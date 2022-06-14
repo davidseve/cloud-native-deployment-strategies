@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: guestbook
+  name: blue-green
 spec:
   generators:
   - list:
@@ -34,3 +34,7 @@ spec:
         directory:
           recurse: true
       project: default
+      syncPolicy:
+        automated:
+          prune: false
+          selfHeal: false
