@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: application-pipeline-ci
+  name: pipeline-ci
   namespace: blue-green-gitops
 spec:
   destination:
