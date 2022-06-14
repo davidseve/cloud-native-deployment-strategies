@@ -1,0 +1,497 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: blue-green-pipeline
+  namespace: blue-green-gitops
+spec:
+  params:
+  - name: HELM_RELEASE_NAME
+    type: string
+    default: shop-blue-green
+    description: The application deployment name
+  - name: SOURCE_GIT_URL
+    type: string
+    default: https://github.com/davidseve/poc-quarkus-applications-helm
+    description: The application git repository url
+  - name: SOURCE_GIT_REVISION
+    type: string
+    default: main
+    description: The application git repository revision
+  - name: CONTEXT_DIR
+    type: string
+    default: "quarkus-helm-umbrella/chart-blue-green"
+    description: The subdirectory in the git repository
+  - name: HELM_RELEASE_VERSION
+    type: string
+    default: v1.0.0
+    description: Helm release version
+  - name: NAMESPACE
+    type: string
+    default: quarkus-gitops
+    description: namespace
+  - name: OVERWRITE_VALUES
+    type: string
+    default: ""
+  - name: VALUES_FILE
+    type: string
+    default: "values/values.yaml" 
+  - name: APP
+    type: string
+    description: discounts or products
+  - name: NEW_IMAGE_TAG
+    type: string
+    default: None
+  - name: REPLICA_COUNT
+    type: string
+    default: None
+  - name: STEP
+    type: string
+  - name: ISTIO
+    type: string
+    default: "false" 
+  - name: WEIGHT
+    type: string
+    default: "100" 
+    
+
+    
+
+  workspaces:
+  - name: app-source
+
+  tasks:
+  - name: git-clone
+    taskRef:
+      kind: ClusterTask
+      name: git-clone
+    params:
+    - name: url
+      value: $(params.SOURCE_GIT_URL)
+    - name: revision
+      value: $(params.SOURCE_GIT_REVISION)
+    - name: deleteExisting
+      value: 'true'
+    workspaces:
+    - name: output
+      workspace: app-source
+
+
+  - name: get-offline-colour
+    runAfter:
+    - git-clone
+    taskRef:
+      name: openshift-client
+    params:
+    - name: SCRIPT
+      value: |
+        ISTIO=$(params.ISTIO)
+        echo $ISTIO
+        if [ $ISTIO = "true" ]; then
+          echo istio
+          oc get vs shop-istio-shop-umbrella-vs-$(params.APP) -n $(params.NAMESPACE) --output="jsonpath={.spec.http[0].route[0].weight}" > $(workspaces.manifest-dir.path)/weight
+          weight= cat $(workspaces.manifest-dir.path)/weight
+          echo $weight
+          if [[ "$weight" == "100" || "$weight" == "90" ]]; then
+            echo a
+            oc get vs shop-istio-shop-umbrella-vs-$(params.APP) -n $(params.NAMESPACE) --output="jsonpath={.spec.http[0].route[0].destination.subset}" > $(workspaces.manifest-dir.path)/version
+          else
+            echo b
+            oc get vs shop-istio-shop-umbrella-vs-$(params.APP) -n $(params.NAMESPACE) --output="jsonpath={.spec.http[0].route[1].destination.subset}" > $(workspaces.manifest-dir.path)/version
+          fi
+        else
+            oc get service $(params.APP)-umbrella-offline -n $(params.NAMESPACE) --output="jsonpath={.spec.selector.version}" > $(workspaces.manifest-dir.path)/version
+        fi
+        cat $(workspaces.manifest-dir.path)/version
+    workspaces:
+    - name: manifest-dir
+      workspace: app-source
+
+  - name: create-result-colour
+    runAfter:
+    - get-offline-colour
+    taskSpec:
+      steps:
+      - name: set-results
+        image: registry.access.redhat.com/ubi8/ubi-minimal:8.3
+        script: |
+          #!/usr/bin/env bash
+          cat $(workspaces.source.path)/version
+          cat $(workspaces.source.path)/version > tekton/results/version
+      results:
+      - name: version
+      workspaces:
+      - name: source
+    workspaces:
+    - name: source
+      workspace: app-source
+
+  - name: change-new-image-tag
+    when:
+      - input: "$(params.STEP)"
+        operator: in
+        values: ["new-version"]
+    runAfter:
+    - create-result-colour
+    params:
+      - name: CONTEXT_DIR
+        value: $(params.CONTEXT_DIR)
+      - name: APP
+        value: $(params.APP)
+      - name: NEW_IMAGE_TAG
+        value: $(params.NEW_IMAGE_TAG) 
+      - name: COLOUR
+        value: $(tasks.create-result-colour.results.version)
+      - name: VALUES_FILE
+        value: $(params.VALUES_FILE)
+      - name: ISTIO
+        value: $(params.ISTIO)
+      - name: REPLICA_COUNT
+        value: $(params.REPLICA_COUNT)
+    taskSpec:
+      params:
+      - name: CONTEXT_DIR
+      - name: APP
+      - name: NEW_IMAGE_TAG 
+      - name: COLOUR
+      - name: VALUES_FILE 
+      - name: ISTIO
+      - name: REPLICA_COUNT
+      steps:
+      - name: change-new-image-tag
+        image: registry.access.redhat.com/ubi8/ubi-minimal:8.3
+        script: |
+          #!/usr/bin/env bash
+          cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
+          sed -i '/$(params.APP)-$(params.COLOUR)/{n;n;n;s/.*/    tag: $(params.NEW_IMAGE_TAG)/}' $(params.VALUES_FILE)
+          
+          ISTIO=$(params.ISTIO)
+          echo $ISTIO
+          if [ $ISTIO = "true" ]; then
+            sed -i '/$(params.APP)-$(params.COLOUR)/{n;s/.*/  replicaCount: $(params.REPLICA_COUNT)/}' $(params.VALUES_FILE)
+          fi
+          cat $(params.VALUES_FILE)
+      workspaces:
+      - name: source
+    workspaces:
+    - name: source
+      workspace: app-source
+
+  - name: commit-new-image-tag
+    runAfter:
+    - change-new-image-tag
+    taskRef:
+      name: git-cli
+    params:
+      - name: GIT_USER_NAME
+        value: davidseve
+      - name: GIT_USER_EMAIL
+        value: davidseve16@gmail.com
+      - name: GIT_SCRIPT
+        value: |
+          cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
+          git add $(params.VALUES_FILE)
+          git commit -m "$(params.APP)-$(tasks.create-result-colour.results.version)  new image tag $(params.NEW_IMAGE_TAG)"
+          git push origin HEAD:$(params.SOURCE_GIT_REVISION)
+    workspaces:
+    - name: source
+      workspace: app-source
+
+  - name: change-configuration
+    when:
+      - input: "$(params.STEP)"
+        operator: in
+        values: ["change-configuration"]
+    runAfter:
+    - create-result-colour
+    params:
+      - name: CONTEXT_DIR
+        value: $(params.CONTEXT_DIR)
+      - name: APP
+        value: $(params.APP)
+      - name: COLOUR
+        value: $(tasks.create-result-colour.results.version)
+      - name: VALUES_FILE
+        value: $(params.VALUES_FILE)        
+    taskSpec:
+      params:
+      - name: CONTEXT_DIR
+      - name: APP
+      - name: COLOUR
+      - name: VALUES_FILE   
+      steps:
+      - name: change-configuration
+        image: registry.access.redhat.com/ubi8/ubi-minimal:8.3
+        script: |
+          #!/usr/bin/env bash
+          cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
+          sed -i '/$(params.APP)-$(params.COLOUR)/{n;s/.*/  replicaCount: 0/}' $(params.VALUES_FILE)
+          sed -i '/$(params.APP)-$(params.COLOUR)/{n;n;n;n;n;n;s#.*#    url: http://discounts-umbrella-online:8080#}' $(params.VALUES_FILE)
+          cat $(params.VALUES_FILE)
+      workspaces:
+      - name: source
+    workspaces:
+    - name: source
+      workspace: app-source
+
+  - name: commit-configuration
+    runAfter:
+    - change-configuration
+    taskRef:
+      name: git-cli
+    params:
+      - name: GIT_USER_NAME
+        value: davidseve
+      - name: GIT_USER_EMAIL
+        value: davidseve16@gmail.com
+      - name: GIT_SCRIPT
+        value: |
+          cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
+          git add $(params.VALUES_FILE)
+          git commit -m "$(params.APP)-$(tasks.create-result-colour.results.version) change configuration"
+          git push origin HEAD:$(params.SOURCE_GIT_REVISION)
+    workspaces:
+    - name: source
+      workspace: app-source
+
+  - name: change-scale-up
+    when:
+      - input: "$(params.STEP)"
+        operator: in
+        values: ["new-version-scale-up"]
+    runAfter:
+    - create-result-colour
+    params:
+      - name: CONTEXT_DIR
+        value: $(params.CONTEXT_DIR)
+      - name: APP
+        value: $(params.APP)
+      - name: REPLICA_COUNT
+        value: $(params.REPLICA_COUNT) 
+      - name: COLOUR
+        value: $(tasks.create-result-colour.results.version)
+      - name: VALUES_FILE
+        value: $(params.VALUES_FILE)        
+    taskSpec:
+      params:
+      - name: CONTEXT_DIR
+      - name: APP
+      - name: REPLICA_COUNT 
+      - name: COLOUR
+      - name: VALUES_FILE 
+      steps:
+      - name: change-scale-up
+        image: registry.access.redhat.com/ubi8/ubi-minimal:8.3
+        script: |
+          #!/usr/bin/env bash
+          cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
+          sed -i '/$(params.APP)-$(params.COLOUR)/{n;s/.*/  replicaCount: $(params.REPLICA_COUNT)/}' $(params.VALUES_FILE)
+          cat $(params.VALUES_FILE)
+      workspaces:
+      - name: source
+    workspaces:
+    - name: source
+      workspace: app-source
+
+  - name: commit-scale-up
+    runAfter:
+    - change-scale-up
+    taskRef:
+      name: git-cli
+    params:
+      - name: GIT_USER_NAME
+        value: davidseve
+      - name: GIT_USER_EMAIL
+        value: davidseve16@gmail.com
+      - name: GIT_SCRIPT
+        value: |
+          cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
+          git add $(params.VALUES_FILE)
+          git commit -m "$(params.APP)-$(tasks.create-result-colour.results.version) replicaCount: $(params.REPLICA_COUNT)"
+          git push origin HEAD:$(params.SOURCE_GIT_REVISION)
+    workspaces:
+    - name: source
+      workspace: app-source
+
+  - name: change-switch
+    when:
+      - input: "$(params.STEP)"
+        operator: in
+        values: ["switch"]
+    runAfter:
+    - create-result-colour
+    params:
+      - name: CONTEXT_DIR
+        value: $(params.CONTEXT_DIR)
+      - name: APP
+        value: $(params.APP)
+      - name: COLOUR
+        value: $(tasks.create-result-colour.results.version) 
+      - name: ISTIO
+        value: $(params.ISTIO)
+      - name: VALUES_FILE
+        value: $(params.VALUES_FILE)    
+      - name: WEIGHT
+        value: $(params.WEIGHT)        
+    taskSpec:
+      params:
+      - name: CONTEXT_DIR
+      - name: APP
+      - name: COLOUR 
+      - name: ISTIO
+      - name: VALUES_FILE
+      - name: WEIGHT 
+      steps:
+      - name: change-switch
+        image: registry.access.redhat.com/ubi8/ubi-minimal:8.3
+        script: |
+          #!/usr/bin/env bash
+          cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
+
+          COLOUR=$(params.COLOUR)
+          if [ $COLOUR = "blue" ]
+          then
+            NEW_COLOUR="green"
+          else
+            NEW_COLOUR="blue"
+          fi
+          echo $NEW_COLOUR
+
+          ISTIO=$(params.ISTIO)
+          echo $ISTIO
+          if [ $ISTIO = "true" ]
+          then
+            WEIGHT=$(params.WEIGHT)
+            NEW_WEIGHT=$((100-$WEIGHT))
+            echo $NEW_WEIGHT
+            
+            sed -i "/    $(params.APP)$(params.COLOUR)Weight/{s/.*/    $(params.APP)$(params.COLOUR)Weight: $NEW_WEIGHT/}" $(params.VALUES_FILE)
+            sed -i "/    $(params.APP)$NEW_COLOURWeight/{s/.*/    $(params.APP)$NEW_COLOURWeight: $(params.WEIGHT)/}" $(params.VALUES_FILE)
+    
+          else
+            sed -i '/$(params.APP)NetworkingOnline/{n;s/.*/  version: $(params.COLOUR)/}' $(params.VALUES_FILE)
+          fi
+          
+          cat $(params.VALUES_FILE)
+      workspaces:
+      - name: source
+    workspaces:
+    - name: source
+      workspace: app-source
+
+  - name: commit-switch
+    runAfter:
+    - change-switch
+    taskRef:
+      name: git-cli
+    params:
+      - name: GIT_USER_NAME
+        value: davidseve
+      - name: GIT_USER_EMAIL
+        value: davidseve16@gmail.com
+      - name: GIT_SCRIPT
+        value: |
+          cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
+          git add $(params.VALUES_FILE)
+          git commit -m "$(params.APP) switch online to $(tasks.create-result-colour.results.version)"
+          git push origin HEAD:$(params.SOURCE_GIT_REVISION)
+    workspaces:
+    - name: source
+      workspace: app-source
+
+  - name: change-scale-down-offline
+    when:
+      - input: "$(params.STEP)"
+        operator: in
+        values: ["scale-down-offline"]
+    runAfter:
+    - create-result-colour
+    params:
+      - name: CONTEXT_DIR
+        value: $(params.CONTEXT_DIR)
+      - name: APP
+        value: $(params.APP)
+      - name: NEW_IMAGE_TAG
+        value: $(params.NEW_IMAGE_TAG) 
+      - name: COLOUR
+        value: $(tasks.create-result-colour.results.version) 
+      - name: ISTIO
+        value: $(params.ISTIO) 
+      - name: VALUES_FILE
+        value: $(params.VALUES_FILE)            
+    taskSpec:
+      params:
+      - name: CONTEXT_DIR
+      - name: APP
+      - name: NEW_IMAGE_TAG 
+      - name: COLOUR 
+      - name: ISTIO
+      - name: VALUES_FILE   
+      steps:
+      - name: scale-down-offline
+        image: registry.access.redhat.com/ubi8/ubi-minimal:8.3
+        script: |
+          #!/bin/bash
+          cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
+          COLOUR=$(params.COLOUR)
+          if [ $COLOUR = "blue" ]
+          then
+            NEW_COLOUR="green"
+          else
+            NEW_COLOUR="blue"
+          fi
+          echo $NEW_COLOUR
+
+          ISTIO=$(params.ISTIO)
+          echo $ISTIO
+          if [ $ISTIO = "false" ]
+          then
+            sed -i "/$(params.APP)NetworkingOffline/{n;s/.*/  version: $NEW_COLOUR/}" $(params.VALUES_FILE)
+          fi
+          
+          sed -i "/$(params.APP)-$NEW_COLOUR/{n;s/.*/  replicaCount: 1/}" $(params.VALUES_FILE)
+          sed -i "/$(params.APP)-$NEW_COLOUR/{n;n;n;s/.*/    tag: $(params.NEW_IMAGE_TAG)/}" $(params.VALUES_FILE)
+          
+          APP=$(params.APP)
+          echo $APP
+          if [ $APP = "products" ] && [ $ISTIO = "false" ]
+          then
+            sed -i '/$(params.APP)-$NEW_COLOUR/{n;n;n;n;n;n;s#.*#    url: http://discounts-umbrella-offline:8080#}' $(params.VALUES_FILE)
+          fi
+          
+          cat $(params.VALUES_FILE)
+      workspaces:
+      - name: source
+    workspaces:
+    - name: source
+      workspace: app-source
+
+  - name: commit-scale-down-offline
+    runAfter:
+    - change-scale-down-offline
+    taskRef:
+      name: git-cli
+    params:
+      - name: GIT_USER_NAME
+        value: davidseve
+      - name: GIT_USER_EMAIL
+        value: davidseve16@gmail.com
+      - name: GIT_SCRIPT
+        value: |
+          cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
+          git add $(params.VALUES_FILE)
+          git commit -m "$(params.APP) scale down offline"
+          git push origin HEAD:$(params.SOURCE_GIT_REVISION)
+    workspaces:
+    - name: source
+      workspace: app-source
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: workspace-pvc-shop-cd-new-version
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
