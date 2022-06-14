@@ -3,8 +3,6 @@ kind: Subscription
 metadata:
   name: tekton
   namespace: openshift-operators
-  annotations:
-    argocd.argoproj.io/sync-wave: "-20"
 spec:
   channel: stable
   installPlanApproval: Automatic

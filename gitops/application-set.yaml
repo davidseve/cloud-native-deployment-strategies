@@ -1,0 +1,36 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: guestbook
+spec:
+  generators:
+  - list:
+      elements:
+      - name: pipeline-ci
+        path: ci/pipeline
+        repoURL: https://github.com/davidseve/poc-quarkus-applications.git
+        targetRevision: HEAD
+      - name: pipeline-blue-green
+        path: pipelines
+        repoURL: https://github.com/davidseve/cloud-native-blue-green.git
+        targetRevision: HEAD
+      - name: shop-blue-green
+        path: quarkus-helm-umbrella/chart-blue-green
+        repoURL: 'https://github.com/davidseve/poc-quarkus-applications-helm.git'
+        targetRevision: blue-green
+  template:
+    metadata:
+      name: '{{name}}'
+      namespace: blue-green-gitops
+    spec:
+      destination:
+        name: ''
+        namespace: blue-green-gitops
+        server: 'https://kubernetes.default.svc'
+      source:
+        path: '{{path}}'
+        repoURL: '{{repoURL}}'
+        targetRevision: '{{targetRevision}}'
+        directory:
+          recurse: true
+      project: default

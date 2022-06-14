@@ -34,13 +34,13 @@ In the current Git repository, the [gitops/cluster-config](gitops/cluster-config
 Execute this command to add a new Argo CD application that syncs a Git repository containing cluster configurations with the OpenShift cluster.
 
 ```
-oc apply -f gitops/cluster-config-application.yaml -n openshift-gitops
+oc apply -f gitops/application-cluster-config.yaml -n openshift-gitops
 ```
 
 Looking at the Argo CD dashboard, you would notice that the **blue-green-cluster-configuration** Argo CD application is created by is out of sync, since we configured it with manual sync policy.
 
 TODO
-![Argo CD - Cluster Config](images/gitops-08.png)
+![Argo CD - Cluster Config](gitops/images/application-cluster-config-outofsync.png)
 
 Click on the **Sync** button on the **blue-green-cluster-configuration** application and then on **Synchronize** button after reviewing the changes that will be rolled out to the cluster.
 
