@@ -6,22 +6,17 @@ spec:
   generators:
   - list:
       elements:
-      - name: pipeline-ci
+      - name: ci
         path: ci/pipeline
         repoURL: https://github.com/davidseve/poc-quarkus-applications.git
         targetRevision: HEAD
-      - name: pipeline-blue-green
+      - name: blue-green
         path: pipelines
         repoURL: https://github.com/davidseve/cloud-native-blue-green.git
         targetRevision: HEAD
-      - name: shop-blue-green
-        path: quarkus-helm-umbrella/chart-blue-green
-        repoURL: 'https://github.com/davidseve/poc-quarkus-applications-helm.git'
-        targetRevision: blue-green
   template:
     metadata:
-      name: '{{name}}'
-      namespace: blue-green-gitops
+      name: 'pipeline-{{name}}'
     spec:
       destination:
         name: ''
