@@ -149,16 +149,12 @@ Execute this command to add a new Argo CD application that syncs a Git repositor
 oc apply -f gitops/application-cluster-config.yaml -n openshift-gitops
 ```
 
-Looking at the Argo CD dashboard, you would notice that three applications has been created. 
+Looking at the Argo CD dashboard, you would notice that three applications has been created[^note]. 
 
 ![Argo CD - Applications](images/applications.png)
-[^note]:**pipelines-blue-green** will have status `Progressing` till we execute the first pipeline. 
-
-You can also use words, to fit your writing style more closely[^note].
 
 [^note]:
-    Named footnotes will still render with numbers instead of the text but allow easier identification and linking.  
-    This footnote also has been made with a different syntax using 4 spaces for new lines.
+     **pipelines-blue-green** will have status `Progressing` till we execute the first pipeline.
 
 You can click on the **blue-green-cluster-configuration** application to check the details of sync resources and their status on the cluster. 
 
