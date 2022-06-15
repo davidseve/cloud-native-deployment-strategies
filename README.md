@@ -1,5 +1,26 @@
 # Cloud Native Blue/Green
 
+## Blue/Green Deployment
+
+Blue green deployment is an application release model that gradually transfers user traffic from a previous version of an app or microservice to a nearly identical new release—both of which are running in production.
+The old version can be called the blue environment while the new version can be known as the green environment. Once production traffic is fully transferred from blue to green, blue can standby in case of rollback or pulled from production and updated to become the template upon which the next update is made.
+
+To achive this with `Cloud Native` applications we have designe this model:
+![Shop Application](gitops/Shop.png)
+
+## Shop application
+
+We are going to use very simple applications to test Blue/Green deployment. We have create two Quarkus applications `Products` and `Discounts`
+
+![Shop Application](gitops/images/Shop.png)
+
+`Products` expose an API with a list of products and call `Discounts` to get the discounts of the products
+
+### Shop Blue/Green
+
+This is the architecture that we have difine t
+
+![Shop Blue/Green](gitops/images/Shop.png)
 ## OpenShift GitOps 
 ### Install OpenShift GitOps 
 
@@ -62,6 +83,11 @@ You can check that the **Openshift Pipelines operator** is installed.
 And also the other to applications has been created **pipelines-blue-green** **shop-blue-green**
 
 
+
+We have to get the Online and the Offline routes
+```
+oc get routes -n blue-green-gitops
+```
 TODO poner como probar que shop funciona
 
 
@@ -77,7 +103,7 @@ tkn hub install task git-cli -n blue-green-gitops
 kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/main/task/openshift-client/0.2/openshift-client.yaml -n blue-green-gitops
 
 TODO lanzar los pipelines
-
+TODO poner su usuario de github
 oc create -f 1-pipelinerun-products-new-version.yaml -n blue-green-gitops
 oc create -f 2-pipelinerun-products-configuration.yaml -n blue-green-gitops
 oc create -f 3-pipelinerun-products-scale-up.yaml -n blue-green-gitops

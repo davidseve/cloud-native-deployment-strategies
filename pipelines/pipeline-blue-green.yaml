@@ -45,8 +45,13 @@ spec:
     type: string
     default: None
   - name: STEP
-    type: string    
-
+    type: string
+  - name: GIT_USER_NAME
+    type: string
+    default: davidseve
+  - name: GIT_USER_EMAIL
+    type: string
+    default: davidseve16@gmail.com
     
 
   workspaces:
@@ -151,9 +156,9 @@ spec:
       name: git-cli
     params:
       - name: GIT_USER_NAME
-        value: davidseve
+        value: $(params.GIT_USER_NAME)
       - name: GIT_USER_EMAIL
-        value: davidseve16@gmail.com
+        value: $(params.GIT_USER_EMAIL)
       - name: GIT_SCRIPT
         value: |
           cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
@@ -208,9 +213,9 @@ spec:
       name: git-cli
     params:
       - name: GIT_USER_NAME
-        value: davidseve
+        value: $(params.GIT_USER_NAME)
       - name: GIT_USER_EMAIL
-        value: davidseve16@gmail.com
+        value: $(params.GIT_USER_EMAIL)
       - name: GIT_SCRIPT
         value: |
           cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
@@ -267,9 +272,9 @@ spec:
       name: git-cli
     params:
       - name: GIT_USER_NAME
-        value: davidseve
+        value: $(params.GIT_USER_NAME)
       - name: GIT_USER_EMAIL
-        value: davidseve16@gmail.com
+        value: $(params.GIT_USER_EMAIL)
       - name: GIT_SCRIPT
         value: |
           cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
@@ -334,9 +339,9 @@ spec:
       name: git-cli
     params:
       - name: GIT_USER_NAME
-        value: davidseve
+        value: $(params.GIT_USER_NAME)
       - name: GIT_USER_EMAIL
-        value: davidseve16@gmail.com
+        value: $(params.GIT_USER_EMAIL)
       - name: GIT_SCRIPT
         value: |
           cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
@@ -407,9 +412,9 @@ spec:
       name: git-cli
     params:
       - name: GIT_USER_NAME
-        value: davidseve
+        value: $(params.GIT_USER_NAME)
       - name: GIT_USER_EMAIL
-        value: davidseve16@gmail.com
+        value: $(params.GIT_USER_EMAIL)
       - name: GIT_SCRIPT
         value: |
           cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
