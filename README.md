@@ -152,6 +152,8 @@ oc apply -f gitops/application-cluster-config.yaml -n openshift-gitops
 Looking at the Argo CD dashboard, you would notice that three applications has been created. 
 
 ![Argo CD - Applications](images/applications.png)
+[^note]:
+  **pipelines-blue-green will have status `Progressing` till we execute the first pipeline. 
 
 You can click on the **blue-green-cluster-configuration** application to check the details of sync resources and their status on the cluster. 
 
@@ -163,8 +165,6 @@ You can check that a namespace called `blue-green-gitops` is created on the clus
 You can check that the **Openshift Pipelines operator** is installed.
 
 And also the other to applications has been created **pipelines-blue-green** **shop-blue-green**
-
-
 
 We have to get the Online and the Offline routes
 ```
