@@ -29,7 +29,16 @@ Click on Argo CD from the OpenShift Web Console application launcher and then lo
 
 ### Configure OpenShift with Argo CD
 
-In the current Git repository, the [gitops/cluster-config](gitops/cluster-config/) directory contains OpenShift cluster configurations such as namespaces that should be created. Let's configure Argo CD to recursively sync the content of the [gitops/cluster-config](gitops/cluster-config/) directory to the OpenShift cluster. Initially, we can set the sync policy to manual in order to be able to review changes before rolling out configurations to the cluster. 
+In the current Git repository, the [gitops/cluster-config](gitops/cluster-config/) directory contains OpenShift cluster configurations such as:
+- namespaces `blue-green-gitops`.
+- operator `Openshift Pipelines`.
+- cluster role `tekton-admin-view`.
+- role binding for ArgoCD to the namespace `blue-green-gitops`.
+- `pipelines-blue-green` the pipelines that we will see later for blue/green deployment.
+- `shop-blue-green` the application that we are going to use to test blue/green deployment
+
+
+ Let's configure Argo CD to recursively sync the content of the [gitops/cluster-config](gitops/cluster-config/) directory to the OpenShift cluster.
 
 Execute this command to add a new Argo CD application that syncs a Git repository containing cluster configurations with the OpenShift cluster.
 
@@ -37,25 +46,31 @@ Execute this command to add a new Argo CD application that syncs a Git repositor
 oc apply -f gitops/application-cluster-config.yaml -n openshift-gitops
 ```
 
-Looking at the Argo CD dashboard, you would notice that the **blue-green-cluster-configuration** Argo CD application is created. Once the sync is completed successfully, you would see that Argo CD reports a the configurations to be currently in sync with the Git repository and healthy. You can click on the **blue-green-cluster-configuration** application to check the details of sync resources and their status on the cluster. 
+Looking at the Argo CD dashboard, you would notice that three applications has been created. 
+
+![Argo CD - Applications](gitops/images/applications.png)
+
+You can click on the **blue-green-cluster-configuration** application to check the details of sync resources and their status on the cluster. 
 
 ![Argo CD - Cluster Config](gitops/images/application-cluster-config-sync.png)
 
 
 You can check that a namespace called `blue-green-gitops` is created on the cluster.
 
-You can also check that the **Openshift Pipelines operator** is installed.
+You can check that the **Openshift Pipelines operator** is installed.
+
+And also the other to applications has been created **pipelines-blue-green** **shop-blue-green**
 
 
+TODO probar que shop funciona.
 
+TODO lanzar los pipelines
 
 TODO ver si faltan mas permisos, casi seguro que el toke de git
 
 
 
-oc apply -f gitops/application-shop-blue-green.yaml -n openshift-gitops
 
-oc apply -f gitops/application-pipeline-blue-green.yaml -n openshift-gitops
 
 
 
