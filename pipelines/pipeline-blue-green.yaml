@@ -340,7 +340,6 @@ spec:
     - change-scale-up
     - change-switch
     - change-scale-down-offline
-    continueAfterSkip: 'true'
     taskRef:
       name: git-cli
     params:
