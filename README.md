@@ -64,7 +64,22 @@ And also the other to applications has been created **pipelines-blue-green** **s
 
 TODO probar que shop funciona.
 
+export TOKEN=XXXXXX
+export GIT_USER=YYY
+oc policy add-role-to-user edit system:serviceaccount:blue-green-gitops:pipeline --rolebinding-name=pipeline-edit -n blue-green-gitops
+oc create secret generic github-token --from-literal=username=${GIT_USER} --from-literal=password=${TOKEN} --type "kubernetes.io/basic-auth" -n blue-green-gitops
+oc annotate secret github-token "tekton.dev/git-0=https://github.com/davidseve" -n blue-green-gitops
+oc secrets link pipeline github-token -n blue-green-gitops
+tkn hub install task helm-upgrade-from-source -n blue-green-gitops
+tkn hub install task kaniko -n blue-green-gitops
+tkn hub install task git-cli -n blue-green-gitops
+kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/main/task/openshift-client/0.2/openshift-client.yaml -n blue-green-gitops
+
 TODO lanzar los pipelines
+
+oc create -f 1-pipelinerun-products-new-version.yaml -n blue-green-gitops
+oc create -f 2-pipelinerun-products-configuration.yaml -n blue-green-gitops
+oc create -f 3-pipelinerun-products-scale-up.yaml -n blue-green-gitops
 
 TODO ver si faltan mas permisos, casi seguro que el toke de git
 

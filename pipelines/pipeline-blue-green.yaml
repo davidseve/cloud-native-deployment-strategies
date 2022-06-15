@@ -27,7 +27,7 @@ spec:
     description: Helm release version
   - name: NAMESPACE
     type: string
-    default: quarkus-gitops
+    default: blue-green-gitops
     description: namespace
   - name: OVERWRITE_VALUES
     type: string
