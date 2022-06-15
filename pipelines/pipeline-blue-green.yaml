@@ -144,25 +144,7 @@ spec:
     - name: source
       workspace: app-source
 
-  - name: commit-new-image-tag
-    runAfter:
-    - change-new-image-tag
-    taskRef:
-      name: git-cli
-    params:
-      - name: GIT_USER_NAME
-        value: davidseve
-      - name: GIT_USER_EMAIL
-        value: davidseve16@gmail.com
-      - name: GIT_SCRIPT
-        value: |
-          cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
-          git add $(params.VALUES_FILE)
-          git commit -m "$(params.APP)-$(tasks.create-result-colour.results.version)  new image tag $(params.NEW_IMAGE_TAG)"
-          git push origin HEAD:$(params.SOURCE_GIT_REVISION)
-    workspaces:
-    - name: source
-      workspace: app-source
+
 
   - name: change-configuration
     when:
@@ -201,25 +183,7 @@ spec:
     - name: source
       workspace: app-source
 
-  - name: commit-configuration
-    runAfter:
-    - change-configuration
-    taskRef:
-      name: git-cli
-    params:
-      - name: GIT_USER_NAME
-        value: davidseve
-      - name: GIT_USER_EMAIL
-        value: davidseve16@gmail.com
-      - name: GIT_SCRIPT
-        value: |
-          cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
-          git add $(params.VALUES_FILE)
-          git commit -m "$(params.APP)-$(tasks.create-result-colour.results.version) change configuration"
-          git push origin HEAD:$(params.SOURCE_GIT_REVISION)
-    workspaces:
-    - name: source
-      workspace: app-source
+
 
   - name: change-scale-up
     when:
@@ -260,25 +224,7 @@ spec:
     - name: source
       workspace: app-source
 
-  - name: commit-scale-up
-    runAfter:
-    - change-scale-up
-    taskRef:
-      name: git-cli
-    params:
-      - name: GIT_USER_NAME
-        value: davidseve
-      - name: GIT_USER_EMAIL
-        value: davidseve16@gmail.com
-      - name: GIT_SCRIPT
-        value: |
-          cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
-          git add $(params.VALUES_FILE)
-          git commit -m "$(params.APP)-$(tasks.create-result-colour.results.version) replicaCount: $(params.REPLICA_COUNT)"
-          git push origin HEAD:$(params.SOURCE_GIT_REVISION)
-    workspaces:
-    - name: source
-      workspace: app-source
+
 
   - name: change-switch
     when:
@@ -327,25 +273,7 @@ spec:
     - name: source
       workspace: app-source
 
-  - name: commit-switch
-    runAfter:
-    - change-switch
-    taskRef:
-      name: git-cli
-    params:
-      - name: GIT_USER_NAME
-        value: davidseve
-      - name: GIT_USER_EMAIL
-        value: davidseve16@gmail.com
-      - name: GIT_SCRIPT
-        value: |
-          cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
-          git add $(params.VALUES_FILE)
-          git commit -m "$(params.APP) switch online to $(tasks.create-result-colour.results.version)"
-          git push origin HEAD:$(params.SOURCE_GIT_REVISION)
-    workspaces:
-    - name: source
-      workspace: app-source
+
 
   - name: change-scale-down-offline
     when:
@@ -400,8 +328,12 @@ spec:
     - name: source
       workspace: app-source
 
-  - name: commit-scale-down-offline
+  - name: commit-values
     runAfter:
+    - change-new-image-tag
+    - change-configuration
+    - change-scale-up
+    - change-switch
     - change-scale-down-offline
     taskRef:
       name: git-cli
