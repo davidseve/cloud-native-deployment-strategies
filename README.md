@@ -2,7 +2,7 @@
 
 ## Blue/Green Deployment
 
-Blue green deployment is an application release model that gradually transfers user traffic from a previous version of an app or microservice to a nearly identical new release—both of which are running in production.
+Blue green deployment is an application release model that transfers user traffic from a previous version of an app or microservice to a nearly identical new release, both of which are running in production.
 The old version can be called the blue environment while the new version can be known as the green environment. Once production traffic is fully transferred from blue to green, blue can standby in case of rollback or pulled from production and updated to become the template upon which the next update is made.
 
 Advantages:
@@ -15,21 +15,21 @@ Disadvantages:
 - Backwards compatibility
 
 
-![Shop Application](gitops/images/blue-green.png)
+![Shop Application](images/blue-green.png)
 
 ## Shop application
 
 We are going to use very simple applications to test Blue/Green deployment. We have create two Quarkus applications `Products` and `Discounts`
 
-![Shop Application](gitops/images/Shop.png)
+![Shop Application](images/Shop.png)
 
 `Products` expose an API with a list of products and call `Discounts` to get the discounts of the products
 
 ## Shop Blue/Green
 
-To achieve blue/green deployment with `Cloud Native` applications we have design this model:
+To achieve blue/green deployment with `Cloud Native` applications we have design this architecture.
 
-![Shop Blue/Green](gitops/images/Shop-blue-green.png)
+![Shop Blue/Green](images/Shop-blue-green.png)
 
 OpenShift Components - Online
 - Routes and Services declared with suffix -online
@@ -46,9 +46,9 @@ OpenShift Components - Offline
 One of the best ways to package `Cloud Native` applications is Helm. But in blue/green deployment it have even more sense.
 We have create a chart for each application that does not know anything about blue/green. Then we pack every thing together in a umbrella helm chart.
 
-![Shop Umbrella Helm Chart](gitops/images/Shop-helm.png)
+![Shop Umbrella Helm Chart](images/Shop-helm.png)
 
-In the `Shop Umbrella Chart` we import several times the same charts as dependencies but with different names if they are blue/green or online/offline
+In the `Shop Umbrella Chart` we use several times the same charts as helm dependencies but with different names if they are blue/green or online/offline
 
 This is the Chart.yaml
 ```
@@ -110,12 +110,11 @@ If we want to have a `Cloud Native` deployment we can not forget `CI/CD`. `OpenS
 Log into OpenShift as a cluster admin and install the OpenShift GitOps operator with the following command:
 ```
 oc apply -f gitops/gitops-operator.yaml
-TODO ver si puedo meter aqui tambin la aplicaicon de argo y que todo sea solo este comando
 ```
 
 Once OpenShift GitOps is installed, an instance of Argo CD is automatically installed on the cluster in the `openshift-gitops` namespace and link to this instance is added to the application launcher in OpenShift Web Console.
 
-![Application Launcher](gitops/images/gitops-link.png)
+![Application Launcher](images/gitops-link.png)
 
 ### Log into Argo CD dashboard
 
@@ -127,9 +126,9 @@ oc extract secret/openshift-gitops-cluster -n openshift-gitops --to=-
 
 Click on Argo CD from the OpenShift Web Console application launcher and then log into Argo CD with `admin` username and the password retrieved from the previous step.
 
-![Argo CD](gitops/images/ArgoCD-login.png)
+![Argo CD](images/ArgoCD-login.png)
 
-![Argo CD](gitops/images/ArgoCD-UI.png)
+![Argo CD](images/ArgoCD-UI.png)
 
 ### Configure OpenShift with Argo CD
 
@@ -152,11 +151,11 @@ oc apply -f gitops/application-cluster-config.yaml -n openshift-gitops
 
 Looking at the Argo CD dashboard, you would notice that three applications has been created. 
 
-![Argo CD - Applications](gitops/images/applications.png)
+![Argo CD - Applications](images/applications.png)
 
 You can click on the **blue-green-cluster-configuration** application to check the details of sync resources and their status on the cluster. 
 
-![Argo CD - Cluster Config](gitops/images/application-cluster-config-sync.png)
+![Argo CD - Cluster Config](images/application-cluster-config-sync.png)
 
 
 You can check that a namespace called `blue-green-gitops` is created on the cluster.
@@ -173,7 +172,7 @@ oc get routes -n blue-green-gitops
 ```
 TODO poner como probar que shop funciona
 
-
+```
 export TOKEN=XXXXXX
 export GIT_USER=YYY
 oc policy add-role-to-user edit system:serviceaccount:blue-green-gitops:pipeline --rolebinding-name=pipeline-edit -n blue-green-gitops
@@ -184,6 +183,7 @@ tkn hub install task helm-upgrade-from-source -n blue-green-gitops
 tkn hub install task kaniko -n blue-green-gitops
 tkn hub install task git-cli -n blue-green-gitops
 kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/main/task/openshift-client/0.2/openshift-client.yaml -n blue-green-gitops
+```
 
 TODO lanzar los pipelines
 TODO poner su usuario de github
