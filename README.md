@@ -5,8 +5,17 @@
 Blue green deployment is an application release model that gradually transfers user traffic from a previous version of an app or microservice to a nearly identical new release—both of which are running in production.
 The old version can be called the blue environment while the new version can be known as the green environment. Once production traffic is fully transferred from blue to green, blue can standby in case of rollback or pulled from production and updated to become the template upon which the next update is made.
 
-To achive this with `Cloud Native` applications we have designe this model:
-![Shop Application](gitops/Shop.png)
+Advantages:
+- Minimize downtime
+- Rapid way to rollback 
+- Smoke testing
+
+Disadvantages:
+- Doubling of total resources
+- Backwards compatibility
+
+
+![Shop Application](gitops/images/blue-green.png)
 
 ## Shop application
 
@@ -16,12 +25,86 @@ We are going to use very simple applications to test Blue/Green deployment. We h
 
 `Products` expose an API with a list of products and call `Discounts` to get the discounts of the products
 
-### Shop Blue/Green
+## Shop Blue/Green
 
-This is the architecture that we have difine t
+To achieve blue/green deployment with `Cloud Native` applications we have design this model:
 
-![Shop Blue/Green](gitops/images/Shop.png)
-## OpenShift GitOps 
+![Shop Blue/Green](gitops/images/Shop-blue-green.png)
+
+OpenShift Components - Online
+- Routes and Services declared with suffix -online
+- Routes mapped only to the online services
+- Services mapped to the deployment with the online flag (Green or Orange)
+
+OpenShift Components - Offline
+- Routes and Services declared with suffix -offline
+- Routes mapped only to the offline services
+- Services mapped to the deployment with the offline flag (Green or Orange)
+
+## Shop Umbrella Helm Chart
+
+One of the best ways to package `Cloud Native` applications is Helm. But in blue/green deployment it have even more sense.
+We have create a chart for each application that does not know anything about blue/green. Then we pack every thing together in a umbrella helm chart.
+
+![Shop Umbrella Helm Chart](gitops/images/Shop-helm.png)
+
+In the `Shop Umbrella Chart` we import several times the same charts as dependencies but with different names if they are blue/green or online/offline
+
+This is the Chart.yaml
+```
+apiVersion: v2
+name: shop-umbrella-blue-green
+description: A Helm chart for Kubernetes
+type: application
+version: 0.1.0
+appVersion: "1.16.0"
+
+dependencies:
+  - name: quarkus-helm-discounts
+    version: 0.1.0
+    alias: discounts-blue
+    tags:
+      - discounts-blue
+  - name: quarkus-helm-discounts
+    version: 0.1.0
+    alias: discounts-green
+    tags:
+      - discounts-green
+  - name: quarkus-base-networking
+    version: 0.1.0
+    alias: discountsNetworkingOnline  
+    tags:
+      - discountsNetworkingOnline
+  - name: quarkus-base-networking
+    version: 0.1.0
+    alias: discountsNetworkingOffline
+    tags:
+      - discountsNetworkingOffline
+  - name: quarkus-helm-products
+    version: 0.1.0
+    alias: products-blue
+    tags:
+      - products-blue
+  - name: quarkus-helm-products
+    version: 0.1.0
+    alias: products-green
+    tags:
+      - products-green
+  - name: quarkus-base-networking
+    version: 0.1.0
+    alias: productsNetworkingOnline
+    tags:
+      - productsNetworkingOnline
+  - name: quarkus-base-networking
+    version: 0.1.0
+    alias: productsNetworkingOffline
+    tags:
+      - productsNetworkingOffline
+```
+
+## OpenShift GitOps
+
+If we want to have a `Cloud Native` deployment we can not forget `CI/CD`. `OpenShift GitOps` and `Openshift Pipelines` will help us. 
 ### Install OpenShift GitOps 
 
 Log into OpenShift as a cluster admin and install the OpenShift GitOps operator with the following command:
