@@ -62,7 +62,8 @@ You can check that the **Openshift Pipelines operator** is installed.
 And also the other to applications has been created **pipelines-blue-green** **shop-blue-green**
 
 
-TODO probar que shop funciona.
+TODO poner como probar que shop funciona
+
 
 export TOKEN=XXXXXX
 export GIT_USER=YYY
@@ -80,8 +81,9 @@ TODO lanzar los pipelines
 oc create -f 1-pipelinerun-products-new-version.yaml -n blue-green-gitops
 oc create -f 2-pipelinerun-products-configuration.yaml -n blue-green-gitops
 oc create -f 3-pipelinerun-products-scale-up.yaml -n blue-green-gitops
+oc create -f 4-pipelinerun-products-switch.yaml -n blue-green-gitops
 
-TODO ver si faltan mas permisos, casi seguro que el toke de git
+
 
 
 
