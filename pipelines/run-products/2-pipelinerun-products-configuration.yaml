@@ -1,0 +1,18 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  generateName: shop-products-change-configuration-
+spec:
+  pipelineRef:
+    name: pipeline-blue-green    
+  params:
+  - name: APP
+    value: products
+  - name: STEP
+    value: "change-configuration"
+  - name: SOURCE_GIT_REVISION
+    value: blue-green
+  workspaces:
+  - name: app-source
+    persistentVolumeClaim:
+      claimName: workspace-pvc-shop-cd-new-version
