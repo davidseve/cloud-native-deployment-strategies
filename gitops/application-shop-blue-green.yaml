@@ -5,7 +5,7 @@ metadata:
 spec:
   destination:
     name: ''
-    namespace: quarkus-gitops
+    namespace: blue-green-gitops
     server: 'https://kubernetes.default.svc'
   source:
     path: quarkus-helm-umbrella/chart-blue-green

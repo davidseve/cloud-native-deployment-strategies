@@ -37,13 +37,7 @@ Execute this command to add a new Argo CD application that syncs a Git repositor
 oc apply -f gitops/application-cluster-config.yaml -n openshift-gitops
 ```
 
-Looking at the Argo CD dashboard, you would notice that the **blue-green-cluster-configuration** Argo CD application is created by is out of sync, since we configured it with manual sync policy.
-
-![Argo CD - Cluster Config](gitops/images/application-cluster-config-outofsync.png)
-
-Click on the **Sync** button on the **blue-green-cluster-configuration** application and then on **Synchronize** button after reviewing the changes that will be rolled out to the cluster.
-
-Once the sync is completed successfully, you would see that Argo CD reports a the configurations to be currently in sync with the Git repository and healthy. You can click on the **blue-green-cluster-configuration** application to check the details of sync resources and their status on the cluster. 
+Looking at the Argo CD dashboard, you would notice that the **blue-green-cluster-configuration** Argo CD application is created. Once the sync is completed successfully, you would see that Argo CD reports a the configurations to be currently in sync with the Git repository and healthy. You can click on the **blue-green-cluster-configuration** application to check the details of sync resources and their status on the cluster. 
 
 ![Argo CD - Cluster Config](gitops/images/application-cluster-config-sync.png)
 
@@ -52,9 +46,17 @@ You can check that a namespace called `blue-green-gitops` is created on the clus
 
 You can also check that the **Openshift Pipelines operator** is installed.
 
+TODO borrar?
 Now that the configuration sync is in place, any changes in the Git repository will be automatically detect by Argo CD and would change the status of the **blue-green-cluster-configuration** to `OutOfSync`, which implies a drift from the desired configuration. One can set the [sync policy to automated](https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/) in order for Argo CD to automatically roll out changes form Git repository to the cluster. 
-
-TODO ver si faltan mas permisos
 
 
 TODO ver si faltan mas permisos, casi seguro que el toke de git
+
+
+TODO creo que no hace falta
+oc policy add-role-to-user edit system:serviceaccount:openshift-gitops:openshift-gitops-argocd-application-controller -n blue-green-gitops
+
+oc apply -f gitops/application-shop-blue-green.yaml -n openshift-gitops
+
+oc apply -f gitops/application-pipeline-blue-green.yaml -n openshift-gitops
+

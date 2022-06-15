@@ -1,15 +1,15 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: blue-green-cluster-configuration
+  name: pipelines-ci
 spec:
   destination:
     name: ''
-    namespace: default
+    namespace: blue-green-gitops
     server: 'https://kubernetes.default.svc'
   source:
-    path: gitops/cluster-config
-    repoURL: 'https://github.com/davidseve/cloud-native-blue-green.git'
+    path: ci/pipeline
+    repoURL: https://github.com/davidseve/poc-quarkus-applications.git
     targetRevision: HEAD
     directory:
       recurse: true
