@@ -46,17 +46,23 @@ You can check that a namespace called `blue-green-gitops` is created on the clus
 
 You can also check that the **Openshift Pipelines operator** is installed.
 
-TODO borrar?
-Now that the configuration sync is in place, any changes in the Git repository will be automatically detect by Argo CD and would change the status of the **blue-green-cluster-configuration** to `OutOfSync`, which implies a drift from the desired configuration. One can set the [sync policy to automated](https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/) in order for Argo CD to automatically roll out changes form Git repository to the cluster. 
+
 
 
 TODO ver si faltan mas permisos, casi seguro que el toke de git
 
 
-TODO creo que no hace falta
-oc policy add-role-to-user edit system:serviceaccount:openshift-gitops:openshift-gitops-argocd-application-controller -n blue-green-gitops
 
 oc apply -f gitops/application-shop-blue-green.yaml -n openshift-gitops
 
 oc apply -f gitops/application-pipeline-blue-green.yaml -n openshift-gitops
+
+
+
+
+
+
+TODO borrar
+borrar todas las aplicaciones desde la web de Argo
+borra los operadoes de pipelienes y gitops desde la web de openshift
 

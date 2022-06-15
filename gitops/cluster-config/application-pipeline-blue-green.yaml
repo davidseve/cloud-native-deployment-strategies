@@ -2,6 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: pipelines-blue-green
+  namespace: openshift-gitops
 spec:
   destination:
     name: ''
