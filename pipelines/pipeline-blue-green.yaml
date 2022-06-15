@@ -107,6 +107,7 @@ spec:
       - input: "$(params.STEP)"
         operator: in
         values: ["new-version"]
+    continueAfterSkip: 'true'
     runAfter:
     - create-result-colour
     params:
@@ -151,6 +152,7 @@ spec:
       - input: "$(params.STEP)"
         operator: in
         values: ["change-configuration"]
+    continueAfterSkip: 'true'
     runAfter:
     - create-result-colour
     params:
@@ -190,6 +192,7 @@ spec:
       - input: "$(params.STEP)"
         operator: in
         values: ["new-version-scale-up"]
+    continueAfterSkip: 'true'
     runAfter:
     - create-result-colour
     params:
@@ -231,6 +234,7 @@ spec:
       - input: "$(params.STEP)"
         operator: in
         values: ["switch"]
+    continueAfterSkip: 'true'
     runAfter:
     - create-result-colour
     params:
@@ -280,6 +284,7 @@ spec:
       - input: "$(params.STEP)"
         operator: in
         values: ["scale-down-offline"]
+    continueAfterSkip: 'true'
     runAfter:
     - create-result-colour
     params:
