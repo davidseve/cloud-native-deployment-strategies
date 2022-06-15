@@ -1,8 +1,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
-  name: pipeline-blue-green
-  namespace: blue-green-gitops
+  name: new-version-quarkus-application
 spec:
   params:
   - name: HELM_RELEASE_NAME
@@ -45,14 +44,7 @@ spec:
     type: string
     default: None
   - name: STEP
-    type: string
-  - name: ISTIO
-    type: string
-    default: "false" 
-  - name: WEIGHT
-    type: string
-    default: "100" 
-    
+    type: string    
 
     
 
@@ -84,23 +76,7 @@ spec:
     params:
     - name: SCRIPT
       value: |
-        ISTIO=$(params.ISTIO)
-        echo $ISTIO
-        if [ $ISTIO = "true" ]; then
-          echo istio
-          oc get vs shop-istio-shop-umbrella-vs-$(params.APP) -n $(params.NAMESPACE) --output="jsonpath={.spec.http[0].route[0].weight}" > $(workspaces.manifest-dir.path)/weight
-          weight= cat $(workspaces.manifest-dir.path)/weight
-          echo $weight
-          if [[ "$weight" == "100" || "$weight" == "90" ]]; then
-            echo a
-            oc get vs shop-istio-shop-umbrella-vs-$(params.APP) -n $(params.NAMESPACE) --output="jsonpath={.spec.http[0].route[0].destination.subset}" > $(workspaces.manifest-dir.path)/version
-          else
-            echo b
-            oc get vs shop-istio-shop-umbrella-vs-$(params.APP) -n $(params.NAMESPACE) --output="jsonpath={.spec.http[0].route[1].destination.subset}" > $(workspaces.manifest-dir.path)/version
-          fi
-        else
-            oc get service $(params.APP)-umbrella-offline -n $(params.NAMESPACE) --output="jsonpath={.spec.selector.version}" > $(workspaces.manifest-dir.path)/version
-        fi
+        oc get service $(params.APP)-umbrella-offline -n $(params.NAMESPACE) --output="jsonpath={.spec.selector.version}" > $(workspaces.manifest-dir.path)/version
         cat $(workspaces.manifest-dir.path)/version
     workspaces:
     - name: manifest-dir
@@ -143,8 +119,6 @@ spec:
         value: $(tasks.create-result-colour.results.version)
       - name: VALUES_FILE
         value: $(params.VALUES_FILE)
-      - name: ISTIO
-        value: $(params.ISTIO)
       - name: REPLICA_COUNT
         value: $(params.REPLICA_COUNT)
     taskSpec:
@@ -154,7 +128,6 @@ spec:
       - name: NEW_IMAGE_TAG 
       - name: COLOUR
       - name: VALUES_FILE 
-      - name: ISTIO
       - name: REPLICA_COUNT
       steps:
       - name: change-new-image-tag
@@ -163,12 +136,6 @@ spec:
           #!/usr/bin/env bash
           cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
           sed -i '/$(params.APP)-$(params.COLOUR)/{n;n;n;s/.*/    tag: $(params.NEW_IMAGE_TAG)/}' $(params.VALUES_FILE)
-          
-          ISTIO=$(params.ISTIO)
-          echo $ISTIO
-          if [ $ISTIO = "true" ]; then
-            sed -i '/$(params.APP)-$(params.COLOUR)/{n;s/.*/  replicaCount: $(params.REPLICA_COUNT)/}' $(params.VALUES_FILE)
-          fi
           cat $(params.VALUES_FILE)
       workspaces:
       - name: source
@@ -326,20 +293,14 @@ spec:
         value: $(params.APP)
       - name: COLOUR
         value: $(tasks.create-result-colour.results.version) 
-      - name: ISTIO
-        value: $(params.ISTIO)
       - name: VALUES_FILE
-        value: $(params.VALUES_FILE)    
-      - name: WEIGHT
-        value: $(params.WEIGHT)        
+        value: $(params.VALUES_FILE)         
     taskSpec:
       params:
       - name: CONTEXT_DIR
       - name: APP
       - name: COLOUR 
-      - name: ISTIO
       - name: VALUES_FILE
-      - name: WEIGHT 
       steps:
       - name: change-switch
         image: registry.access.redhat.com/ubi8/ubi-minimal:8.3
@@ -356,20 +317,7 @@ spec:
           fi
           echo $NEW_COLOUR
 
-          ISTIO=$(params.ISTIO)
-          echo $ISTIO
-          if [ $ISTIO = "true" ]
-          then
-            WEIGHT=$(params.WEIGHT)
-            NEW_WEIGHT=$((100-$WEIGHT))
-            echo $NEW_WEIGHT
-            
-            sed -i "/    $(params.APP)$(params.COLOUR)Weight/{s/.*/    $(params.APP)$(params.COLOUR)Weight: $NEW_WEIGHT/}" $(params.VALUES_FILE)
-            sed -i "/    $(params.APP)$NEW_COLOURWeight/{s/.*/    $(params.APP)$NEW_COLOURWeight: $(params.WEIGHT)/}" $(params.VALUES_FILE)
-    
-          else
-            sed -i '/$(params.APP)NetworkingOnline/{n;s/.*/  version: $(params.COLOUR)/}' $(params.VALUES_FILE)
-          fi
+          sed -i '/$(params.APP)NetworkingOnline/{n;s/.*/  version: $(params.COLOUR)/}' $(params.VALUES_FILE)
           
           cat $(params.VALUES_FILE)
       workspaces:
@@ -414,8 +362,6 @@ spec:
         value: $(params.NEW_IMAGE_TAG) 
       - name: COLOUR
         value: $(tasks.create-result-colour.results.version) 
-      - name: ISTIO
-        value: $(params.ISTIO) 
       - name: VALUES_FILE
         value: $(params.VALUES_FILE)            
     taskSpec:
@@ -424,7 +370,6 @@ spec:
       - name: APP
       - name: NEW_IMAGE_TAG 
       - name: COLOUR 
-      - name: ISTIO
       - name: VALUES_FILE   
       steps:
       - name: scale-down-offline
@@ -441,19 +386,14 @@ spec:
           fi
           echo $NEW_COLOUR
 
-          ISTIO=$(params.ISTIO)
-          echo $ISTIO
-          if [ $ISTIO = "false" ]
-          then
-            sed -i "/$(params.APP)NetworkingOffline/{n;s/.*/  version: $NEW_COLOUR/}" $(params.VALUES_FILE)
-          fi
+          sed -i "/$(params.APP)NetworkingOffline/{n;s/.*/  version: $NEW_COLOUR/}" $(params.VALUES_FILE)
           
           sed -i "/$(params.APP)-$NEW_COLOUR/{n;s/.*/  replicaCount: 1/}" $(params.VALUES_FILE)
           sed -i "/$(params.APP)-$NEW_COLOUR/{n;n;n;s/.*/    tag: $(params.NEW_IMAGE_TAG)/}" $(params.VALUES_FILE)
           
           APP=$(params.APP)
           echo $APP
-          if [ $APP = "products" ] && [ $ISTIO = "false" ]
+          if [ $APP = "products" ]
           then
             sed -i '/$(params.APP)-$NEW_COLOUR/{n;n;n;n;n;n;s#.*#    url: http://discounts-umbrella-offline:8080#}' $(params.VALUES_FILE)
           fi
