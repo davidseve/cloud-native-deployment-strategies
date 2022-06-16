@@ -9,7 +9,7 @@ spec:
   - name: APP
     value: products
   - name: NEW_IMAGE_TAG
-    value: "v1.1.0"
+    value: "v1.1.1"
   - name: STEP
     value: "new-version"
   - name: SOURCE_GIT_REVISION

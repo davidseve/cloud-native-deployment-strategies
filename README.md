@@ -2,7 +2,7 @@
 
 ## Introduction
 
-One important topic in the `Cloud Native` is the `Microservice Architecture`. We are not any more dealing wih one monolithic application. We have several applications that have dependencies on each other and also has other dependencies like broker or data bases. 
+One important topic in the `Cloud Native` is the `Microservice Architecture`. We are not any more dealing wih one monolithic application. We have several applications that have dependencies on each other and also has other dependencies like brokers or data bases. 
 
 Applications have its own life cycle, so we should be able to execute independent blue/green deployment. All the applications and dependencies will not change its version at the same time. 
 
@@ -72,7 +72,7 @@ We have create a chart for each application that does not know anything about bl
 
 ![Shop Umbrella Helm Chart](images/Shop-helm.png)
 
-In the `Shop Umbrella Chart` we use several times the same charts as helm dependencies but with different names if they are blue/green or online/offline
+In the `Shop Umbrella Chart` we use several times the same charts as helm dependencies but with different names if they are blue/green or online/offline. This will allow as to have different configuration for each color.
 
 This is the Chart.yaml
 ```
@@ -126,15 +126,20 @@ dependencies:
       - productsNetworkingOffline
 ```
 
+We have package both applications in one chart, but we may have different umbrella chart per application.
+
 ## Demo!!
 
-TODO que hagan fork del repo?
+First step is to fork this repository, you will have to do some changes and commits. You should clone your forked repository in your local. 
 
 
 If we want to have a `Cloud Native` deployment we can not forget `CI/CD`. `OpenShift GitOps` and `Openshift Pipelines` will help us.
-
-TODO how to install OpenShift
 ### Install OpenShift GitOps 
+
+Go to he folder where you have clone your forked repository and creare a new branch `blue-green`
+```
+git checkout -b blue-green
+```
 
 Log into OpenShift as a cluster admin and install the OpenShift GitOps operator with the following command:
 ```
@@ -160,6 +165,8 @@ Click on Argo CD from the OpenShift Web Console application launcher and then lo
 ![Argo CD](images/ArgoCD-UI.png)
 
 ### Configure OpenShift with Argo CD
+
+We are going to follow, as much as we can, a GitOps methodology in this demo. So we will have every thing in our Git repository and use **ArgoCD** to deploy it in the cluster.
 
 In the current Git repository, the [gitops/cluster-config](gitops/cluster-config/) directory contains OpenShift cluster configurations such as:
 - namespaces `blue-green-gitops`.
@@ -194,11 +201,56 @@ You can check that a namespace called `blue-green-gitops` is created on the clus
 
 ## Test Shop application
 
-We have to get the Online and the Offline routes
+We have deploy the `shop-blue-green` with ArgoCD. We can test that is up and running.
+
+We have to get the Online route
 ```
-oc get routes -n blue-green-gitops
+echo "$(oc get routes products-umbrella-online -n blue-green-gitops --template='http://{{.spec.host}}')/products"
 ```
-TODO poner como probar que shop funciona
+And the offline route
+```
+echo "$(oc get routes products-umbrella-offline -n blue-green-gitops --template='http://{{.spec.host}}')/products"
+```
+
+Becaus right now we have the same version v1.0.0 in both colors we will have the same response
+```json
+{
+   "products":[
+      {
+         "discountInfo":{
+            "discounts":[
+               {
+                  "name":"BlackFriday",
+                  "price":"1350€",
+                  "discount":"10%"
+               }
+            ],
+            "metadata":{
+               "version":"v1.0.1",
+               "colour":"blue",
+               "mode":"online"
+            }
+         },
+         "name":"TV 4K",
+         "price":"1500€"
+      }
+   ],
+   "metadata":{
+      "version":"v1.0.1",
+      "colour":"blue",
+      "mode":"online"
+   }
+}
+```
+Notices that in the each microservice response we have add metadata information to see better the `version`, `color`, `mode` of each applications. This will help us to see the changes while we do the Blue/Green deployment.
+```json
+   "metadata":{
+      "version":"v1.0.1",
+      "colour":"blue",
+      "mode":"online"
+   }
+```
+
 
 
 TODO ver donde meter esto
@@ -215,12 +267,109 @@ tkn hub install task git-cli -n blue-green-gitops
 kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/main/task/openshift-client/0.2/openshift-client.yaml -n blue-green-gitops
 ```
 
+## Products Blue/Green deployment
+TODO
+We have created a pipeline with differents step to 
+We have already create a new product's version v1.1.1
+
+
+
+
 TODO lanzar los pipelines
 TODO poner su usuario de github
 oc create -f 1-pipelinerun-products-new-version.yaml -n blue-green-gitops
+
+See that offline applications has the version v1.1.1 and the new atribute description.
+
+```json
+{
+   "products":[
+      {
+         "discountInfo":{...},
+         "name":"TV 4K",
+         "price":"1500€",
+         "description":"The best TV"
+      }
+   ],
+   "metadata":{
+      "version":"v1.1.1",
+      "colour":"green",
+      "mode":"offline"
+   }
+}
+```
+
 oc create -f 2-pipelinerun-products-configuration.yaml -n blue-green-gitops
-oc create -f 3-pipelinerun-products-scale-up.yaml -n blue-green-gitops
-oc create -f 4-pipelinerun-products-switch.yaml -n blue-green-gitops
+First will change ths configuratoin and scale to 0
+Second will scale up the application to production number of replicas
+We can see that now Products is calling Discouts online application
+
+In this point the applicatin is ready to recived real trafic from the users. We can see that now Products is calling Discouts online application
+```json
+"discountInfo":{
+   "discounts":[...],
+   "metadata":{
+      "version":"v1.0.1",
+      "colour":"blue",
+      "mode":"online"
+   }
+}
+```
+
+oc create -f 3-pipelinerun-products-switch.yaml -n blue-green-gitops
+We have in the online enviroment the new version v1.1.1
+```json
+{
+   "products":[
+      {
+         "discountInfo":{...},
+         "name":"TV 4K",
+         "price":"1500€",
+         "description":"The best TV"
+      }
+   ],
+   "metadata":{
+      "version":"v1.1.1",
+      "colour":"green",
+      "mode":"online"
+   }
+}
+```
+oc create -f 4-pipelinerun-products-scale-down.yaml -n blue-green-gitops
+
+Finnaly we aligne the offline colour with the new version v1.1.1 and with the offline configuration (calling the offline Discounts application)
+
+```json
+{
+   "products":[
+      {
+         "discountInfo":{
+            "discounts":[
+               {
+                  "name":"BlackFriday",
+                  "price":"1350€",
+                  "discount":"10%",
+                  "description":null
+               }
+            ],
+            "metadata":{
+               "version":"v1.0.1",
+               "colour":"green",
+               "mode":"offline" <--
+            }
+         },
+         "name":"TV 4K",
+         "price":"1500€",
+         "description":"The best TV"
+      }
+   ],
+   "metadata":{
+      "version":"v1.1.1", <--
+      "colour":"blue",
+      "mode":"offline" <--
+   }
+}
+```
 
 
 

@@ -226,13 +226,35 @@ spec:
     - name: source
       workspace: app-source
 
-  - name: change-scale-up
-    when:
-      - input: "$(params.STEP)"
-        operator: in
-        values: ["new-version-scale-up"]
+
+
+
+  - name: get-deployment-replicas
     runAfter:
-    - create-result-colour
+    - commit-configuration
+    taskRef:
+      name: openshift-client
+    params: 
+    - name: SCRIPT
+      value: |
+        replicas=-1
+        while [ $replicas != 0 ]
+        do
+          replicas=$(oc get deployments $(params.APP)-$(tasks.create-result-colour.results.version) -n $(params.NAMESPACE) --output="jsonpath={.spec.replicas}" 2>&1)
+          echo $replicas
+          sleep 5
+        done
+        oc get deployments $(params.APP)-$(tasks.create-result-colour.results.version) -n $(params.NAMESPACE) --output="jsonpath={.spec.replicas}" > $(workspaces.manifest-dir.path)/replicas
+        cat $(workspaces.manifest-dir.path)/replicas
+    workspaces:
+    - name: manifest-dir
+      workspace: app-source
+
+
+
+  - name: change-scale-up
+    runAfter:
+    - get-deployment-replicas
     params:
       - name: CONTEXT_DIR
         value: $(params.CONTEXT_DIR)

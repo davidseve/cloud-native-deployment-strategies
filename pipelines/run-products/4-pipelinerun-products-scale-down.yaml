@@ -1,17 +1,17 @@
 apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
-  generateName: shop-products-scale-up-
+  generateName: shop-products-scale-down-offline-
 spec:
   pipelineRef:
     name: pipeline-blue-green    
   params:
   - name: APP
     value: products
-  - name: REPLICA_COUNT
-    value: "2"
+  - name: NEW_IMAGE_TAG
+    value: "v1.1.1"
   - name: STEP
-    value: "new-version-scale-up"
+    value: "scale-down-offline"
   - name: SOURCE_GIT_REVISION
     value: blue-green
   - name: GIT_USER_NAME
