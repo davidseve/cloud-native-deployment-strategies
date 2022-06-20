@@ -302,7 +302,7 @@ oc create -f 1-pipelinerun-products-new-version.yaml -n blue-green-gitops
 The pipeline has committed the changes in GitHub. ArgoCD will refresh the status after some minutes. If you don`t want to wait you can refresh it manually from ArgoCD UI.
 ![Refresh Shop](images/ArgoCD-Shop-Refresh.png)
 
-After the pipeline finished this will be the `Shop` status:
+After the pipeline finished and ArgoCD has synchronized the changes this will be the `Shop` status:
 ![Shop step 1](images/blue-green-step-1.png)
 
 
@@ -335,9 +335,10 @@ The pipeline first will change ths configuration and scale to 0, second will sca
 ```
 oc create -f 2-pipelinerun-products-configuration.yaml -n blue-green-gitops
 ```
-TODO add pipeline iamge
+This step may take more time because we are doing two different commits, so ArgoCD has to synchronize the first one in order to continue with the pipeline. If you want to make it faster you can refresh ArgoCD manually after the step `commit-configuration`. 
+![Pipeline step 2](images/pipeline-step-2.png)
 
-After the pipeline finished this will be the `Shop` status:
+After the pipeline finished and ArgoCD has synchronized the changes this will be the `Shop` status:
 ![Shop step 2](images/blue-green-step-2.png)
 We can see that now offline `Products` is calling `Discounts` online application.
 ```json
@@ -358,7 +359,7 @@ We are going to open the new version to final users. The pipeline will just chan
 oc create -f 3-pipelinerun-products-switch.yaml -n blue-green-gitops
 ```
 TODO add pipeline iamge
-After the pipeline finished this will be the `Shop` status:
+After the pipeline finished and ArgoCD has synchronized the changes this will be the `Shop` status:
 ![Shop step 3](images/blue-green-step-3.png)
 We have in the online environment the new version v1.1.1!!!
 ```json
@@ -386,7 +387,7 @@ Imagine that something goes wrong, we know that this never happen but just it ca
 oc create -f 3-pipelinerun-products-switch-rollback.yaml -n blue-green-gitops
 ```
 TODO add pipeline iamge
-After the pipeline finished this will be the `Shop` status:
+After the pipeline finished and ArgoCD has synchronized the changes this will be the `Shop` status:
 ![Shop step 3,5 Rollback](images/blue-green-step-3-5.png)
 TODO add json
 
@@ -421,7 +422,7 @@ Finally, when online is stable we should align offline with the new version and 
 oc create -f 4-pipelinerun-products-scale-down.yaml -n blue-green-gitops
 ```
 TODO add pipeline iamge
-After the pipeline finished this will be the `Shop` status:
+After the pipeline finished and ArgoCD has synchronized the changes this will be the `Shop` status:
 ![Shop step 4](images/blue-green-step-4.png)
 We can see that the offline `Products` is calling offline `Discounts` and has the new version v1.1.1
 ```json
