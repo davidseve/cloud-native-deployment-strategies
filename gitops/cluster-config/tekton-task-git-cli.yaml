@@ -12,7 +12,7 @@ metadata:
     tekton.dev/tags: git
     tekton.dev/displayName: "git cli"
     tekton.dev/platforms: "linux/amd64,linux/s390x,linux/ppc64le"
-    argocd.argoproj.io/sync-wave: "10"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
   description: >-
     This task can be used to perform git operations.
