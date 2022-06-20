@@ -471,21 +471,12 @@ We can see that the offline `Products` is calling offline `Discounts` and has th
    }
 }
 ```
+## Delete environment
 
-
-
-
-
-
-
-
-
-
-
-
-TODO borrar
-borrar todas las aplicaciones desde la web de Argo
-borra los operadoes de pipelienes y gitops desde la web de openshift
+To delete all the thing that we have done for the demo you have to_
+- In GitHub delete the branch `blue-green`
+- In ArgoCD delete the application `blue-green-cluster-configuration`
+- In Openshift, go to project `openshift-operators` and delete the installed operators **Openshift GitOps** and **Openshift Pipelines**
 ![Installed Operators](images/installed-operators.png)
 ![Delete Pipeline Operator](images/delete-pipeline.png)
 
