@@ -37,7 +37,7 @@ When a new version is ready to be used by the users we only change the deploymen
  
 There is **minimum downtime** and we can do a **rapid rollback** just undoing the changes in the services.
  
-However, meanwhile we are going to do the switch, we have to be ready to do a rapid rollback. We need the **doubling or total resources** (we will see how to minimize this)
+However, meanwhile we are going to do the switch, we have to be ready to do a rapid rollback. We need the **doubling or total resources** (we will see how to minimize this).
 It is also very important to keep **backwards compatibility**. Without it, we can not do independent Blue/Green deployments.
 ## Shop application
  
