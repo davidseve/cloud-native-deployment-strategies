@@ -141,7 +141,7 @@ Go to he folder where you have clone your forked repository and creare a new bra
 git checkout -b blue-green
 ```
 
-Log into OpenShift as a cluster admin and install the OpenShift GitOps operator with the following command:
+Log into OpenShift as a cluster admin and install the OpenShift GitOps operator with the following command. This may take some minutes.
 ```
 oc apply -f gitops/gitops-operator.yaml
 ```
@@ -466,4 +466,6 @@ We can see that the offline `Products` is calling offline `Discounts` and has th
 TODO borrar
 borrar todas las aplicaciones desde la web de Argo
 borra los operadoes de pipelienes y gitops desde la web de openshift
+![Installed Operators](images/installed-operators.png)
+![Delete Pipeline Operator](images/delete-pipeline.png)
 
