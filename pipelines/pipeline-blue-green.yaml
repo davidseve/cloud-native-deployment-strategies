@@ -11,7 +11,7 @@ spec:
     description: The application deployment name
   - name: SOURCE_GIT_URL
     type: string
-    default: https://github.com/davidseve/poc-quarkus-applications-helm
+    default: https://github.com/davidseve/cloud-native-blue-green
     description: The application git repository url
   - name: SOURCE_GIT_REVISION
     type: string
@@ -19,7 +19,7 @@ spec:
     description: The application git repository revision
   - name: CONTEXT_DIR
     type: string
-    default: "quarkus-helm-umbrella/chart-blue-green"
+    default: "helm/quarkus-helm-umbrella/chart-blue-green"
     description: The subdirectory in the git repository
   - name: HELM_RELEASE_VERSION
     type: string
@@ -141,7 +141,6 @@ spec:
         script: |
           #!/usr/bin/env bash
           cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
-          cat $(params.VALUES_FILE)
           sed -i '/$(params.APP)-$(params.COLOUR)/{n;n;n;s/.*/    tag: $(params.NEW_IMAGE_TAG)/}' $(params.VALUES_FILE)
           cat $(params.VALUES_FILE)
       workspaces:
