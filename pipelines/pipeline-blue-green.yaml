@@ -140,8 +140,8 @@ spec:
         image: registry.access.redhat.com/ubi8/ubi-minimal:8.3
         script: |
           #!/usr/bin/env bash
-          cat $(params.VALUES_FILE)
           cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
+          cat $(params.VALUES_FILE)
           sed -i '/$(params.APP)-$(params.COLOUR)/{n;n;n;s/.*/    tag: $(params.NEW_IMAGE_TAG)/}' $(params.VALUES_FILE)
           cat $(params.VALUES_FILE)
       workspaces:
