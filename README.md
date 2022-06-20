@@ -37,7 +37,7 @@ When a new version is ready to be use by the users we only change the deployment
 
 There is **minimum downtime** and we can do a **rapid rollback** just undoing the changes in the services.
 
-However, main while we are going to do the switch, and we want to be really to do a rapid rollback. We need the **doubling or total resources**, we will see how to minimize this.
+However, main while we are going to do the switch, and we want to be really to do a rapid rollback. We need the **doubling or total resources** (we will see how to minimize this)
 It is also very important to keep **backwards compatibility**. With out it, we can not do independent Blue/Green deployments.
 ## Shop application
 
@@ -174,9 +174,9 @@ In the current Git repository, the [gitops/cluster-config](gitops/cluster-config
 - cluster role `tekton-admin-view`.
 - role binding for ArgoCD and Pipelines to the namespace `blue-green-gitops`.
 - `pipelines-blue-green` the pipelines that we will see later for blue/green deployment.
-- `shop-blue-green` the application that we are going to use to test blue/green deployment
-TODO add tekton tasks and role 
-
+- `shop-blue-green` the application that we are going to use to test blue/green deployment.
+- Tekton cluster role.
+- Tekton tasks for git and Openshift clients.
 
  Let's configure Argo CD to recursively sync the content of the [gitops/cluster-config](gitops/cluster-config/) directory to the OpenShift cluster.
 
@@ -246,35 +246,10 @@ Becaus right now we have the same version v1.0.1 in both colors we will have alm
 
 
 
-TODO ver donde meter esto
-```
-export TOKEN=XXXXXX
-export GIT_USER=YYY
-
-
-oc create secret generic github-token --from-literal=username=${GIT_USER} --from-literal=password=${TOKEN} --type "kubernetes.io/basic-auth" -n blue-green-gitops
-oc annotate secret github-token "tekton.dev/git-0=https://github.com/davidseve" -n blue-green-gitops
-oc secrets link pipeline github-token -n blue-green-gitops
-
-
-
-
-
-
-
-No deberia de ser necesario
-oc policy add-role-to-user edit system:serviceaccount:blue-green-gitops:pipeline --rolebinding-name=pipeline-edit -n blue-green-gitops
-
-kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/main/task/openshift-client/0.2/openshift-client.yaml -n blue-green-gitops
-
-tkn hub install task helm-upgrade-from-source -n blue-green-gitops
-tkn hub install task kaniko -n blue-green-gitops
-tkn hub install task git-cli -n blue-green-gitops
-```
 
 
 ## Products Blue/Green deployment
-TODO
+
 We have split a `Cloud Native` Blue/Green deployment in four steps:
 1. Deploy new version.
 2. Change to online configuration.
@@ -282,6 +257,17 @@ We have split a `Cloud Native` Blue/Green deployment in four steps:
 4. Align and scale down Offline.
 
 Using **Openshift Pipelines**, we have created a pipeline with those fourth steps to manage the Blue/Green deployment. This pipeline is the same for both applications, now we are going to use it for Products application.
+Because the pipeline push that changes done in the helm values on each step. **Openshift Pipelines** needs a **GitHub** token to do the push. Because we don`t want to set your **GitHub** token on git we have to do thous steps manually and not with GitOps methodology.
+```
+export TOKEN=XXXXXX
+export GIT_USER=YYY
+```
+
+```
+oc create secret generic github-token --from-literal=username=${GIT_USER} --from-literal=password=${TOKEN} --type "kubernetes.io/basic-auth" -n blue-green-gitops
+oc annotate secret github-token "tekton.dev/git-0=https://github.com/${TOKEN}" -n blue-green-gitops
+oc secrets link pipeline github-token -n blue-green-gitops
+```
 
 We have already deployed the product's version v1.0.1, and we have ready to use a new product's version v1.1.1 that has a new `description` attribute.
 
