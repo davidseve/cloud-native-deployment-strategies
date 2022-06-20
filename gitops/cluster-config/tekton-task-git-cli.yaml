@@ -3,6 +3,7 @@ apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
   name: git-cli
+  namespace: blue-green-gitops
   labels:
     app.kubernetes.io/version: "0.3"
   annotations:
