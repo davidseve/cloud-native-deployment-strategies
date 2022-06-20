@@ -358,10 +358,10 @@ We are going to open the new version to final users. The pipeline will just chan
 ```
 oc create -f 3-pipelinerun-products-switch.yaml -n blue-green-gitops
 ```
-TODO add pipeline iamge
+![Pipeline step 3](images/pipeline-step-3.png)
 After the pipeline finished and ArgoCD has synchronized the changes this will be the `Shop` status:
 ![Shop step 3](images/blue-green-step-3.png)
-We have in the online environment the new version v1.1.1!!!
+**We have in the online environment the new version v1.1.1!!!**
 ```json
 {
    "products":[
@@ -386,16 +386,31 @@ Imagine that something goes wrong, we know that this never happen but just it ca
 ```
 oc create -f 3-pipelinerun-products-switch-rollback.yaml -n blue-green-gitops
 ```
-TODO add pipeline iamge
+![Pipeline step 3,5 Rollback](images/pipeline-step-3-rollback.png)
 After the pipeline finished and ArgoCD has synchronized the changes this will be the `Shop` status:
 ![Shop step 3,5 Rollback](images/blue-green-step-3-5.png)
-TODO add json
+We have version v1.0.1 online again.
+```json
+{
+   "products":[
+      {
+         "discountInfo":{...},
+         "name":"TV 4K",
+         "price":"1500€",
+      }
+   ],
+   "metadata":{
+      "version":"v1.0.1", <--
+      "colour":"blue",
+      "mode":"online" <--
+   }
+}
+```
 
 After fixing the issue we can execute the Switch step again.
 ```
 oc create -f 3-pipelinerun-products-switch.yaml -n blue-green-gitops
 ```
-TODO add pipeline iamge
 ![Shop step 3](images/blue-green-step-3.png)
 We have in the online environment the new version v1.1.1 again.
 ```json
@@ -421,7 +436,7 @@ Finally, when online is stable we should align offline with the new version and 
 ```
 oc create -f 4-pipelinerun-products-scale-down.yaml -n blue-green-gitops
 ```
-TODO add pipeline iamge
+![Pipeline step 4](images/pipeline-step-4.png)
 After the pipeline finished and ArgoCD has synchronized the changes this will be the `Shop` status:
 ![Shop step 4](images/blue-green-step-4.png)
 We can see that the offline `Products` is calling offline `Discounts` and has the new version v1.1.1
