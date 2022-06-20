@@ -139,6 +139,7 @@ If we want to have a `Cloud Native` deployment we can not forget `CI/CD`. **Open
 Go to he folder where you have clone your forked repository and creare a new branch `blue-green`
 ```
 git checkout -b blue-green
+git push origin blue-green
 ```
 
 Log into OpenShift as a cluster admin and install the OpenShift GitOps operator with the following command. This may take some minutes.
