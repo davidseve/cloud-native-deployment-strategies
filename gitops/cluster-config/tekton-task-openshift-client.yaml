@@ -12,7 +12,7 @@ metadata:
     tekton.dev/tags: cli
     tekton.dev/displayName: "openshift client"
     tekton.dev/platforms: "linux/amd64"
-    argocd.argoproj.io/sync-wave: "10"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
   workspaces:
     - name: manifest-dir
