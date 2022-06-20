@@ -297,7 +297,11 @@ We will use the already created pipelinerun to execute the first step with the n
 cd pipelines/run-products
 oc create -f 1-pipelinerun-products-new-version.yaml -n blue-green-gitops
 ```
-TODO add pipeline iamge
+![Pipeline step 1](images/pipeline-step-1.png)
+
+The pipeline has committed the changes in GitHub. ArgoCD will refresh the status after some minutes. If you don`t want to wait you can refresh it manually from ArgoCD UI.
+![Refresh Shop](images/ArgoCD-Shop-Refresh.png)
+
 After the pipeline finished this will be the `Shop` status:
 ![Shop step 1](images/blue-green-step-1.png)
 
