@@ -260,12 +260,14 @@ Using **Openshift Pipelines**, we have created a pipeline with those fourth step
 Because the pipeline push that changes done in the helm values on each step. **Openshift Pipelines** needs a **GitHub** token to do the push. Because we don`t want to set your **GitHub** token on git we have to do thous steps manually and not with GitOps methodology.
 ```
 export TOKEN=XXXXXX
+```
+```
 export GIT_USER=YYY
 ```
 
 ```
 oc create secret generic github-token --from-literal=username=${GIT_USER} --from-literal=password=${TOKEN} --type "kubernetes.io/basic-auth" -n blue-green-gitops
-oc annotate secret github-token "tekton.dev/git-0=https://github.com/${TOKEN}" -n blue-green-gitops
+oc annotate secret github-token "tekton.dev/git-0=https://github.com/${GIT_USER}" -n blue-green-gitops
 oc secrets link pipeline github-token -n blue-green-gitops
 ```
 
