@@ -133,7 +133,7 @@ We have package both applications in one chart, but we may have different umbrel
 First step is to fork this repository, you will have to do some changes and commits. You should clone your forked repository in your local. 
 
 
-If we want to have a `Cloud Native` deployment we can not forget `CI/CD`. `OpenShift GitOps` and `Openshift Pipelines` will help us.
+If we want to have a `Cloud Native` deployment we can not forget `CI/CD`. **OpenShift GitOps** and **Openshift Pipelines** will help us.
 ### Install OpenShift GitOps 
 
 Go to he folder where you have clone your forked repository and creare a new branch `blue-green`
