@@ -281,7 +281,7 @@ We have split a `Cloud Native` Blue/Green deployment in four steps:
 3. Switch new version to Online.
 4. Align and scale down Offline.
 
-Using **Openshift Pipelines**, we have created a pipeline with fourth steps to manage the Blue/Green deployment. This pipeline is the same for both applications, now we are going to use it for Products application.
+Using **Openshift Pipelines**, we have created a pipeline with those fourth steps to manage the Blue/Green deployment. This pipeline is the same for both applications, now we are going to use it for Products application.
 
 We have already deployed the product's version v1.0.1, and we have ready to use a new product's version v1.1.1 that has a new `description` attribute.
 
@@ -289,9 +289,9 @@ This is our current status:
 ![Shop initial status](images/blue-green-step-0.png)
 
 
-### Deploy new version
+### Step 1 - Deploy new version
 
-Lets start deploying a new version v1.1.1 in the offline color. But instead of going manually to see witch is the offline color and deploy de the new version on it, let`s let the pipeline to find the current offline color and automatically deploy the new version. With no manual intervention.
+We will start deploying a new version v1.1.1 in the offline color. But instead of going manually to see witch is the offline color and deploy the new version on it, let`s let the pipeline to find the current offline color and automatically deploy the new version, with no manual intervention.
 We will use the already created pipelinerun to execute the first step with the new version v1.1.1
 ```
 cd pipelines/run-products
@@ -321,9 +321,9 @@ See that offline applications has the version v1.1.1 and the new attribute descr
    }
 }
 ```
-Functional testing users may validate this new v1.1.1 version to give the green to open it for final users. 
+Functional testing users can execute `Smoke tests` to validate this new v1.1.1 version.
 
-### Change to online configuration
+### Step 2 - Change to online configuration
 
 Now we are going to change the configuration to online and also scale up the application to be ready for final users requests.
 The pipeline first will change ths configuration and scale to 0, second will scale up the application to production number of replicas.
@@ -335,7 +335,7 @@ TODO add pipeline iamge
 
 After the pipeline finished this will be the `Shop` status:
 ![Shop step 2](images/blue-green-step-2.png)
-We can see that now Products is calling Discounts online application.
+We can see that now offline `Products` is calling `Discounts` online application.
 ```json
 "discountInfo":{
    "discounts":[...],
@@ -346,13 +346,14 @@ We can see that now Products is calling Discounts online application.
    }
 }
 ```
-At this point the application is ready to received real traffic fro
-### Switch new version to Online
+At this point the application is ready to received real traffic.
+### Step 3 - Switch new version to Online
 
-We are going to open the new version to final users. The pipeline will just change the service to use the other color. Again the pipeline do this automatically with out manual intervention.
+We are going to open the new version to final users. The pipeline will just change the service to use the other color. Again the pipeline do this automatically with out manual intervention. We also `minimize downtime` because is just change the service label.
 ```
 oc create -f 3-pipelinerun-products-switch.yaml -n blue-green-gitops
 ```
+TODO add pipeline iamge
 After the pipeline finished this will be the `Shop` status:
 ![Shop step 3](images/blue-green-step-3.png)
 We have in the online environment the new version v1.1.1!!!
@@ -374,12 +375,13 @@ We have in the online environment the new version v1.1.1!!!
 }
 ```
 
-### Rollback
+### Step 3,5 - Rollback
 
-Imagine that something goes wrong, we know that this never happen but just it case. We can do a very quick rollback just undoing the change in the `Products` online service. But are we sure that with all the pressure that we will have at this momento, we will find the right service and change the label to the right color. Let`s move this pressure to the pipeline. We can have a pipeline for rollback. 
+Imagine that something goes wrong, we know that this never happen but just it case. We can do a very `quick rollback` just undoing the change in the `Products` online service. But are we sure that with all the pressure that we will have at this momento, we will find the right service and change the label to the right color. Let`s move this pressure to the pipeline. We can have a pipeline for rollback. 
 ```
 oc create -f 3-pipelinerun-products-switch-rollback.yaml -n blue-green-gitops
 ```
+TODO add pipeline iamge
 After the pipeline finished this will be the `Shop` status:
 ![Shop step 3,5 Rollback](images/blue-green-step-3-5.png)
 TODO add json
@@ -388,6 +390,7 @@ After fixing the issue we can execute the Switch step again.
 ```
 oc create -f 3-pipelinerun-products-switch.yaml -n blue-green-gitops
 ```
+TODO add pipeline iamge
 ![Shop step 3](images/blue-green-step-3.png)
 We have in the online environment the new version v1.1.1 again.
 ```json
@@ -407,12 +410,13 @@ We have in the online environment the new version v1.1.1 again.
    }
 }
 ```
-### Align and scale down Offline
+### Step 4 - Align and scale down Offline
 
 Finally, when online is stable we should align offline with the new version and scale it down. Does not make sense use the same resources that we have in production.
 ```
 oc create -f 4-pipelinerun-products-scale-down.yaml -n blue-green-gitops
 ```
+TODO add pipeline iamge
 After the pipeline finished this will be the `Shop` status:
 ![Shop step 4](images/blue-green-step-4.png)
 We can see that the offline `Products` is calling offline `Discounts` and has the new version v1.1.1
