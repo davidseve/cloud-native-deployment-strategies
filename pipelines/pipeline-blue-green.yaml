@@ -474,7 +474,7 @@ spec:
           fi
           echo $NEW_COLOUR
 
-          sed -i '/$(params.APP)NetworkingOnline/{n;s/.*/  version: $NEW_COLOUR/}' $(params.VALUES_FILE)
+          sed -i "/$(params.APP)NetworkingOnline/{n;s/.*/  version: $NEW_COLOUR/}" $(params.VALUES_FILE)
           
           cat $(params.VALUES_FILE)
       workspaces:
