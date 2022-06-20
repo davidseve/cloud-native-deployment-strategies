@@ -15,22 +15,22 @@ productsNetworkingOffline:
 products-green:
   replicaCount: 1
   image:
-    tag: v1.0.0
+    tag: v1.0.1
   mode: offline
 products-blue:
   replicaCount: 2
   image:
-    tag: v1.0.0
+    tag: v1.0.1
   mode: online
 
 discounts-green:
   replicaCount: 1
   image:
-    tag: v1.0.0
+    tag: v1.0.1
   mode: offline
 discounts-blue:
   replicaCount: 2
   image:
-    tag: v1.0.0
+    tag: v1.0.1
   mode: online
 
