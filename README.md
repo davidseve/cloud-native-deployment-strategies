@@ -172,9 +172,10 @@ In the current Git repository, the [gitops/cluster-config](gitops/cluster-config
 - namespaces `blue-green-gitops`.
 - operator **Openshift Pipelines**.
 - cluster role `tekton-admin-view`.
-- role binding for ArgoCD to the namespace `blue-green-gitops`.
+- role binding for ArgoCD and Pipelines to the namespace `blue-green-gitops`.
 - `pipelines-blue-green` the pipelines that we will see later for blue/green deployment.
 - `shop-blue-green` the application that we are going to use to test blue/green deployment
+TODO add tekton tasks and role 
 
 
  Let's configure Argo CD to recursively sync the content of the [gitops/cluster-config](gitops/cluster-config/) directory to the OpenShift cluster.
@@ -207,12 +208,12 @@ We have to get the Online route
 ```
 echo "$(oc get routes products-umbrella-online -n blue-green-gitops --template='http://{{.spec.host}}')/products"
 ```
-And the offline route
+And the Offline route
 ```
 echo "$(oc get routes products-umbrella-offline -n blue-green-gitops --template='http://{{.spec.host}}')/products"
 ```
-
-Becaus right now we have the same version v1.0.0 in both colors we will have the same response
+Notices that in the each microservice response we have add metadata information to see better the `version`, `color`, `mode` of each applications. This will help us to see the changes while we do the Blue/Green deployment.
+Becaus right now we have the same version v1.0.1 in both colors we will have almost the same response, only the mode will change.
 ```json
 {
    "products":[
@@ -228,7 +229,7 @@ Becaus right now we have the same version v1.0.0 in both colors we will have the
             "metadata":{
                "version":"v1.0.1",
                "colour":"blue",
-               "mode":"online"
+               "mode":"online" <--
             }
          },
          "name":"TV 4K",
@@ -238,17 +239,9 @@ Becaus right now we have the same version v1.0.0 in both colors we will have the
    "metadata":{
       "version":"v1.0.1",
       "colour":"blue",
-      "mode":"online"
+      "mode":"online" <--
    }
 }
-```
-Notices that in the each microservice response we have add metadata information to see better the `version`, `color`, `mode` of each applications. This will help us to see the changes while we do the Blue/Green deployment.
-```json
-   "metadata":{
-      "version":"v1.0.1",
-      "colour":"blue",
-      "mode":"online"
-   }
 ```
 
 
@@ -257,15 +250,28 @@ TODO ver donde meter esto
 ```
 export TOKEN=XXXXXX
 export GIT_USER=YYY
-oc policy add-role-to-user edit system:serviceaccount:blue-green-gitops:pipeline --rolebinding-name=pipeline-edit -n blue-green-gitops
+
+
 oc create secret generic github-token --from-literal=username=${GIT_USER} --from-literal=password=${TOKEN} --type "kubernetes.io/basic-auth" -n blue-green-gitops
 oc annotate secret github-token "tekton.dev/git-0=https://github.com/davidseve" -n blue-green-gitops
 oc secrets link pipeline github-token -n blue-green-gitops
+
+
+
+
+
+
+
+No deberia de ser necesario
+oc policy add-role-to-user edit system:serviceaccount:blue-green-gitops:pipeline --rolebinding-name=pipeline-edit -n blue-green-gitops
+
+kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/main/task/openshift-client/0.2/openshift-client.yaml -n blue-green-gitops
+
 tkn hub install task helm-upgrade-from-source -n blue-green-gitops
 tkn hub install task kaniko -n blue-green-gitops
 tkn hub install task git-cli -n blue-green-gitops
-kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/main/task/openshift-client/0.2/openshift-client.yaml -n blue-green-gitops
 ```
+
 
 ## Products Blue/Green deployment
 TODO
@@ -288,13 +294,13 @@ See that offline applications has the version v1.1.1 and the new atribute descri
          "discountInfo":{...},
          "name":"TV 4K",
          "price":"1500€",
-         "description":"The best TV"
+         "description":"The best TV" <--
       }
    ],
    "metadata":{
-      "version":"v1.1.1",
+      "version":"v1.1.1", <--
       "colour":"green",
-      "mode":"offline"
+      "mode":"offline" <--
    }
 }
 ```
@@ -304,20 +310,20 @@ First will change ths configuratoin and scale to 0
 Second will scale up the application to production number of replicas
 We can see that now Products is calling Discouts online application
 
-In this point the applicatin is ready to recived real trafic from the users. We can see that now Products is calling Discouts online application
+In this point the applicatin is ready to recived real traffic from the users
 ```json
 "discountInfo":{
    "discounts":[...],
    "metadata":{
       "version":"v1.0.1",
       "colour":"blue",
-      "mode":"online"
+      "mode":"online" <--
    }
 }
 ```
 
 oc create -f 3-pipelinerun-products-switch.yaml -n blue-green-gitops
-We have in the online enviroment the new version v1.1.1
+We have in the online environment the new version v1.1.1
 ```json
 {
    "products":[
@@ -325,17 +331,20 @@ We have in the online enviroment the new version v1.1.1
          "discountInfo":{...},
          "name":"TV 4K",
          "price":"1500€",
-         "description":"The best TV"
+         "description":"The best TV" <--
       }
    ],
    "metadata":{
-      "version":"v1.1.1",
+      "version":"v1.1.1", <--
       "colour":"green",
-      "mode":"online"
+      "mode":"online" <--
    }
 }
 ```
-oc create -f 4-pipelinerun-products-scale-down.yaml -n blue-green-gitops
+TODO add rollback
+
+
+oc create -f 5-pipelinerun-products-scale-down.yaml -n blue-green-gitops
 
 Finnaly we aligne the offline colour with the new version v1.1.1 and with the offline configuration (calling the offline Discounts application)
 

@@ -1,0 +1,36 @@
+discountsNetworkingOnline:
+  version: blue
+discountsNetworkingOffline:
+  version: green
+
+productsNetworkingOnline:
+  version: blue
+  router:
+    enabled: true
+productsNetworkingOffline:
+  version: green
+  router:
+    enabled: true
+
+products-green:
+  replicaCount: 1
+  image:
+    tag: v1.0.0
+  mode: offline
+products-blue:
+  replicaCount: 2
+  image:
+    tag: v1.0.0
+  mode: online
+
+discounts-green:
+  replicaCount: 1
+  image:
+    tag: v1.0.0
+  mode: offline
+discounts-blue:
+  replicaCount: 2
+  image:
+    tag: v1.0.0
+  mode: online
+

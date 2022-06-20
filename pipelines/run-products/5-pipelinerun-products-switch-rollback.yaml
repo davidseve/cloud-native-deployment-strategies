@@ -9,7 +9,7 @@ spec:
   - name: APP
     value: products
   - name: STEP
-    value: "switch"
+    value: "switch-rollback"
   - name: SOURCE_GIT_REVISION
     value: blue-green
   - name: GIT_USER_NAME

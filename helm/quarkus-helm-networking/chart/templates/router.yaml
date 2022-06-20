@@ -1,0 +1,17 @@
+{{ if .Values.router.enabled  }}
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  labels:
+    {{- include "quarkus.labels" . | nindent 4 }}
+  name: {{ include "quarkus.fullname" . }}
+spec:
+  port:
+    targetPort: {{ .Values.service.port }}
+  to:
+    kind: Service
+    name: {{ include "quarkus.fullname" . }}
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+{{ end }}

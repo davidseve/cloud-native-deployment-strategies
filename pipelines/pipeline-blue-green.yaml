@@ -335,18 +335,7 @@ spec:
         script: |
           #!/usr/bin/env bash
           cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
-
-          COLOUR=$(params.COLOUR)
-          if [ $COLOUR = "blue" ]
-          then
-            NEW_COLOUR="green"
-          else
-            NEW_COLOUR="blue"
-          fi
-          echo $NEW_COLOUR
-
           sed -i '/$(params.APP)NetworkingOnline/{n;s/.*/  version: $(params.COLOUR)/}' $(params.VALUES_FILE)
-          
           cat $(params.VALUES_FILE)
       workspaces:
       - name: source
@@ -442,6 +431,73 @@ spec:
           cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
           git add $(params.VALUES_FILE)
           git commit -m "$(params.APP) scale down offline"
+          git push origin HEAD:$(params.SOURCE_GIT_REVISION)
+    workspaces:
+    - name: source
+      workspace: app-source
+
+  - name: switch-rollback
+    when:
+      - input: "$(params.STEP)"
+        operator: in
+        values: ["switch-rollback"]
+    runAfter:
+    - create-result-colour
+    params:
+      - name: CONTEXT_DIR
+        value: $(params.CONTEXT_DIR)
+      - name: APP
+        value: $(params.APP)
+      - name: COLOUR
+        value: $(tasks.create-result-colour.results.version) 
+      - name: VALUES_FILE
+        value: $(params.VALUES_FILE)         
+    taskSpec:
+      params:
+      - name: CONTEXT_DIR
+      - name: APP
+      - name: COLOUR 
+      - name: VALUES_FILE
+      steps:
+      - name: change-switch
+        image: registry.access.redhat.com/ubi8/ubi-minimal:8.3
+        script: |
+          #!/usr/bin/env bash
+          cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
+
+          COLOUR=$(params.COLOUR)
+          if [ $COLOUR = "blue" ]
+          then
+            NEW_COLOUR="green"
+          else
+            NEW_COLOUR="blue"
+          fi
+          echo $NEW_COLOUR
+
+          sed -i '/$(params.APP)NetworkingOnline/{n;s/.*/  version: $(params.NEW_COLOUR)/}' $(params.VALUES_FILE)
+          
+          cat $(params.VALUES_FILE)
+      workspaces:
+      - name: source
+    workspaces:
+    - name: source
+      workspace: app-source
+
+  - name: commit-switch-rollback
+    runAfter:
+    - switch-rollback
+    taskRef:
+      name: git-cli
+    params:
+      - name: GIT_USER_NAME
+        value: $(params.GIT_USER_NAME)
+      - name: GIT_USER_EMAIL
+        value: $(params.GIT_USER_EMAIL)
+      - name: GIT_SCRIPT
+        value: |
+          cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
+          git add $(params.VALUES_FILE)
+          git commit -m "$(params.APP) switch-rollback online to $(tasks.create-result-colour.results.version)"
           git push origin HEAD:$(params.SOURCE_GIT_REVISION)
     workspaces:
     - name: source

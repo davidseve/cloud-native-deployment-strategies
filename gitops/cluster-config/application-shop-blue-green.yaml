@@ -9,8 +9,8 @@ spec:
     namespace: blue-green-gitops
     server: 'https://kubernetes.default.svc'
   source:
-    path: quarkus-helm-umbrella/chart-blue-green
-    repoURL: 'https://github.com/davidseve/poc-quarkus-applications-helm.git'
+    path: helm/quarkus-helm-umbrella/chart-blue-green
+    repoURL:  https://github.com/davidseve/cloud-native-blue-green.git
     targetRevision: blue-green
     helm:
       valueFiles:
