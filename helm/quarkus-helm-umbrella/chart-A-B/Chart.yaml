@@ -1,0 +1,43 @@
+apiVersion: v2
+name: shop-umbrella-A-B
+description: A Helm chart for Kubernetes
+type: application
+version: 0.1.0
+appVersion: "1.16.0"
+
+dependencies:
+  - name: quarkus-helm-discounts
+    version: 0.1.0
+    alias: discounts-A
+    tags:
+      - discounts-A
+  - name: quarkus-helm-discounts
+    version: 0.1.0
+    alias: discounts-B
+    tags:
+      - discounts-B
+  - name: quarkus-base-networking
+    version: 0.1.0
+    alias: discountsNetworkingA  
+    tags:
+      - discountsNetworkingA
+  - name: quarkus-base-networking
+    version: 0.1.0
+    alias: discountsNetworkingB
+    tags:
+      - discountsNetworkingB
+  - name: quarkus-helm-products
+    version: 0.1.0
+    alias: products-A
+    tags:
+      - products-A
+  - name: quarkus-helm-products
+    version: 0.1.0
+    alias: products-B
+    tags:
+      - products-B
+  - name: quarkus-base-networking-ab
+    version: 0.0.1
+    alias: productsNetworkingAB
+    tags:
+      - productsNetworkingAB

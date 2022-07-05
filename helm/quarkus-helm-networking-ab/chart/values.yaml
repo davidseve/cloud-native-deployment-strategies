@@ -1,0 +1,6 @@
+service:
+  type: ClusterIP
+  port: 8080
+
+router:
+  enabled: true

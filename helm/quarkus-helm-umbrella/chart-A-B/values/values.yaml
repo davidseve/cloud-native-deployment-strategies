@@ -1,0 +1,24 @@
+productsNetworkingAB:
+  router:
+    enabled: true
+    weightA: 100
+    weightB: 0
+
+products-B:
+  replicaCount: 1
+  image:
+    tag: v1.0.1
+products-A:
+  replicaCount: 2
+  image:
+    tag: v1.0.1
+
+discounts-B:
+  replicaCount: 1
+  image:
+    tag: v1.0.1
+discounts-A:
+  replicaCount: 2
+  image:
+    tag: v1.0.1
+

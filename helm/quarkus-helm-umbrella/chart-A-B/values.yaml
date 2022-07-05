@@ -1,0 +1,95 @@
+# Default values for discounts.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+discounts-A:
+  replicaCount: 2
+  nameOverride: discounts-umbrella
+  fullnameOverride: "discounts-A"
+  log:
+    level: DEBUG
+  version: A
+  mode: A
+  image:
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: "latest"
+  podAnnotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8443"
+    prometheus.io/scheme: "https"
+discounts-B:
+  nameOverride: discounts-umbrella
+  fullnameOverride: "discounts-B"
+  log:
+    level: DEBUG 
+  version: B
+  mode: B
+  image:
+    tag: "latest"
+  podAnnotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8443"
+    prometheus.io/scheme: "https"    
+discountsNetworkingA:
+  version: A
+  nameOverride: discounts-umbrella
+  fullnameOverride: "discounts-umbrella-A"
+  router:
+    enabled: false
+discountsNetworkingB:
+  version: B
+  nameOverride: discounts-umbrella
+  fullnameOverride: "discounts-umbrella-B"
+  router:
+    enabled: false
+    
+products-A:
+  replicaCount: 2
+  nameOverride: products-umbrella
+  fullnameOverride: "products-A"
+  log:
+    level: DEBUG
+  discountsApi:
+    url: http://discounts-umbrella-online:8080
+  version: A
+  mode: A
+  image:
+    tag: "latest"
+  podAnnotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8443"
+    prometheus.io/scheme: "https"
+products-B:
+  nameOverride: products-umbrella
+  fullnameOverride: "products-B"
+  log:
+    level: DEBUG
+  discountsApi:
+    url: http://discounts-umbrella-online:8080
+  version: B
+  mode: B
+  image:
+    tag: "latest"
+  podAnnotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8443"
+    prometheus.io/scheme: "https" 
+productsNetworkingAB:
+  nameOverride: products-umbrella-AB
+  fullnameOverride: products-umbrella-AB
+
+
+
+global:
+  istio:
+    enabled: false
+
+nameOverride: "shop-umbrella" 
+
+fullnameOverride: ""
+
+
+
+
+
+
