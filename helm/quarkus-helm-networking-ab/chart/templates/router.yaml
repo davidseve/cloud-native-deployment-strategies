@@ -10,11 +10,11 @@ spec:
     targetPort: {{ .Values.service.port }}
   to:
     kind: Service
-    name: {{ include "quarkus.fullname" . }}_A
+    name: {{ include "quarkus.fullname" . }}_a
     weight: {{ default 100 .Values.router.weightA  }}
   alternateBackends:
   - kind: Service
-    name: {{ include "quarkus.fullname" . }}_B
+    name: {{ include "quarkus.fullname" . }}_b
     weight: {{ default 0 .Values.router.weightB  }}
   tls:
     termination: edge

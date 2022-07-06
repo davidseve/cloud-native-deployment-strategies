@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "quarkus.fullname" . }}_A
+  name: {{ include "quarkus.fullname" . }}_a
   labels:
     {{- include "quarkus.labels" . | nindent 4 }}
     version: A
@@ -18,7 +18,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "quarkus.fullname" . }}_B
+  name: {{ include "quarkus.fullname" . }}_b
   labels:
     {{- include "quarkus.labels" . | nindent 4 }}
     version: B
