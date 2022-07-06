@@ -9,7 +9,7 @@ spec:
     namespace: blue-green-gitops
     server: 'https://kubernetes.default.svc'
   source:
-    path: helm/quarkus-helm-umbrella/chart-blue-green
+    path: helm/quarkus-helm-umbrella/chart-A-B
     repoURL:  https://github.com/davidseve/cloud-native-blue-green.git
     targetRevision: a-b-test
     helm:
