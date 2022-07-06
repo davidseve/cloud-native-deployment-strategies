@@ -75,8 +75,8 @@ products-b:
     prometheus.io/port: "8443"
     prometheus.io/scheme: "https" 
 productsNetworkingab:
-  nameOverride: products-umbrella-ab
-  fullnameOverride: products-umbrella-ab
+  nameOverride: products-umbrella
+  fullnameOverride: products-umbrella
 
 
 
