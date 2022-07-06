@@ -10,7 +10,7 @@ spec:
   source:
     path: gitops/cluster-config
     repoURL: 'https://github.com/davidseve/cloud-native-blue-green.git'
-    targetRevision: HEAD
+    targetRevision: a-b-test
     directory:
       recurse: true
   project: default
