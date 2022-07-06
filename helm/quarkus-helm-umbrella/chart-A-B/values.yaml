@@ -2,14 +2,14 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-discounts-A:
+discounts-a:
   replicaCount: 2
   nameOverride: discounts-umbrella
-  fullnameOverride: "discounts-A"
+  fullnameOverride: "discounts-a"
   log:
     level: DEBUG
-  version: A
-  mode: A
+  version: a
+  mode: a
   image:
     # Overrides the image tag whose default is the chart appVersion.
     tag: "latest"
@@ -17,13 +17,13 @@ discounts-A:
     prometheus.io/scrape: "true"
     prometheus.io/port: "8443"
     prometheus.io/scheme: "https"
-discounts-B:
+discounts-b:
   nameOverride: discounts-umbrella
-  fullnameOverride: "discounts-B"
+  fullnameOverride: "discounts-b"
   log:
     level: DEBUG 
-  version: B
-  mode: B
+  version: b
+  mode: b
   image:
     tag: "latest"
   podAnnotations:
@@ -31,52 +31,52 @@ discounts-B:
     prometheus.io/port: "8443"
     prometheus.io/scheme: "https"    
 discountsNetworkingA:
-  version: A
+  version: a
   nameOverride: discounts-umbrella
-  fullnameOverride: "discounts-umbrella-A"
+  fullnameOverride: "discounts-umbrella-a"
   router:
     enabled: false
 discountsNetworkingB:
-  version: B
+  version: b
   nameOverride: discounts-umbrella
-  fullnameOverride: "discounts-umbrella-B"
+  fullnameOverride: "discounts-umbrella-b"
   router:
     enabled: false
     
-products-A:
+products-a:
   replicaCount: 2
   nameOverride: products-umbrella
-  fullnameOverride: "products-A"
+  fullnameOverride: "products-a"
   log:
     level: DEBUG
   discountsApi:
     url: http://discounts-umbrella-online:8080
-  version: A
-  mode: A
+  version: a
+  mode: a
   image:
     tag: "latest"
   podAnnotations:
     prometheus.io/scrape: "true"
     prometheus.io/port: "8443"
     prometheus.io/scheme: "https"
-products-B:
+products-b:
   nameOverride: products-umbrella
-  fullnameOverride: "products-B"
+  fullnameOverride: "products-b"
   log:
     level: DEBUG
   discountsApi:
     url: http://discounts-umbrella-online:8080
-  version: B
-  mode: B
+  version: b
+  mode: b
   image:
     tag: "latest"
   podAnnotations:
     prometheus.io/scrape: "true"
     prometheus.io/port: "8443"
     prometheus.io/scheme: "https" 
-productsNetworkingAB:
-  nameOverride: products-umbrella-AB
-  fullnameOverride: products-umbrella-AB
+productsNetworkingab:
+  nameOverride: products-umbrella-ab
+  fullnameOverride: products-umbrella-ab
 
 
 
