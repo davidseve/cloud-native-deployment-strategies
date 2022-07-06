@@ -4,7 +4,7 @@ metadata:
   name: {{ include "quarkus.fullname" . }}-a
   labels:
     {{- include "quarkus.labels" . | nindent 4 }}
-    version: A
+    version: a
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -13,7 +13,7 @@ spec:
       name: http
   selector:
     {{- include "quarkus.selectorLabels" . | nindent 4 }}
-    version: A
+    version: a
 ---
 apiVersion: v1
 kind: Service
@@ -21,7 +21,7 @@ metadata:
   name: {{ include "quarkus.fullname" . }}-b
   labels:
     {{- include "quarkus.labels" . | nindent 4 }}
-    version: B
+    version: b
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -30,4 +30,4 @@ spec:
       name: http
   selector:
     {{- include "quarkus.selectorLabels" . | nindent 4 }}
-    version: B
+    version: b
