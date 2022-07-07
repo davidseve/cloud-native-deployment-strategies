@@ -11,7 +11,7 @@ data:
   
   quarkus.log.level: {{ .Values.log.level }}
 
-  # quarkus.http.ssl-port: "8443"
+  quarkus.http.ssl-port: "8443"
   # quarkus.http.ssl.certificate.file: "/var/run/secret/kubernetes.io/ssl/cert.pem"
   # quarkus.http.ssl.certificate.key-file: "/var/run/secret/kubernetes.io/ssl/key.pem"
 
