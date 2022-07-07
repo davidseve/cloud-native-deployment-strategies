@@ -2,8 +2,9 @@ apiVersion: maistra.io/v1
 kind: ServiceMeshMemberRoll
 metadata:
   name: default
-  namespace: blue-green-gitops
+  namespace: istio-system
   annotations:
     argocd.argoproj.io/sync-wave: "5"
 spec:
   members:
+    - blue-green-gitops

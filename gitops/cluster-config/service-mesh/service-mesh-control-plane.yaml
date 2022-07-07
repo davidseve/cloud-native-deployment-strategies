@@ -2,7 +2,7 @@ apiVersion: maistra.io/v2
 kind: ServiceMeshControlPlane
 metadata:
   name: basic
-  namespace: blue-green-gitops
+  namespace: istio-system
   annotations:
     argocd.argoproj.io/sync-wave: "5"
 spec:
