@@ -11,10 +11,10 @@ spec:
   source:
     path: helm/quarkus-helm-umbrella/chart-blue-green
     repoURL:  https://github.com/davidseve/cloud-native-blue-green.git
-    targetRevision: blue-green
+    targetRevision: istio
     helm:
       valueFiles:
-        - values/values.yaml
+        - values/values-istio.yaml
   project: default
   syncPolicy:
     automated:
