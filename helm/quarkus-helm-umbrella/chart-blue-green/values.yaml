@@ -26,8 +26,8 @@ discounts-green:
     tag: "latest"
   podAnnotations:
     prometheus.io/scrape: "true"
-    prometheus.io/port: "8443"
-    prometheus.io/scheme: "https"    
+    prometheus.io/port: "8080"
+    prometheus.io/path: "/q/metrics" 
 discountsNetworkingOnline:
   nameOverride: discounts-umbrella
   fullnameOverride: "discounts-umbrella-online"
@@ -52,8 +52,8 @@ products-blue:
     tag: "latest"
   podAnnotations:
     prometheus.io/scrape: "true"
-    prometheus.io/port: "8443"
-    prometheus.io/scheme: "https"
+    prometheus.io/port: "8080"
+    prometheus.io/path: "/q/metrics"
 products-green:
   nameOverride: products-umbrella
   fullnameOverride: "products-green"
@@ -66,8 +66,8 @@ products-green:
     tag: "latest"
   podAnnotations:
     prometheus.io/scrape: "true"
-    prometheus.io/port: "8443"
-    prometheus.io/scheme: "https" 
+    prometheus.io/port: "8080"
+    prometheus.io/path: "/q/metrics"
 productsNetworkingOnline:
   nameOverride: products-umbrella
   fullnameOverride: products-umbrella-online
