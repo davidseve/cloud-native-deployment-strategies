@@ -12,6 +12,8 @@ discounts-blue:
   image:
     # Overrides the image tag whose default is the chart appVersion.
     tag: "latest"
+  podAnnotations:
+    prometheus.io/scrape: "true"
 discounts-green:
   nameOverride: discounts-umbrella
   fullnameOverride: "discounts-green"
