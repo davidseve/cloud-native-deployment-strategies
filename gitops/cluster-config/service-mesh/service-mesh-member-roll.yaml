@@ -7,4 +7,3 @@ metadata:
     argocd.argoproj.io/sync-wave: "5"
 spec:
   members:
-    - blue-green-gitops
