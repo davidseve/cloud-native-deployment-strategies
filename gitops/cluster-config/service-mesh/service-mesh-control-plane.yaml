@@ -3,6 +3,8 @@ kind: ServiceMeshControlPlane
 metadata:
   name: basic
   namespace: blue-green
+  annotations:
+    argocd.argoproj.io/sync-wave: "5"
 spec:
   gateways:
     egress:

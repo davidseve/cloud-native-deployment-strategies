@@ -3,6 +3,8 @@ kind: ServiceMeshMemberRoll
 metadata:
   name: default
   namespace: blue-green
+  annotations:
+    argocd.argoproj.io/sync-wave: "5"
 spec:
   members:
     - blue-green
