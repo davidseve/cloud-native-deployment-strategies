@@ -14,7 +14,7 @@ discounts-blue:
     tag: "latest"
   podAnnotations:
     prometheus.io/scrape: "true"
-    prometheus.io/port: "8080"
+    prometheus.io/port: "8443"
     prometheus.io/scheme: "https"
 discounts-green:
   nameOverride: discounts-umbrella
