@@ -3,7 +3,7 @@ apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
   name: openshift-client
-  namespace: blue-green-gitops
+  namespace: gitops
   labels:
     app.kubernetes.io/version: "0.2"
   annotations:
