@@ -3,8 +3,6 @@ kind: Application
 metadata:
   name: shop-blue-green
   namespace: openshift-gitops
-  annotations:
-    argocd.argoproj.io/sync-wave: "5"
 spec:
   destination:
     name: ''
