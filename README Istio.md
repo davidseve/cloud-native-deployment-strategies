@@ -19,6 +19,7 @@ crear un helm para la config y decidir si va con istio o no. que no aparezca blu
 crear pipelies para cambio de wight
 argo rollouts
 test de validacion tanto blue/green como A/B
+añadir al borrar, borrar todos los operadores
 
 
 

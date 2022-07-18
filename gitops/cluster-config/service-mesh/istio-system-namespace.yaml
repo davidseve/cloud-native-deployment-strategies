@@ -4,6 +4,8 @@ metadata:
   name: istio-system
   labels:
      argocd.argoproj.io/managed-by: openshift-gitops
+  annotation:
+    argocd.argoproj.io/sync-wave: "-5"
 spec:
   finalizers:
   - kubernetes
