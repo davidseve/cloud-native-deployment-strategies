@@ -1,19 +1,20 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: pipelines-blue-green
+  name: shop
   namespace: openshift-gitops
 spec:
   destination:
     name: ''
-    namespace: blue-green-gitops
+    namespace: gitops
     server: 'https://kubernetes.default.svc'
   source:
-    path: pipelines
-    repoURL: https://github.com/davidseve/cloud-native-blue-green.git
+    path: helm/quarkus-helm-umbrella/chart-blue-green
+    repoURL:  https://github.com/davidseve/cloud-native-blue-green.git
     targetRevision: istio
-    directory:
-      recurse: true
+    helm:
+      valueFiles:
+        - values/values-istio.yaml
   project: default
   syncPolicy:
     automated:

@@ -2,7 +2,7 @@ apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
   name: pipeline-blue-green
-  namespace: blue-green-gitops
+  namespace: gitops
 spec:
   params:
   - name: HELM_RELEASE_NAME
@@ -27,7 +27,7 @@ spec:
     description: Helm release version
   - name: NAMESPACE
     type: string
-    default: blue-green-gitops
+    default: gitops
     description: namespace
   - name: OVERWRITE_VALUES
     type: string
