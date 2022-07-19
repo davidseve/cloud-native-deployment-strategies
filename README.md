@@ -175,7 +175,6 @@ In the current Git repository, the [gitops/cluster-config](gitops/cluster-config
 - cluster role `tekton-admin-view`.
 - role binding for ArgoCD and Pipelines to the namespace `gitops`.
 - `pipelines-blue-green` the pipelines that we will see later for blue/green deployment.
-- `shop-blue-green` the application that we are going to use to test blue/green deployment.
 - Tekton cluster role.
 - Tekton tasks for git and Openshift clients.
  
@@ -191,7 +190,7 @@ Looking at the Argo CD dashboard, you would notice that three applications have 
  
 [^note]:
     `pipelines-blue-green` will have status `Progressing` till we execute the first pipeline.
- TODO change image
+TODO change image
 ![Argo CD - Applications](images/applications.png)
  
 You can click on the `blue-green-cluster-configuration` application to check the details of sync resources and their status on the cluster.
@@ -200,7 +199,18 @@ You can click on the `blue-green-cluster-configuration` application to check the
  
  
 You can check that a namespace called `gitops` is created on the cluster, the **Openshift Pipelines operator** is installed.
- TODO create shop application
+
+### Create Shop application
+
+We are going to create the application `shop`, that we are going to use to test blue/green deployment.
+
+```
+oc apply -f gitops/application-shop-blue-green.yaml -n openshift-gitops 
+```
+
+Looking at the Argo CD dashboard, you would notice that we have a new `shop` application.
+
+TODO add image
 ## Test Shop application
  
 We have deployed the `shop-blue-green` with ArgoCD. We can test that it is up and running.
@@ -286,7 +296,7 @@ We will use the already created pipelinerun to execute the first step with the n
 cd pipelines/run-products
 oc create -f 1-pipelinerun-products-new-version.yaml -n gitops
 ```
-TODO change image
+
 ![Pipeline step 1](images/pipeline-step-1.png)
  
 The pipeline has committed the changes in GitHub. ArgoCD will refresh the status after some minutes. If you don't want to wait you can refresh it manually from ArgoCD UI.
@@ -326,7 +336,7 @@ The pipeline first will change the configuration and scale to 0, second will sca
 oc create -f 2-pipelinerun-products-configuration.yaml -n gitops
 ```
 This step may take more time because we are doing two different commits, so ArgoCD has to synchronize the first one in order to continue with the pipeline. If you want to make it faster you can refresh ArgoCD manually after the step `commit-configuration`.
-TODO change image
+
 ![Pipeline step 2](images/pipeline-step-2.png)
  
 After the pipeline finished and ArgoCD has synchronized the changes this will be the `Shop` status:
@@ -349,7 +359,7 @@ We are going to open the new version to final users. The pipeline will just chan
 ```
 oc create -f 3-pipelinerun-products-switch.yaml -n gitops
 ```
-TODO change image
+
 ![Pipeline step 3](images/pipeline-step-3.png)
 After the pipeline finished and ArgoCD has synchronized the changes this will be the `Shop` status:
 ![Shop step 3](images/blue-green-step-3.png)
@@ -378,7 +388,7 @@ Imagine that something goes wrong, we know that this never happens but just in c
 ```
 oc create -f 3-pipelinerun-products-switch-rollback.yaml -n gitops
 ```
-TODO change image
+
 ![Pipeline step 3,5 Rollback](images/pipeline-step-3-rollback.png)
 After the pipeline finished and ArgoCD has synchronized the changes this will be the `Shop` status:
 ![Shop step 3,5 Rollback](images/blue-green-step-3-5.png)
@@ -429,7 +439,7 @@ Finally, when online is stable we should align offline with the new version and 
 ```
 oc create -f 4-pipelinerun-products-scale-down.yaml -n gitops
 ```
-TODO change image
+
 ![Pipeline step 4](images/pipeline-step-4.png)
 After the pipeline finished and ArgoCD has synchronized the changes this will be the `Shop` status:
 ![Shop step 4](images/blue-green-step-4.png)
