@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: blue-green-cluster-configuration
+  name: cluster-configuration
 spec:
   destination:
     name: ''

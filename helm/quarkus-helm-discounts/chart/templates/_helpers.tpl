@@ -48,6 +48,7 @@ Selector labels
 {{- define "discounts.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "discounts.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
+app: {{ include "discounts.name" . }}
 {{- end }}
 
 {{/*

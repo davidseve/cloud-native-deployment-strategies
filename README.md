@@ -170,12 +170,11 @@ Click on Argo CD from the OpenShift Web Console application launcher and then lo
 We are going to follow, as much as we can, a GitOps methodology in this demo. So we will have everything in our Git repository and use **ArgoCD** to deploy it in the cluster.
  
 In the current Git repository, the [gitops/cluster-config](gitops/cluster-config/) directory contains OpenShift cluster configurations such as:
-- namespaces `blue-green-gitops`.
+- namespaces `gitops`.
 - operator **Openshift Pipelines**.
 - cluster role `tekton-admin-view`.
-- role binding for ArgoCD and Pipelines to the namespace `blue-green-gitops`.
+- role binding for ArgoCD and Pipelines to the namespace `gitops`.
 - `pipelines-blue-green` the pipelines that we will see later for blue/green deployment.
-- `shop-blue-green` the application that we are going to use to test blue/green deployment.
 - Tekton cluster role.
 - Tekton tasks for git and Openshift clients.
  
@@ -191,7 +190,7 @@ Looking at the Argo CD dashboard, you would notice that three applications have 
  
 [^note]:
     `pipelines-blue-green` will have status `Progressing` till we execute the first pipeline.
- 
+TODO change image
 ![Argo CD - Applications](images/applications.png)
  
 You can click on the `blue-green-cluster-configuration` application to check the details of sync resources and their status on the cluster.
@@ -199,19 +198,30 @@ You can click on the `blue-green-cluster-configuration` application to check the
 ![Argo CD - Cluster Config](images/application-cluster-config-sync.png)
  
  
-You can check that a namespace called `blue-green-gitops` is created on the cluster, the **Openshift Pipelines operator** is installed, and also the other to applications has been created `pipelines-blue-green` and `shop-blue-green`
- 
+You can check that a namespace called `gitops` is created on the cluster, the **Openshift Pipelines operator** is installed.
+
+### Create Shop application
+
+We are going to create the application `shop`, that we are going to use to test blue/green deployment.
+
+```
+oc apply -f gitops/application-shop-blue-green.yaml -n openshift-gitops 
+```
+
+Looking at the Argo CD dashboard, you would notice that we have a new `shop` application.
+
+TODO add image
 ## Test Shop application
  
 We have deployed the `shop-blue-green` with ArgoCD. We can test that it is up and running.
  
 We have to get the Online route
 ```
-echo "$(oc get routes products-umbrella-online -n blue-green-gitops --template='http://{{.spec.host}}')/products"
+echo "$(oc get routes products-umbrella-online -n gitops --template='http://{{.spec.host}}')/products"
 ```
 And the Offline route
 ```
-echo "$(oc get routes products-umbrella-offline -n blue-green-gitops --template='http://{{.spec.host}}')/products"
+echo "$(oc get routes products-umbrella-offline -n gitops --template='http://{{.spec.host}}')/products"
 ```
 Notice that in each microservice response we have added metadata information to see better the `version`, `color`, `mode` of each application. This will help us to see the changes while we do the Blue/Green deployment.
 Because right now we have the same version v1.0.1 in both colors we will have almost the same response, only the mode will change.
@@ -267,9 +277,9 @@ export GIT_USER=YYY
 ```
  
 ```
-oc create secret generic github-token --from-literal=username=${GIT_USER} --from-literal=password=${TOKEN} --type "kubernetes.io/basic-auth" -n blue-green-gitops
-oc annotate secret github-token "tekton.dev/git-0=https://github.com/${GIT_USER}" -n blue-green-gitops
-oc secrets link pipeline github-token -n blue-green-gitops
+oc create secret generic github-token --from-literal=username=${GIT_USER} --from-literal=password=${TOKEN} --type "kubernetes.io/basic-auth" -n gitops
+oc annotate secret github-token "tekton.dev/git-0=https://github.com/${GIT_USER}" -n gitops
+oc secrets link pipeline github-token -n gitops
 ```
  
 We have already deployed the product's version v1.0.1, and we have ready to use a new product's version v1.1.1 that has a new `description` attribute.
@@ -284,8 +294,9 @@ We will start deploying a new version v1.1.1 in the offline color. But instead o
 We will use the already created pipelinerun to execute the first step with the new version v1.1.1
 ```
 cd pipelines/run-products
-oc create -f 1-pipelinerun-products-new-version.yaml -n blue-green-gitops
+oc create -f 1-pipelinerun-products-new-version.yaml -n gitops
 ```
+
 ![Pipeline step 1](images/pipeline-step-1.png)
  
 The pipeline has committed the changes in GitHub. ArgoCD will refresh the status after some minutes. If you don't want to wait you can refresh it manually from ArgoCD UI.
@@ -322,9 +333,10 @@ Now we are going to change the configuration to online and also scale up the app
 The pipeline first will change the configuration and scale to 0, second will scale up the application to production number of replicas.
  
 ```
-oc create -f 2-pipelinerun-products-configuration.yaml -n blue-green-gitops
+oc create -f 2-pipelinerun-products-configuration.yaml -n gitops
 ```
 This step may take more time because we are doing two different commits, so ArgoCD has to synchronize the first one in order to continue with the pipeline. If you want to make it faster you can refresh ArgoCD manually after the step `commit-configuration`.
+
 ![Pipeline step 2](images/pipeline-step-2.png)
  
 After the pipeline finished and ArgoCD has synchronized the changes this will be the `Shop` status:
@@ -345,8 +357,9 @@ At this point the application is ready to receive real traffic.
  
 We are going to open the new version to final users. The pipeline will just change the service to use the other color. Again the pipeline does this automatically without manual intervention. We also `minimize downtime` because it just changes the service label.
 ```
-oc create -f 3-pipelinerun-products-switch.yaml -n blue-green-gitops
+oc create -f 3-pipelinerun-products-switch.yaml -n gitops
 ```
+
 ![Pipeline step 3](images/pipeline-step-3.png)
 After the pipeline finished and ArgoCD has synchronized the changes this will be the `Shop` status:
 ![Shop step 3](images/blue-green-step-3.png)
@@ -373,8 +386,9 @@ After the pipeline finished and ArgoCD has synchronized the changes this will be
  
 Imagine that something goes wrong, we know that this never happens but just in case. We can do a very `quick rollback` just undoing the change in the `Products` online service. But are we sure that with all the pressure that we will have at this moment, we will find the right service and change the label to the right color. Let's move this pressure to the pipeline. We can have a pipeline for rollback.
 ```
-oc create -f 3-pipelinerun-products-switch-rollback.yaml -n blue-green-gitops
+oc create -f 3-pipelinerun-products-switch-rollback.yaml -n gitops
 ```
+
 ![Pipeline step 3,5 Rollback](images/pipeline-step-3-rollback.png)
 After the pipeline finished and ArgoCD has synchronized the changes this will be the `Shop` status:
 ![Shop step 3,5 Rollback](images/blue-green-step-3-5.png)
@@ -398,7 +412,7 @@ We have version v1.0.1 online again.
  
 After fixing the issue we can execute the Switch step again.
 ```
-oc create -f 3-pipelinerun-products-switch.yaml -n blue-green-gitops
+oc create -f 3-pipelinerun-products-switch.yaml -n gitops
 ```
 ![Shop step 3](images/blue-green-step-3.png)
 We have in the online environment the new version v1.1.1 again.
@@ -423,8 +437,9 @@ We have in the online environment the new version v1.1.1 again.
  
 Finally, when online is stable we should align offline with the new version and scale it down. Does not make sense to use the same resources that we have in production.
 ```
-oc create -f 4-pipelinerun-products-scale-down.yaml -n blue-green-gitops
+oc create -f 4-pipelinerun-products-scale-down.yaml -n gitops
 ```
+
 ![Pipeline step 4](images/pipeline-step-4.png)
 After the pipeline finished and ArgoCD has synchronized the changes this will be the `Shop` status:
 ![Shop step 4](images/blue-green-step-4.png)

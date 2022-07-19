@@ -1,0 +1,98 @@
+{{- if .Values.global.istio.enabled }}
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: {{ include "shop.fullname" $ }}-gateway
+  labels:
+    {{- include "shop.labels" . | nindent 4 }}
+spec:
+  selector:
+    istio: ingressgateway # use istio default controller
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ include "shop.fullname" $ }}-vs-products
+  labels:
+    {{- include "shop.labels" . | nindent 4 }}
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - {{ include "shop.fullname" $ }}-gateway
+  http:
+  - match:
+    - uri:
+        exact: /products
+    route:
+    - destination:
+        host: {{ .Values.productsNetworkingOnline.fullnameOverride }}
+        subset: blue
+      weight: {{ .Values.global.istio.productsblueWeight}}
+    - destination:
+        host: {{ .Values.productsNetworkingOnline.fullnameOverride }}
+        subset: green
+      weight: {{ .Values.global.istio.productsgreenWeight}}
+---
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: {{ include "shop.fullname" $ }}-products-rule
+  labels:
+    {{- include "shop.labels" . | nindent 4 }}
+spec:
+  host: {{ .Values.productsNetworkingOnline.fullnameOverride }}
+  subsets:
+  - name: blue
+    labels:
+      version: blue
+  - name: green
+    labels:
+      version: green
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ include "shop.fullname" $ }}-vs-discounts
+  labels:
+    {{- include "shop.labels" . | nindent 4 }}
+spec:
+  hosts:
+  - {{ .Values.discountsNetworkingOnline.fullnameOverride }}
+  http:
+  - match:
+    - uri:
+        exact: /discounts
+    route:
+    - destination:
+        host: {{ .Values.discountsNetworkingOnline.fullnameOverride }}
+        subset: blue
+      weight: {{ .Values.global.istio.discountsblueWeight}}
+    - destination:
+        host: {{ .Values.discountsNetworkingOnline.fullnameOverride }}
+        subset: green
+      weight: {{ .Values.global.istio.discountsgreenWeight}}
+---
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: {{ include "shop.fullname" $ }}-discounts-rule
+  labels:
+    {{- include "shop.labels" . | nindent 4 }}
+spec:
+  host: {{ .Values.discountsNetworkingOnline.fullnameOverride }}
+  subsets:
+  - name: blue
+    labels:
+      version: blue
+  - name: green
+    labels:
+      version: green
+{{ end }}

@@ -1,0 +1,43 @@
+tags:
+  productsNetworkingOffline: false
+  discountsNetworkingOffline: false
+
+discountsNetworkingOnline:
+  router:
+    enabled: false
+
+productsNetworkingOnline:
+  router:
+    enabled: false
+
+global:
+  istio:
+    enabled: true
+    productsblueWeight: 100
+    productsgreenWeight: 0
+    discountsblueWeight: 100
+    discountsgreenWeight: 0
+
+
+products-green:
+  replicaCount: 1
+  image:
+    tag: v1.0.1
+  mode: offline
+products-blue:
+  replicaCount: 2
+  image:
+    tag: v1.0.1
+  mode: online
+
+discounts-green:
+  replicaCount: 1
+  image:
+    tag: v1.0.1
+  mode: offline
+discounts-blue:
+  replicaCount: 2
+  image:
+    tag: v1.0.1
+  mode: online
+

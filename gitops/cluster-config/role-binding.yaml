@@ -1,8 +1,8 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: blue-green-gitops-role-binding
-  namespace: blue-green-gitops
+  name: gitops-role-binding
+  namespace: gitops
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -15,8 +15,8 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: blue-green-edit-pipeline
-  namespace: blue-green-gitops
+  name: gitops-edit-pipeline
+  namespace: gitops
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -24,4 +24,4 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: pipeline
-  namespace: blue-green-gitops
+  namespace: gitops

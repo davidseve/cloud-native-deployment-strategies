@@ -2,7 +2,9 @@ apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
   name: pipeline-blue-green
-  namespace: blue-green-gitops
+  namespace: gitops
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
   params:
   - name: HELM_RELEASE_NAME
@@ -27,7 +29,7 @@ spec:
     description: Helm release version
   - name: NAMESPACE
     type: string
-    default: blue-green-gitops
+    default: gitops
     description: namespace
   - name: OVERWRITE_VALUES
     type: string
@@ -52,7 +54,9 @@ spec:
   - name: GIT_USER_EMAIL
     type: string
     default: davidseve16@gmail.com
-    
+  - name: JQ_PATH
+    type: string
+    default: .metadata  
 
   workspaces:
   - name: app-source
@@ -169,6 +173,34 @@ spec:
     - name: source
       workspace: app-source
 
+  # - name: get-application-url-new-image-tag
+  #   runAfter:
+  #   - commit-new-image-tag
+  #   taskRef:
+  #     name: openshift-client
+  #   params:
+  #   - name: SCRIPT
+  #     value: |
+  #       oc get routes $(params.APP)-umbrella-offline -n $(params.NAMESPACE) --template='http://{{.spec.host}}/$(params.APP)' > $(workspaces.manifest-dir.path)/url
+  #       cat $(workspaces.manifest-dir.path)/url
+  #   workspaces:
+  #   - name: manifest-dir
+  #     workspace: app-source
+
+  # - name: e2e-test-new-image-tag
+  #   runAfter:
+  #   - get-application-url-new-image-tag
+  #   params:
+  #     - name: TARGET_VERSION
+  #       value: $(params.NEW_IMAGE_TAG)
+  #     - name: JQ_PATH
+  #       value: $(params.JQ_PATH)
+  #   taskRef:
+  #     name: shop-e2e-test
+  #   workspaces:
+  #   - name: source
+  #     workspace: app-source
+
   - name: change-configuration
     when:
       - input: "$(params.STEP)"
@@ -226,9 +258,6 @@ spec:
     - name: source
       workspace: app-source
 
-
-
-
   - name: get-deployment-replicas
     runAfter:
     - commit-configuration
@@ -249,8 +278,6 @@ spec:
     workspaces:
     - name: manifest-dir
       workspace: app-source
-
-
 
   - name: change-scale-up
     runAfter:
@@ -503,9 +530,38 @@ spec:
     - name: source
       workspace: app-source
 ---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: shop-e2e-test
+  namespace: gitops
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  params:
+  - name: TARGET_VERSION
+  - name: JQ_PATH
+  steps:
+  - name: set-results
+    image: badouralix/curl-jq
+    script: |
+      version="none"
+      cat $(workspaces.source.path)/url
+      while [[ "$version" != "$(params.TARGET_VERSION)" ]]
+      do
+        sleep 5
+        curl $(cat $(workspaces.source.path)/url) | jq -r '$(params.JQ_PATH)' > metadata
+        cat metadata
+        version=$(jq -r '.version' metadata)
+        echo $version
+      done
+  workspaces:
+  - name: source
+---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
+  namespace: gitops
   name: workspace-pvc-shop-cd-new-version
 spec:
   accessModes:
