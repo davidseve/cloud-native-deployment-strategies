@@ -1,0 +1,11 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  generateName: test-
+spec:
+  pipelineRef:
+    name: pipeline-test
+  workspaces:
+  - name: app-source
+    persistentVolumeClaim:
+      claimName: aaa

@@ -54,7 +54,16 @@ spec:
   - name: GIT_USER_EMAIL
     type: string
     default: davidseve16@gmail.com
-    
+  - name: TARGET_VERSION
+    type: string
+    default: v1.0.1
+  - name: TEST_URL
+    type: string
+    default: http://istio-ingressgateway-istio-system.apps.cluster-lsxh6.lsxh6.sandbox1300.opentlc.com/products  
+  - name: JQ_PATH
+    type: string
+    default: .metadata
+    #'.products[0].discountInfo.metadata'    
 
   workspaces:
   - name: app-source
@@ -508,6 +517,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
+  namespace: gitops
   name: workspace-pvc-shop-cd-new-version
 spec:
   accessModes:
