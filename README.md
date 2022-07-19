@@ -186,19 +186,14 @@ Execute this command to add a new Argo CD application that syncs a Git repositor
 oc apply -f gitops/application-cluster-config.yaml -n openshift-gitops
 ```
  
-Looking at the Argo CD dashboard, you would notice that three applications have been created[^note].
+Looking at the Argo CD dashboard, you would notice that an application has been created[^note].
  
 [^note]:
-    `pipelines-blue-green` will have status `Progressing` till we execute the first pipeline.
-TODO change image
-![Argo CD - Applications](images/applications.png)
- 
-You can click on the `blue-green-cluster-configuration` application to check the details of sync resources and their status on the cluster.
+    `cluster-configuration` will have status `Progressing` till we execute the first pipeline.
+
+You can click on the `cluster-configuration` application to check the details of sync resources and their status on the cluster.
  
 ![Argo CD - Cluster Config](images/application-cluster-config-sync.png)
- 
- 
-You can check that a namespace called `gitops` is created on the cluster, the **Openshift Pipelines operator** is installed.
 
 ### Create Shop application
 
@@ -210,7 +205,9 @@ oc apply -f gitops/application-shop-blue-green.yaml -n openshift-gitops
 
 Looking at the Argo CD dashboard, you would notice that we have a new `shop` application.
 
-TODO add image
+![Argo CD - Cluster Config](images/ArgoCD-Applications.png)
+
+
 ## Test Shop application
  
 We have deployed the `shop-blue-green` with ArgoCD. We can test that it is up and running.
@@ -479,7 +476,7 @@ We can see that the offline `Products` is calling offline `Discounts` and has th
  
 To delete all the thing that we have done for the demo you have to_
 - In GitHub delete the branch `blue-green`
-- In ArgoCD delete the application `blue-green-cluster-configuration`
+- In ArgoCD delete the application `cluster-configuration` and `shop`
 - In Openshift, go to project `openshift-operators` and delete the installed operators **Openshift GitOps** and **Openshift Pipelines**
 ![Installed Operators](images/installed-operators.png)
 ![Delete Pipeline Operator](images/delete-pipeline.png)
