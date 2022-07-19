@@ -54,16 +54,9 @@ spec:
   - name: GIT_USER_EMAIL
     type: string
     default: davidseve16@gmail.com
-  - name: TARGET_VERSION
-    type: string
-    default: v1.0.1
-  - name: TEST_URL
-    type: string
-    default: http://istio-ingressgateway-istio-system.apps.cluster-lsxh6.lsxh6.sandbox1300.opentlc.com/products  
   - name: JQ_PATH
     type: string
-    default: .metadata
-    #'.products[0].discountInfo.metadata'    
+    default: .metadata  
 
   workspaces:
   - name: app-source
@@ -176,6 +169,34 @@ spec:
           git add $(params.VALUES_FILE)
           git commit -m "$(params.APP)-$(tasks.create-result-colour.results.version)  new image tag $(params.NEW_IMAGE_TAG)"
           git push origin HEAD:$(params.SOURCE_GIT_REVISION)
+    workspaces:
+    - name: source
+      workspace: app-source
+
+  - name: get-application-url-new-image-tag
+    runAfter:
+    - commit-new-image-tag
+    taskRef:
+      name: openshift-client
+    params:
+    - name: SCRIPT
+      value: |
+        oc get routes $(params.APP)-umbrella-offline -n $(params.NAMESPACE) --template='http://{{.spec.host}}/$(params.APP)' > $(workspaces.manifest-dir.path)/url
+        cat $(workspaces.manifest-dir.path)/url
+    workspaces:
+    - name: manifest-dir
+      workspace: app-source
+
+  - name: e2e-test-new-image-tag
+    runAfter:
+    - get-application-url-new-image-tag
+    params:
+      - name: TARGET_VERSION
+        value: $(params.NEW_IMAGE_TAG)
+      - name: JQ_PATH
+        value: $(params.JQ_PATH)
+    taskRef:
+      name: shop-e2e-test
     workspaces:
     - name: source
       workspace: app-source
@@ -513,6 +534,34 @@ spec:
     workspaces:
     - name: source
       workspace: app-source
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: shop-e2e-test
+  namespace: gitops
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  params:
+  - name: TARGET_VERSION
+  - name: JQ_PATH
+  steps:
+  - name: set-results
+    image: badouralix/curl-jq
+    script: |
+      version="none"
+      cat $(workspaces.source.path)/url
+      while [[ "$version" != "$(params.TARGET_VERSION)" ]]
+      do
+        sleep 5
+        curl $(cat $(workspaces.source.path)/url) | jq -r '$(params.JQ_PATH)' > metadata
+        cat metadata
+        version=$(jq -r '.version' metadata)
+        echo $version
+      done
+  workspaces:
+  - name: source
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
