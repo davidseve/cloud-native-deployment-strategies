@@ -173,33 +173,33 @@ spec:
     - name: source
       workspace: app-source
 
-  - name: get-application-url-new-image-tag
-    runAfter:
-    - commit-new-image-tag
-    taskRef:
-      name: openshift-client
-    params:
-    - name: SCRIPT
-      value: |
-        oc get routes $(params.APP)-umbrella-offline -n $(params.NAMESPACE) --template='http://{{.spec.host}}/$(params.APP)' > $(workspaces.manifest-dir.path)/url
-        cat $(workspaces.manifest-dir.path)/url
-    workspaces:
-    - name: manifest-dir
-      workspace: app-source
+  # - name: get-application-url-new-image-tag
+  #   runAfter:
+  #   - commit-new-image-tag
+  #   taskRef:
+  #     name: openshift-client
+  #   params:
+  #   - name: SCRIPT
+  #     value: |
+  #       oc get routes $(params.APP)-umbrella-offline -n $(params.NAMESPACE) --template='http://{{.spec.host}}/$(params.APP)' > $(workspaces.manifest-dir.path)/url
+  #       cat $(workspaces.manifest-dir.path)/url
+  #   workspaces:
+  #   - name: manifest-dir
+  #     workspace: app-source
 
-  - name: e2e-test-new-image-tag
-    runAfter:
-    - get-application-url-new-image-tag
-    params:
-      - name: TARGET_VERSION
-        value: $(params.NEW_IMAGE_TAG)
-      - name: JQ_PATH
-        value: $(params.JQ_PATH)
-    taskRef:
-      name: shop-e2e-test
-    workspaces:
-    - name: source
-      workspace: app-source
+  # - name: e2e-test-new-image-tag
+  #   runAfter:
+  #   - get-application-url-new-image-tag
+  #   params:
+  #     - name: TARGET_VERSION
+  #       value: $(params.NEW_IMAGE_TAG)
+  #     - name: JQ_PATH
+  #       value: $(params.JQ_PATH)
+  #   taskRef:
+  #     name: shop-e2e-test
+  #   workspaces:
+  #   - name: source
+  #     workspace: app-source
 
   - name: change-configuration
     when:
@@ -258,9 +258,6 @@ spec:
     - name: source
       workspace: app-source
 
-
-
-
   - name: get-deployment-replicas
     runAfter:
     - commit-configuration
@@ -281,8 +278,6 @@ spec:
     workspaces:
     - name: manifest-dir
       workspace: app-source
-
-
 
   - name: change-scale-up
     runAfter:
