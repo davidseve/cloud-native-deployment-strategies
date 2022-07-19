@@ -15,7 +15,7 @@ productsNetworkingOffline:
 products-green:
   replicaCount: 1
   image:
-    tag: v1.1.1
+    tag: v1.0.1
   mode: offline
 products-blue:
   replicaCount: 2
