@@ -1,3 +1,4 @@
+{{- if .Values.istio.enabled }}
 apiVersion: maistra.io/v2
 kind: ServiceMeshControlPlane
 metadata:
@@ -39,3 +40,4 @@ spec:
           type: Memory
     kiali:
       enabled: true
+{{ end }}

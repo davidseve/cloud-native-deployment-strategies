@@ -1,3 +1,4 @@
+{{- if .Values.istio.enabled }}
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -7,3 +8,4 @@ metadata:
 spec:
   finalizers:
   - kubernetes
+{{ end }}

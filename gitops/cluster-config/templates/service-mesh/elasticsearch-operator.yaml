@@ -1,0 +1,13 @@
+{{- if .Values.istio.enabled }}
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: elasticsearch-operator
+  namespace: openshift-operators
+spec:
+  channel: stable
+  name: elasticsearch-operator
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace
+  installPlanApproval: Automatic
+{{ end }}
