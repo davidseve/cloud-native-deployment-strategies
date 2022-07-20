@@ -1,2 +1,6 @@
 istio:
-  enabled: false 
+  enabled: false
+github:
+  token: changeme
+  user: changeme
+  mail: changeme

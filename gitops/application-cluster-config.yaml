@@ -2,6 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: cluster-configuration
+  namespace: openshift-gitops
 spec:
   destination:
     name: ''
@@ -11,6 +12,8 @@ spec:
     path: gitops/cluster-config
     repoURL: 'https://github.com/davidseve/cloud-native-blue-green.git'
     targetRevision: helm
+    helm:
+      values: changeme
   project: default
   syncPolicy:
     automated:

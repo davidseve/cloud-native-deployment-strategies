@@ -50,10 +50,10 @@ spec:
     type: string
   - name: GIT_USER_NAME
     type: string
-    default: davidseve
+    default: {{ .Values.github.user }}
   - name: GIT_USER_EMAIL
     type: string
-    default: davidseve16@gmail.com
+    default: {{ .Values.github.mail }}
   - name: JQ_PATH
     type: string
     default: .metadata  
