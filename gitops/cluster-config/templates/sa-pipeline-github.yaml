@@ -1,6 +1,7 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: pipelines-github-token 
+  name: pipelines-github-token
+  namespace: gitops
 secrets:
   - name: github-token
