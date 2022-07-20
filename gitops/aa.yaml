@@ -15,7 +15,7 @@ spec:
     helm:
      parameters:
       - name: "github.token"
-        value: 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
+        value: sss
       - name: "github.user"
         value: davidseve
       - name: "github.mail"
