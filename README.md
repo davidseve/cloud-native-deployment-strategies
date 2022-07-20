@@ -183,7 +183,7 @@ Let's configure Argo CD to recursively sync the content of the [gitops/cluster-c
 Execute this command to add a new Argo CD application that syncs a Git repository containing cluster configurations with the OpenShift cluster.
  
 ```
-oc apply -f gitops/application-cluster-config.yaml -n openshift-gitops
+oc apply -f gitops/application-cluster-config.yaml
 ```
  
 Looking at the Argo CD dashboard, you would notice that an application has been created[^note].

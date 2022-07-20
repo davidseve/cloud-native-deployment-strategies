@@ -3,6 +3,7 @@ kind: PipelineRun
 metadata:
   generateName: shop-products-new-version-
 spec:
+  #serviceAccountName: pipelines-github-token
   pipelineRef:
     name: pipeline-blue-green    
   params:

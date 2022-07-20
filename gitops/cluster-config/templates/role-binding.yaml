@@ -23,5 +23,6 @@ roleRef:
   name: edit
 subjects:
 - kind: ServiceAccount
-  name: pipelines-github-token
+  name: pipeline
+{{/*name: pipelines-github-token*/}}
   namespace: gitops
