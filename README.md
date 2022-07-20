@@ -179,6 +179,37 @@ In the current Git repository, the [gitops/cluster-config](gitops/cluster-config
 - Tekton tasks for git and Openshift clients.
  
 Let's configure Argo CD to recursively sync the content of the [gitops/cluster-config](gitops/cluster-config/) directory to the OpenShift cluster.
+
+But first we have to set your GutHub credentials. Please edit the file gitops/application-cluster-config.yaml. It should looks like:
+```
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cluster-configuration
+  namespace: openshift-gitops
+spec:
+  destination:
+    name: ''
+    namespace: openshift-gitops
+    server: 'https://kubernetes.default.svc'
+  source:
+    path: gitops/cluster-config
+    repoURL: 'https://github.com/davidseve/cloud-native-blue-green.git'
+    targetRevision: helm
+    helm:
+     parameters:
+      - name: "github.token"
+        value: "ghp_34me082uU5prxdS5Y54xIAQBcb4acW49b9gc"
+      - name: "github.user"
+        value: "davidseve"
+      - name: "github.mail"
+        value: "davidseve16@gmail.com"
+  project: default
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: false
+```
  
 Execute this command to add a new Argo CD application that syncs a Git repository containing cluster configurations with the OpenShift cluster.
  
@@ -195,6 +226,12 @@ You can click on the `cluster-configuration` application to check the details of
  
 ![Argo CD - Cluster Config](images/application-cluster-config-sync.png)
 
+Using **Openshift Pipelines**, we have created a pipeline to manage the Blue/Green deployment.
+Because the pipeline push that changes done in the helm values on each step. **Openshift Pipelines** needs a **GitHub** token to do the push. We don`t want to set your **GitHub** token on git, we have to do this steps manually and not with GitOps.
+
+```
+oc secrets link pipeline github-token -n gitops
+```
 ### Create Shop application
 
 We are going to create the application `shop`, that we are going to use to test blue/green deployment.
@@ -264,20 +301,7 @@ We have split a `Cloud Native` Blue/Green deployment in four steps:
 3. Switch new version to Online.
 4. Align and scale down Offline.
  
-Using **Openshift Pipelines**, we have created a pipeline with those fourth steps to manage the Blue/Green deployment. This pipeline is the same for both applications, now we are going to use it for Products application.
-Because the pipeline push that changes done in the helm values on each step. **Openshift Pipelines** needs a **GitHub** token to do the push. Because we don`t want to set your **GitHub** token on git we have to do those steps manually and not with GitOps methodology.
-```
-export TOKEN=XXXXXX
-```
-```
-export GIT_USER=YYY
-```
- 
-```
-oc create secret generic github-token --from-literal=username=${GIT_USER} --from-literal=password=${TOKEN} --type "kubernetes.io/basic-auth" -n gitops
-oc annotate secret github-token "tekton.dev/git-0=https://github.com/${GIT_USER}" -n gitops
-oc secrets link pipeline github-token -n gitops
-```
+
  
 We have already deployed the product's version v1.0.1, and we have ready to use a new product's version v1.1.1 that has a new `description` attribute.
  
