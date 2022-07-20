@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cluster-configuration
+  namespace: openshift-gitops
+spec:
+  destination:
+    name: ''
+    namespace: openshift-gitops
+    server: 'https://kubernetes.default.svc'
+  source:
+    path: gitops/cluster-config
+    repoURL: 'https://github.com/davidseve/cloud-native-blue-green.git'
+    targetRevision: helm
+    helm:
+     parameters:
+      - name: "github.token"
+        value: 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
+      - name: "github.user"
+        value: davidseve
+      - name: "github.mail"
+        value: davidseve16@gmail.com
+  project: default
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: false
