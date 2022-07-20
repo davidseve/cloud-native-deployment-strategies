@@ -6,7 +6,7 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
- serviceAccountName: pipelines-github-token
+  serviceAccountName: pipelines-github-token
   params:
   - name: HELM_RELEASE_NAME
     type: string
