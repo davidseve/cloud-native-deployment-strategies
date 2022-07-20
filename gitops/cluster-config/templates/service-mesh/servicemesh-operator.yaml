@@ -4,6 +4,8 @@ kind: Subscription
 metadata:
   name: servicemeshoperator
   namespace: openshift-operators
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
 spec:
   channel: stable
   installPlanApproval: Automatic
