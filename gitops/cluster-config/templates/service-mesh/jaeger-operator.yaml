@@ -4,8 +4,6 @@ kind: Subscription
 metadata:
   name: jaeger-product
   namespace: openshift-operators
-  annotations:
-    argocd.argoproj.io/sync-wave: "3"
 spec:
   channel: stable
   installPlanApproval: Automatic

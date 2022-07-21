@@ -11,7 +11,7 @@ spec:
   source:
     path: gitops/cluster-config
     repoURL: 'https://github.com/davidseve/cloud-native-blue-green.git'
-    targetRevision: rollout
+    targetRevision: HEAD
     helm:
      parameters:
       - name: "github.token"

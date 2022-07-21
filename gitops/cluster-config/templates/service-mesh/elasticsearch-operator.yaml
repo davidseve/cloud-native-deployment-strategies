@@ -4,8 +4,6 @@ kind: Subscription
 metadata:
   name: elasticsearch-operator
   namespace: openshift-operators
-  annotations:
-    argocd.argoproj.io/sync-wave: "4"
 spec:
   channel: stable
   name: elasticsearch-operator

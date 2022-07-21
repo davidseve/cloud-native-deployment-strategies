@@ -6,7 +6,6 @@ metadata:
   namespace: istio-system
   annotations:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
-    argocd.argoproj.io/sync-wave: "10"
 spec:
   members:
     - gitops

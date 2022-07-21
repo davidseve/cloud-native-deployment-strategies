@@ -4,8 +4,6 @@ kind: Subscription
 metadata:
   name: kiali-ossm
   namespace: openshift-operators
-  annotations:
-    argocd.argoproj.io/sync-wave: "2"
 spec:
   channel: stable
   installPlanApproval: Automatic
