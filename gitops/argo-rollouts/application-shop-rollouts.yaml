@@ -13,6 +13,9 @@ spec:
     repoURL:  https://github.com/davidseve/cloud-native-blue-green.git
     targetRevision: rollouts
     helm:
+      parameters:
+      - name: "global.namespace"
+        value: gitops
       valueFiles:
         - values/values-rollouts.yaml
   project: default
