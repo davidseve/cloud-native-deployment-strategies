@@ -117,10 +117,6 @@ We have split a `Cloud Native` Blue/Green deployment in two steps:
  
 We have already deployed the product's version v1.0.1, and we have ready to use a new product's version v1.1.1 that has a new `description` attribute.
  
-This is our current status:
-![Shop initial status](../../images/blue-green-step-0.png)
- 
- 
 ### Step 1 - Deploy new version
  
 We will deploy a new version v1.1.1
@@ -166,10 +162,11 @@ If the promotion analysis goes well, we can see that offline applications have t
 Functional testing users can execute `Smoke tests` to validate this new v1.1.1 version.
 
 We have to be careful with those tests in a production environment because the product microservice will call the online dependencies.
+If this dependency is for example a production DB we will create the things that our `Smoke tests` do.
  
 ### Step 2 - Promote new version
  
-We are going to open the new version to final users. **Argo Rollouts** will just change the service to use the new release (replicaset).  We also `minimize downtime` because it just changes the service label. And after `scaleDownDelaySeconds` **Argo Rollouts** will delete the first release (v1.0.1)
+We are going to open the new version to final users. **Argo Rollouts** will just change the service to use the new release (ReplicaSet).  We also `minimize downtime` because it just changes the service label. And after `scaleDownDelaySeconds` **Argo Rollouts** will delete the first release (v1.0.1)
 
 ```
 kubectl argo rollouts promote products
