@@ -1,0 +1,14 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: {{ include "discounts.fullname" . }}-analysis-template
+  labels:
+    {{- include "discounts.labels" . | nindent 4 }}
+spec:
+  metrics:
+  - name: {{ include "discounts.fullname" . }}-webmetric
+    successCondition: result == 'UP'
+    provider:
+      web:
+        url: "http://{{ .Values.rollouts.blueGreen.previewService }}.{{ .Values.global.namespace }}.svc.cluster.local:8080/q/health/ready"
+        jsonPath: "{$.status}" 

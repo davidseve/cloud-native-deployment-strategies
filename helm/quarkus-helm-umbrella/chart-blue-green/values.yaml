@@ -1,7 +1,3 @@
-# Default values for discounts.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
-
 discounts-blue:
   replicaCount: 2
   nameOverride: discounts-umbrella
@@ -45,8 +41,6 @@ products-blue:
   fullnameOverride: "products-blue"
   log:
     level: DEBUG
-  discountsApi:
-    url: http://discounts-umbrella-online:8080
   version: blue
   image:
     tag: "latest"
@@ -59,8 +53,6 @@ products-green:
   fullnameOverride: "products-green"
   log:
     level: DEBUG
-  discountsApi:
-    url: http://discounts-umbrella-online:8080
   version: green
   image:
     tag: "latest"

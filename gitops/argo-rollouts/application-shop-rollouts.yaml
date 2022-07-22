@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: shop
+  namespace: openshift-gitops
+spec:
+  destination:
+    name: ''
+    namespace: gitops
+    server: 'https://kubernetes.default.svc'
+  source:
+    path: helm/quarkus-helm-umbrella/chart-blue-green
+    repoURL:  https://github.com/davidseve/cloud-native-blue-green.git
+    targetRevision: rollouts
+    helm:
+      valueFiles:
+        - values/values-rollouts.yaml
+  project: default
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: false
