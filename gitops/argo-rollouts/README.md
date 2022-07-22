@@ -1,5 +1,4 @@
 # Cloud Native Argo Rollouts Blue/Green Deployment
-## Demo!!
  
 First step is to fork this repository, you will have to do some changes and commits. You should clone your forked repository in your local.
  
@@ -18,7 +17,7 @@ oc apply -f gitops/gitops-operator.yaml
  
 Once OpenShift GitOps is installed, an instance of Argo CD is automatically installed on the cluster in the `openshift-gitops` namespace and a link to this instance is added to the application launcher in OpenShift Web Console.
  
-![Application Launcher](images/gitops-link.png)
+![Application Launcher](../../images/gitops-link.png)
  
 ### Log into Argo CD dashboard
  
@@ -30,9 +29,9 @@ oc extract secret/openshift-gitops-cluster -n openshift-gitops --to=-
  
 Click on Argo CD from the OpenShift Web Console application launcher and then log into Argo CD with `admin` username and the password retrieved from the previous step.
  
-![Argo CD](images/ArgoCD-login.png)
+![Argo CD](../../images/ArgoCD-login.png)
  
-![Argo CD](images/ArgoCD-UI.png)
+![Argo CD](../../images/ArgoCD-UI.png)
  
 ### Configure OpenShift with Argo CD
  
@@ -90,7 +89,7 @@ We have split a `Cloud Native` Blue/Green deployment in two steps:
 We have already deployed the product's version v1.0.1, and we have ready to use a new product's version v1.1.1 that has a new `description` attribute.
  
 This is our current status:
-![Shop initial status](images/blue-green-step-0.png)
+![Shop initial status](../../images/blue-green-step-0.png)
  
  
 ### Step 1 - Deploy new version
@@ -113,9 +112,9 @@ git push origin rollouts
 ```
 
  ArgoCD will refresh the status after some minutes. If you don't want to wait you can refresh it manually from ArgoCD UI.
-![Refresh Shop](images/ArgoCD-Shop-Refresh.png)
+![Refresh Shop](../../images/ArgoCD-Shop-Refresh.png)
  
-Argo Rollouts will automatically deploy the new products version and execute the promotion analysis. 
+**Argo Rollouts** will automatically deploy the new products version and execute the promotion analysis. 
  
  
 If the promotion analysis goes well, we can see that offline applications have the version v1.1.1 and the new attribute description, but the online has not changed.
@@ -141,7 +140,7 @@ We have to be careful with those tests in a production environment because the p
  
 ### Step 2 - Promote new version
  
-We are going to open the new version to final users. Argo Rollouts will just change the service to use the new release (replicaset).  We also `minimize downtime` because it just changes the service label. And after `scaleDownDelaySeconds` Argo Rollouts will delete the first release (v1.0.1)
+We are going to open the new version to final users. **Argo Rollouts** will just change the service to use the new release (replicaset).  We also `minimize downtime` because it just changes the service label. And after `scaleDownDelaySeconds` **Argo Rollouts** will delete the first release (v1.0.1)
 
 ```
 kubectl argo rollouts promote products
