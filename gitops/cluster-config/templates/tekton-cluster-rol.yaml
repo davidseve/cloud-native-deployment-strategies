@@ -1,3 +1,4 @@
+{{- if not .Values.pipeline.enabled }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -7,3 +8,4 @@ rules:
   resources: ["clusterinterceptors"]
   verbs: ["get", "watch", "list"]
 ---
+{{ end }}

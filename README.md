@@ -181,7 +181,8 @@ In the current Git repository, the [gitops/cluster-config](gitops/cluster-config
 Let's configure Argo CD to recursively sync the content of the [gitops/cluster-config](gitops/cluster-config/) directory to the OpenShift cluster.
 
 But first we have to set your GutHub credentials. Please edit the file gitops/application-cluster-config.yaml. It should looks like:
-```
+
+```yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -237,7 +238,7 @@ oc secrets link pipeline github-token -n gitops
 We are going to create the application `shop`, that we are going to use to test blue/green deployment.
 
 ```
-oc apply -f gitops/application-shop-blue-green.yaml -n openshift-gitops 
+oc apply -f gitops/application-shop-blue-green.yaml
 ```
 
 Looking at the Argo CD dashboard, you would notice that we have a new `shop` application.
@@ -247,7 +248,7 @@ Looking at the Argo CD dashboard, you would notice that we have a new `shop` app
 
 ## Test Shop application
  
-We have deployed the `shop-blue-green` with ArgoCD. We can test that it is up and running.
+We have deployed the `shop` with ArgoCD. We can test that it is up and running.
  
 We have to get the Online route
 ```

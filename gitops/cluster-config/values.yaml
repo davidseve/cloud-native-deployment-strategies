@@ -1,5 +1,9 @@
 istio:
   enabled: false
+pipeline:
+  enabled: true
+bluegreen:
+  enabled: true
 github:
   token: changeme
   user: changeme

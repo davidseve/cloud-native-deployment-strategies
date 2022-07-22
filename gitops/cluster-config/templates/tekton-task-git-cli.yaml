@@ -1,4 +1,4 @@
----
+{{- if not .Values.pipeline.enabled }}
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
@@ -146,3 +146,4 @@ spec:
         fi
         # Make sure we don't add a trailing newline to the result!
         echo -n "$RESULT_SHA" > $(results.commit.path)
+{{ end }}

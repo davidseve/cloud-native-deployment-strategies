@@ -1,4 +1,4 @@
----
+{{- if not .Values.pipeline.enabled }}
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
@@ -54,3 +54,4 @@ spec:
         export KUBECONFIG=$(workspaces.kubeconfig-dir.path)/kubeconfig
 
         $(params.SCRIPT)
+{{ end }}
