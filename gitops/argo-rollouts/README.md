@@ -1,5 +1,34 @@
 # Cloud Native Argo Rollouts Blue/Green Deployment
+## Shop application
  
+We are going to use very simple applications to test Blue/Green deployment. We have create two Quarkus applications `Products` and `Discounts`
+ 
+![Shop Application](../../images/Shop.png)
+ 
+`Products` call `Discounts` to get the product`s discount and expose an API with a list of products with its discounts.
+ 
+## Shop Blue/Green
+ 
+To achieve blue/green deployment with `Cloud Native` applications we have designed this architecture.
+ 
+OpenShift Components - Online
+- Routes and Services declared with suffix -online
+- Routes mapped only to the online services
+- Services mapped to the deployment.
+ 
+OpenShift Components - Offline
+- Routes and Services declared with suffix -offline
+- Routes mapped only to the offline services
+- Services mapped to the deployment
+
+ 
+## Shop Umbrella Helm Chart
+ 
+One of the best ways to package `Cloud Native` applications is `Helm`. In blue/green deployment it makes even more sense.
+We have created a chart for each application that does not know anything about blue/green. Then we pack everything together in an umbrella helm chart.
+
+## Demo!!
+
 First step is to fork this repository, you will have to do some changes and commits. You should clone your forked repository in your local.
  
 ### Install OpenShift GitOps
