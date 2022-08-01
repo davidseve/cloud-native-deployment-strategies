@@ -28,10 +28,10 @@ products-blue:
       steps:
         - setWeight: 25
         - pause:
-            duration: 1m
+            duration: 30s
         - setWeight: 50
         - pause:
-            duration: 1m
+            duration: 30s
 global:
   namespace: test
   #needed for rollouts analysis
