@@ -1,0 +1,40 @@
+tags:
+  discounts-green: false
+  products-green: false
+
+discounts-blue:
+  fullnameOverride: "discounts"
+  image:
+    tag: v1.0.1
+  rollouts:
+    enabled: true
+    blueGreen:
+      enabled: true
+      activeService: "discounts-umbrella-online"
+      previewService: "discounts-umbrella-offline"
+    
+products-blue:
+  mode: online
+  image:
+    tag: v1.0.1
+  replicaCount: 2
+  fullnameOverride: "products"
+  rollouts:
+    enabled: true
+    blueGreen:
+      enabled: true
+      activeService: "products-umbrella-online"
+      previewService: "products-umbrella-offline"
+
+global:
+  namespace: test
+  #needed for rollouts analysis
+
+
+
+
+
+
+
+
+

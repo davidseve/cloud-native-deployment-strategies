@@ -8,8 +8,6 @@ jaeger:
   endpoint: http://jaeger-collector.blue-green.svc:14268/api/traces
 log:
   level: INFO 
-discountsApi:
-  url: http://discounts:8080
 
 fullnameOverride: ""
 
@@ -77,3 +75,14 @@ tolerations: []
 
 affinity: {}
 
+#needed for rollouts analysis
+global:
+  namespace: changeme
+
+rollouts:
+  enabled: false
+  blueGreen:
+    enabled: false
+    activeService: changeme
+    previewService: changeme
+    autoPromotionEnabled: false

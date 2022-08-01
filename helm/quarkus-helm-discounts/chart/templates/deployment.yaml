@@ -1,5 +1,10 @@
+{{- if .Values.rollouts.enabled }}
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+{{- else }}
 apiVersion: apps/v1
 kind: Deployment
+{{- end }}
 metadata:
   name: {{ include "discounts.fullname" . }}
   labels:
@@ -7,6 +12,7 @@ metadata:
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
+  revisionHistoryLimit: 2
   {{- end }}
   selector:
     matchLabels:
@@ -71,9 +77,6 @@ spec:
             timeoutSeconds: 10
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          volumeMounts:
-          - mountPath: "/var/run/secret/kubernetes.io/ssl"
-            name: {{ include "discounts.fullname" $ }}-secret
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -86,7 +89,13 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      volumes:
-      - name: {{ include "discounts.fullname" $ }}-secret
-        secret:
-          secretName: {{ include "discounts.fullname" $ }}-secret
+{{- if .Values.rollouts.blueGreen.enabled }}
+  strategy:
+    blueGreen: 
+      prePromotionAnalysis:
+        templates:
+        - templateName: {{ include "discounts.fullname" . }}-analysis-template
+      activeService: {{ .Values.rollouts.blueGreen.activeService }}
+      previewService: {{ .Values.rollouts.blueGreen.previewService }}
+      autoPromotionEnabled: {{ .Values.rollouts.blueGreen.autoPromotionEnabled }}
+{{- end }}

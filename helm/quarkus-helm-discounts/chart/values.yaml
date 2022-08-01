@@ -84,6 +84,17 @@ tolerations: []
 
 affinity: {}
 
+#needed for rollouts analysis
+global:
+  namespace: changeme
+
+rollouts:
+  enabled: false
+  blueGreen:
+    enabled: false
+    activeService: changeme
+    previewService: changeme
+    autoPromotionEnabled: false
 
 
 
