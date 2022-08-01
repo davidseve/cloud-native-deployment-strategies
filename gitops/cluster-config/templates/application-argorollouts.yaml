@@ -1,8 +1,8 @@
-{{- if not .Values.rollouts.enabled }}
+{{- if not .Values.argorollouts.enabled }}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: argorollouts
+  name: argo-rollouts
   namespace: openshift-gitops
 spec:
   destination:
@@ -19,4 +19,16 @@ spec:
     automated:
       prune: false
       selfHeal: false
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: istio-helm-repo
+  namespace: openshift-gitops
+  labels:
+    argocd.argoproj.io/secret-type: repository
+stringData:
+  url: https://argoproj.github.io/argo-helm
+  name: argo-helm
+  type: helm
 {{ end }}
