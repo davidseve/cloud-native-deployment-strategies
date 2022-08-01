@@ -99,3 +99,8 @@ spec:
       previewService: {{ .Values.rollouts.blueGreen.previewService }}
       autoPromotionEnabled: {{ .Values.rollouts.blueGreen.autoPromotionEnabled }}
 {{- end }}
+{{- with .Values.rollouts.canary }}
+  strategy:
+    canary:
+      {{- toYaml .| nindent 6 }}
+{{- end }}
