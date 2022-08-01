@@ -63,7 +63,7 @@ Let's configure Argo CD to recursively sync the content of the [gitops/cluster-c
 Execute this command to add a new Argo CD application that syncs a Git repository containing cluster configurations with the OpenShift cluster.
  
 ```
-oc apply -f gitops/istio/application-cluster-config.yaml
+oc apply -f gitops/service-mesh/application-cluster-config.yaml
 ```
  
 Looking at the Argo CD dashboard, you would notice that an application has been created.
@@ -75,7 +75,7 @@ You can click on the `cluster-configuration` application to check the details of
 We are going to create the application `shop`, that we are going to use to test canary deployment. It is important to wait till **OpenShift Service Mesh** installation has finished, if not the Istio sidecar will not be injected in our applications.
 
 ```
-oc apply -f gitops/istio/application-shop-mesh.yaml
+oc apply -f gitops/service-mesh/application-shop-mesh.yaml
 ```
 
 Looking at the Argo CD dashboard, you would notice that we have a new `shop` application.
