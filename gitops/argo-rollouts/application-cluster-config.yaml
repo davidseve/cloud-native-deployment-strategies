@@ -15,15 +15,11 @@ spec:
     helm:
      parameters:
       - name: "bluegreen.enabled"
-        value: false
+        value: 'false'
       - name: "pipeline.enabled"
-        value: false
-      - name: "github.token"
-        value: changeme
-      - name: "github.user"
-        value: changeme
-      - name: "github.mail"
-        value: changeme
+        value: 'false'
+      - name: "argorollouts.enabled"
+        value: 'true'
   project: default
   syncPolicy:
     automated:
