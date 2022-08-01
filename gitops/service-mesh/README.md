@@ -56,7 +56,9 @@ In the current Git repository, the [gitops/cluster-config](gitops/cluster-config
 - namespaces `gitops`.
 - role binding for ArgoCD to the namespace `gitops`.
 - **OpenShift Service Mesh**
-- TODO
+- **Kiali Operator**
+- **OpenShift Elasticsearch Operator**
+- **Red Hat OpenShift distributed tracing platform**
  
 Let's configure Argo CD to recursively sync the content of the [gitops/cluster-config](gitops/cluster-config/) directory to the OpenShift cluster.
  
@@ -96,6 +98,6 @@ oc get routes istio-ingressgateway -n istio-system --template='http://{{.spec.ho
 To delete all the thing that we have done for the demo you have to_
 - In GitHub delete the branch `rollouts`
 - In ArgoCD delete the application `cluster-configuration` and `shop`
-- In Openshift, go to project `openshift-operators` and delete the installed operators **Openshift GitOps**, **OpenShift Service Mesh**
+- In Openshift, go to project `openshift-operators` and delete the installed operators **Openshift GitOps**, **OpenShift Service Mesh**, **Kiali Operator**, **OpenShift Elasticsearch Operator**, **Red Hat OpenShift distributed tracing platform**
 
 
