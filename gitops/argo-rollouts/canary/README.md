@@ -87,6 +87,15 @@ We have to get the Online route
 echo "$(oc get routes products-umbrella-online -n gitops --template='http://{{.spec.host}}')/products"
 ```
 
+We can also see the rollout`s status[^note].
+
+[^note]:
+    Argo Rollouts offers a Kubectl plugin to enrich the experience with Rollouts https://argoproj.github.io/argo-rollouts/installation/#kubectl-plugin-installation 
+
+```
+kubectl argo rollouts get rollout products --watch -n gitops
+```
+
  
 ## Products Canary deployment
  
