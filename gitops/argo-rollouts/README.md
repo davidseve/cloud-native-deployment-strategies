@@ -61,7 +61,6 @@ Click on Argo CD from the OpenShift Web Console application launcher and then lo
  
 ![Argo CD](../../images/ArgoCD-login.png)
  
-![Argo CD](../../images/ArgoCD-UI.png)
  
 ### Configure OpenShift with Argo CD
  
@@ -107,6 +106,14 @@ And the Offline route
 ```
 echo "$(oc get routes products-umbrella-offline -n gitops --template='http://{{.spec.host}}')/products"
 ```
+We can also see the rollout`s status[^note].
+
+[^note]:
+    Argo Rollouts offers a Kubectl plugin to enrich the experience with Rollouts https://argoproj.github.io/argo-rollouts/installation/#kubectl-plugin-installation 
+
+```
+kubectl argo rollouts get rollout products --watch -n gitops
+```
 
  
 ## Products Blue/Green deployment
@@ -131,7 +138,7 @@ products-blue:
     tag: v1.1.1
 ```
 
-And push the chages
+And push the changes
 ```
 git add .
 git commit -m "Change products version to v1.1.1"
@@ -168,15 +175,14 @@ If this dependency is for example a production DB we will create the things that
  
 ### Step 2 - Promote new version
  
-We are going to open the new version to final users. **Argo Rollouts** will just change the service to use the new release (ReplicaSet).  We also `minimize downtime` because it just changes the service label. And after `scaleDownDelaySeconds` **Argo Rollouts** will delete the first release (v1.0.1)[^note].
+We are going to open the new version to final users. **Argo Rollouts** will just change the service to use the new release (ReplicaSet).  We also `minimize downtime` because it just changes the service label. And after `scaleDownDelaySeconds` **Argo Rollouts** will delete the first release (v1.0.1).
 
 ```
 kubectl argo rollouts promote products
 ```
 
  
-[^note]:
-    Argo Rollouts offers a Kubectl plugin to enrich the experience with Rollouts https://argoproj.github.io/argo-rollouts/installation/#kubectl-plugin-installation 
+
 
 **We have in the online environment the new version v1.1.1!!!**
 ```json
