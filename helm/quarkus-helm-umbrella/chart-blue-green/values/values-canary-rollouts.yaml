@@ -19,7 +19,7 @@ discounts-blue:
 products-blue:
   mode: online
   image:
-    tag: v1.0.1
+    tag: v1.1.1
   replicaCount: 4
   fullnameOverride: "products"
   rollouts:
