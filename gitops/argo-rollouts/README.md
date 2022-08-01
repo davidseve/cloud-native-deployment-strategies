@@ -70,6 +70,7 @@ We are going to follow, as much as we can, a GitOps methodology in this demo. So
 In the current Git repository, the [gitops/cluster-config](gitops/cluster-config/) directory contains OpenShift cluster configurations such as:
 - namespaces `gitops`.
 - role binding for ArgoCD to the namespace `gitops`.
+- Argo Rollouts project.
  
 Let's configure Argo CD to recursively sync the content of the [gitops/cluster-config](gitops/cluster-config/) directory to the OpenShift cluster.
  
