@@ -1,0 +1,39 @@
+tags:
+  discounts-green: false
+  products-green: false
+
+discounts-blue:
+  fullnameOverride: "discounts"
+  image:
+    tag: v1.0.1
+  rollouts:
+    enabled: true
+    canary:
+      enabled: true
+    
+products-blue:
+  mode: online
+  image:
+    tag: v1.0.1
+  replicaCount: 4
+  fullnameOverride: "products"
+  rollouts:
+    enabled: true
+    canary:
+      steps:
+        - setWeight: 50
+        - pause:
+            duration: 1m
+
+global:
+  namespace: test
+  #needed for rollouts analysis
+
+
+
+
+
+
+
+
+
