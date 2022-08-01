@@ -4,7 +4,7 @@ metadata:
   name: openshift-gitops-operator
   namespace: openshift-operators
 spec:
-  channel: gitops-1.6
+  channel: gitops-1.4 #using this version because of this issues https://github.com/argoproj/argo-cd/issues/8820
   installPlanApproval: Automatic
   name: openshift-gitops-operator
   source: redhat-operators
