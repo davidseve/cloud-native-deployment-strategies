@@ -1,4 +1,5 @@
 # Cloud Native Argo Rollouts Blue/Green Deployment
+
 ## Shop application
  
 We are going to use very simple applications to test Blue/Green deployment. We have create two Quarkus applications `Products` and `Discounts`
@@ -166,11 +167,15 @@ If this dependency is for example a production DB we will create the things that
  
 ### Step 2 - Promote new version
  
-We are going to open the new version to final users. **Argo Rollouts** will just change the service to use the new release (ReplicaSet).  We also `minimize downtime` because it just changes the service label. And after `scaleDownDelaySeconds` **Argo Rollouts** will delete the first release (v1.0.1)
+We are going to open the new version to final users. **Argo Rollouts** will just change the service to use the new release (ReplicaSet).  We also `minimize downtime` because it just changes the service label. And after `scaleDownDelaySeconds` **Argo Rollouts** will delete the first release (v1.0.1)[^note].
 
 ```
 kubectl argo rollouts promote products
 ```
+
+ 
+[^note]:
+    Argo Rollouts offers a Kubectl plugin to enrich the experience with Rollouts https://argoproj.github.io/argo-rollouts/installation/#kubectl-plugin-installation 
 
 **We have in the online environment the new version v1.1.1!!!**
 ```json
