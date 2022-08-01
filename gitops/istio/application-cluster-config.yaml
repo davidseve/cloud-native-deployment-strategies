@@ -11,21 +11,15 @@ spec:
   source:
     path: gitops/cluster-config
     repoURL: 'https://github.com/davidseve/cloud-native-blue-green.git'
-    targetRevision: HEAD
+    targetRevision: rollouts
     helm:
      parameters:
-      - name: "github.token"
-        value: changeme
-      - name: "github.user"
-        value: changeme
-      - name: "github.mail"
-        value: changeme
       - name: "istio.enabled"
         value: "true"
       - name: "bluegreen.enabled"
-        value: false
+        value: "false"
       - name: "pipeline.enabled"
-        value: false
+        value: "false"
   project: default
   syncPolicy:
     automated:
