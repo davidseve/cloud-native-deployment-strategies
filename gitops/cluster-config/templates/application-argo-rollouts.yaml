@@ -1,24 +1,5 @@
 {{- if .Values.argorollouts.enabled }}
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: argo-rollouts
-  namespace: openshift-gitops
-spec:
-  destination:
-    name: ''
-    namespace: gitops
-    server: 'https://kubernetes.default.svc'
-  source:
-    path: ''
-    repoURL: 'https://argoproj.github.io/argo-helm'
-    targetRevision: 2.18.0
-    chart: argo-rollouts
-  project: default
-  syncPolicy:
-    automated:
-      prune: false
-      selfHeal: false
+
 ---
 apiVersion: v1
 kind: Secret
