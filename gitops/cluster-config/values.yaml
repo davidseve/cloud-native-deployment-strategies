@@ -4,6 +4,8 @@ pipeline:
   enabled: true
 bluegreen:
   enabled: true
+argorollouts:
+  enabled: false
 github:
   token: changeme
   user: changeme
