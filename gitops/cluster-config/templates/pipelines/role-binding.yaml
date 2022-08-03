@@ -4,6 +4,8 @@ kind: RoleBinding
 metadata:
   name: gitops-edit-pipeline
   namespace: gitops
+  annotations:
+    argocd.argoproj.io/sync-wave: "5"
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
