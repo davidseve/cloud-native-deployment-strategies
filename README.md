@@ -235,7 +235,31 @@ oc secrets link pipeline github-token -n gitops
 ```
 ### Create Shop application
 
-We are going to create the application `shop`, that we are going to use to test blue/green deployment.
+We are going to create the application `shop`, that we are going to use to test blue/green deployment. Because we will make changes in the application's GitHub repository, we have to use the repository that you have just fork. Please edit the file `gitops/application-shop-blue-green.yaml` and set you own repository.
+```
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: shop
+  namespace: openshift-gitops
+spec:
+  destination:
+    name: ''
+    namespace: gitops
+    server: 'https://kubernetes.default.svc'
+  source:
+    path: helm/quarkus-helm-umbrella/chart-blue-green
+    repoURL:  https://github.com/change_me/cloud-native-blue-green.git
+    targetRevision: blue-green
+    helm:
+      valueFiles:
+        - values/values.yaml
+  project: default
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: false
+```
 
 ```
 oc apply -f gitops/application-shop-blue-green.yaml
