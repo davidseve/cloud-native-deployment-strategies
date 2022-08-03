@@ -227,12 +227,6 @@ You can click on the `cluster-configuration` application to check the details of
  
 ![Argo CD - Cluster Config](images/application-cluster-config-sync.png)
 
-Using **Openshift Pipelines**, we have created a pipeline to manage the Blue/Green deployment.
-Because the pipeline push that changes done in the helm values on each step. **Openshift Pipelines** needs a **GitHub** token to do the push. We don`t want to set your **GitHub** token on git, we have to do this steps manually and not with GitOps.
-
-```
-oc secrets link pipeline github-token -n gitops
-```
 ### Create Shop application
 
 We are going to create the application `shop`, that we are going to use to test blue/green deployment. Because we will make changes in the application's GitHub repository, we have to use the repository that you have just fork. Please edit the file `gitops/application-shop-blue-green.yaml` and set you own repository.
