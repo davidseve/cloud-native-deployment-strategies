@@ -15,11 +15,11 @@ spec:
     helm:
      parameters:
       - name: "github.token"
-        value: "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"
+        value: changeme
       - name: "github.user"
-        value: "davidseve"
+        value: changeme
       - name: "github.mail"
-        value: "davidseve16@gmail.com"
+        value: changeme
   project: default
   syncPolicy:
     automated:
