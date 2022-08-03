@@ -594,8 +594,6 @@ kind: PersistentVolumeClaim
 metadata:
   namespace: gitops
   name: workspace-pvc-shop-cd-new-version
-  annotations:
-    argocd.argoproj.io/sync-wave: "10"
 spec:
   accessModes:
   - ReadWriteOnce
