@@ -10,7 +10,7 @@ spec:
     server: 'https://kubernetes.default.svc'
   source:
     path: helm/quarkus-helm-umbrella/chart-blue-green
-    repoURL:  https://github.com/davidseve/cloud-native-blue-green.git
+    repoURL:  https://github.com/changeme/cloud-native-blue-green.git
     targetRevision: blue-green
     helm:
       valueFiles:

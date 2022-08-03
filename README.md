@@ -180,7 +180,7 @@ In the current Git repository, the [gitops/cluster-config](gitops/cluster-config
  
 Let's configure Argo CD to recursively sync the content of the [gitops/cluster-config](gitops/cluster-config/) directory to the OpenShift cluster.
 
-But first we have to set your GutHub credentials. Please edit the file gitops/application-cluster-config.yaml. It should looks like:
+But first we have to set your GutHub credentials. Please edit the file `gitops/application-cluster-config.yaml`. It should looks like:
 
 ```yaml
 apiVersion: argoproj.io/v1alpha1
