@@ -11,17 +11,17 @@ spec:
   source:
     path: gitops/cluster-config
     repoURL: 'https://github.com/davidseve/cloud-native-blue-green.git'
-    targetRevision: organize
+    targetRevision: HEAD
     helm:
      parameters:
       - name: "github.token"
-        value: "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"
+        value: changeme
       - name: "github.user"
-        value: "davidseve"
+        value: changeme
       - name: "github.mail"
-        value: "davidseve16@gmail.com"
+        value: changeme
       - name: "github.repository"
-        value: davidseve
+        value: changeme
   project: default
   syncPolicy:
     automated:
