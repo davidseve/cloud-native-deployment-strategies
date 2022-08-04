@@ -12,9 +12,6 @@ spec:
     value: "v1.1.1"
   - name: STEP
     value: "scale-down-offline"
-  - name: SOURCE_GIT_REVISION
-    value: blue-green
-  - name: GIT_USER_NAME
   workspaces:
   - name: app-source
     persistentVolumeClaim:

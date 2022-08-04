@@ -10,8 +10,6 @@ spec:
     value: products
   - name: STEP
     value: "switch"
-  - name: SOURCE_GIT_REVISION
-    value: blue-green
   workspaces:
   - name: app-source
     persistentVolumeClaim:
