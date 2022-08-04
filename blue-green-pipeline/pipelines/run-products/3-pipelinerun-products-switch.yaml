@@ -12,14 +12,6 @@ spec:
     value: "switch"
   - name: SOURCE_GIT_REVISION
     value: blue-green
-  - name: GIT_USER_NAME
-    value: davidseve
-  - name: GIT_USER_EMAIL
-    value: davidseve16@gmail.com
- # If we add E2E test validations
- # - name: NEW_IMAGE_TAG
- #   value: "v1.1.1"
-
   workspaces:
   - name: app-source
     persistentVolumeClaim:

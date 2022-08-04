@@ -14,10 +14,6 @@ spec:
     value: "2"
   - name: SOURCE_GIT_REVISION
     value: blue-green
-  - name: GIT_USER_NAME
-    value: davidseve
-  - name: GIT_USER_EMAIL
-    value: davidseve16@gmail.com
   workspaces:
   - name: app-source
     persistentVolumeClaim:

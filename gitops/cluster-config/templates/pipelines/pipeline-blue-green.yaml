@@ -391,36 +391,6 @@ spec:
     workspaces:
     - name: source
       workspace: app-source
-{{/*
-  - name: get-application-url-commit-switch
-    runAfter:
-    - commit-switch
-    taskRef:
-      name: openshift-client
-    params:
-    - name: SCRIPT
-      value: |
-        oc get routes $(params.APP)-umbrella-online -n $(params.NAMESPACE) --template='http://{{.spec.host}}/$(params.APP)' > $(workspaces.manifest-dir.path)/url
-        cat $(workspaces.manifest-dir.path)/url
-    workspaces:
-    - name: manifest-dir
-      workspace: app-source
-
-  - name: e2e-test-commit-switch
-    runAfter:
-    - get-application-url-commit-switch
-    params:
-      - name: TARGET_VERSION
-        value: $(params.NEW_IMAGE_TAG)
-      - name: JQ_PATH
-        value: $(params.JQ_PATH)
-    taskRef:
-      name: shop-e2e-test
-    timeout: "0h5m30s"
-    workspaces:
-    - name: source
-      workspace: app-source
-*/}}
   - name: change-scale-down-offline
     when:
       - input: "$(params.STEP)"
