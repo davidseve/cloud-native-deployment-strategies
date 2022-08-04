@@ -66,12 +66,12 @@ Click on Argo CD from the OpenShift Web Console application launcher and then lo
  
 We are going to follow, as much as we can, a GitOps methodology in this demo. So we will have everything in our Git repository and use **ArgoCD** to deploy it in the cluster.
  
-In the current Git repository, the [gitops/cluster-config](gitops/cluster-config/) directory contains OpenShift cluster configurations such as:
+In the current Git repository, the [gitops/cluster-config](../gitops/cluster-config/) directory contains OpenShift cluster configurations such as:
 - namespaces `gitops`.
 - role binding for ArgoCD to the namespace `gitops`.
 - Argo Rollouts project.
  
-Let's configure Argo CD to recursively sync the content of the [gitops/cluster-config](gitops/cluster-config/) directory to the OpenShift cluster.
+Let's configure Argo CD to recursively sync the content of the [gitops/cluster-config](../gitops/cluster-config/) directory to the OpenShift cluster.
  
 Execute this command to add a new Argo CD application that syncs a Git repository containing cluster configurations with the OpenShift cluster.
  
