@@ -4,7 +4,7 @@
  
 We are going to use very simple applications to test Blue/Green deployment. We have create two Quarkus applications `Products` and `Discounts`
  
-![Shop Application](../../images/Shop.png)
+![Shop Application](../images/Shop.png)
  
 `Products` call `Discounts` to get the product`s discount and expose an API with a list of products with its discounts.
  
@@ -47,7 +47,7 @@ oc apply -f gitops/gitops-operator.yaml
  
 Once OpenShift GitOps is installed, an instance of Argo CD is automatically installed on the cluster in the `openshift-gitops` namespace and a link to this instance is added to the application launcher in OpenShift Web Console.
  
-![Application Launcher](../../images/gitops-link.png)
+![Application Launcher](../images/gitops-link.png)
  
 ### Log into Argo CD dashboard
  
@@ -59,7 +59,7 @@ oc extract secret/openshift-gitops-cluster -n openshift-gitops --to=-
  
 Click on Argo CD from the OpenShift Web Console application launcher and then log into Argo CD with `admin` username and the password retrieved from the previous step.
  
-![Argo CD](../../images/ArgoCD-login.png)
+![Argo CD](../images/ArgoCD-login.png)
  
  
 ### Configure OpenShift with Argo CD
@@ -76,7 +76,7 @@ Let's configure Argo CD to recursively sync the content of the [gitops/cluster-c
 Execute this command to add a new Argo CD application that syncs a Git repository containing cluster configurations with the OpenShift cluster.
  
 ```
-oc apply -f gitops/argo-rollouts/application-cluster-config.yaml
+oc apply -f blue-green-argo-rollouts/application-cluster-config.yaml
 ```
  
 Looking at the Argo CD dashboard, you would notice that an application has been created.
@@ -88,7 +88,7 @@ You can click on the `cluster-configuration` application to check the details of
 We are going to create the application `shop`, that we are going to use to test blue/green deployment.
 
 ```
-oc apply -f gitops/argo-rollouts/application-shop-blue-green-rollouts.yaml
+oc apply -f blue-green-argo-rollouts/application-shop-blue-green-rollouts.yaml
 ```
 
 Looking at the Argo CD dashboard, you would notice that we have a new `shop` application.
@@ -146,7 +146,7 @@ git push origin rollouts
 ```
 
  ArgoCD will refresh the status after some minutes. If you don't want to wait you can refresh it manually from ArgoCD UI.
-![Refresh Shop](../../images/ArgoCD-Shop-Refresh.png)
+![Refresh Shop](../images/ArgoCD-Shop-Refresh.png)
  
 **Argo Rollouts** will automatically deploy the new products version and execute the promotion analysis. 
  
