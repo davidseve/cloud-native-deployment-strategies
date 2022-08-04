@@ -1,4 +1,4 @@
-# Cloud Native Canary Deployment with Openshift Service Mesh
+# Cloud Native Canary Deployment Strategy with Openshift Service Mesh
 
 | :warning: WARNING          |
 |:---------------------------|

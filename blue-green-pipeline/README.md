@@ -1,4 +1,4 @@
-# Cloud Native Blue/Green Deployment
+# Cloud Native Blue/Green Deployment Strategy
  
 ## Introduction
  

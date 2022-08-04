@@ -1,4 +1,4 @@
-# Cloud Native Argo Rollouts Blue/Green Deployment
+# Cloud Native Argo Rollouts Blue/Green Deployment Strategy
 
 | :warning: WARNING          |
 |:---------------------------|
