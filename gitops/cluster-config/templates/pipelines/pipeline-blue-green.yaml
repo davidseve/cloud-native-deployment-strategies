@@ -14,7 +14,7 @@ spec:
     description: The application deployment name
   - name: SOURCE_GIT_URL
     type: string
-    default: https://github.com/davidseve/cloud-native-blue-green
+    default: https://github.com/{{ .Values.github.repository }}/cloud-native-blue-green
     description: The application git repository url
   - name: SOURCE_GIT_REVISION
     type: string

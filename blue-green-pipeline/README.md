@@ -205,6 +205,8 @@ spec:
         value: "davidseve"
       - name: "github.mail"
         value: "davidseve16@gmail.com"
+      - name: "github.repository"
+        value: davidseve
   project: default
   syncPolicy:
     automated:
@@ -229,8 +231,9 @@ You can click on the `cluster-configuration` application to check the details of
 
 ### Create Shop application
 
-We are going to create the application `shop`, that we are going to use to test blue/green deployment. Because we will make changes in the application's GitHub repository, we have to use the repository that you have just fork. Please edit the file `gitops/application-shop-blue-green.yaml` and set you own repository.
-```
+We are going to create the application `shop`, that we are going to use to test blue/green deployment. Because we will make changes in the application's GitHub repository, we have to use the repository that you have just fork. Please edit the file `blue-green-pipeline/application-shop-blue-green.yaml` and set you own GitHub repository in the `reportURL`.
+
+```yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
