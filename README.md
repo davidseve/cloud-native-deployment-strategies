@@ -22,6 +22,17 @@ Those are the different `Cloud Native` deployment strategies that we have develo
 
 ## Deployment Strategies comparison
 
+Those are the advantages and disadvantages of all of those deployment strategies:
+
+Advantages:
+- Minimize downtime
+- Rapid way to rollback
+ 
+Disadvantages:
+- Backwards compatibility
+
+This is the comparison between the different strategy:
+
 | Name                                            | Advantage | Disadvantage |
 | ----------------------------------------------- | --------- | ------------ |
 | Blue/Green Openshift Pipelines                  |           |              |

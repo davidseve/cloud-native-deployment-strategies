@@ -20,7 +20,7 @@ spec:
         value: changeme
       - name: "github.mail"
         value: changeme
-      - name: repository
+      - name: "github.repository"
         value: changeme
   project: default
   syncPolicy:
