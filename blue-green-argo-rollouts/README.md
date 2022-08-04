@@ -1,5 +1,9 @@
 # Cloud Native Argo Rollouts Blue/Green Deployment
 
+| :warning: WARNING          |
+|:---------------------------|
+| Work in progress           |
+
 ## Shop application
  
 We are going to use very simple applications to test Blue/Green deployment. We have create two Quarkus applications `Products` and `Discounts`

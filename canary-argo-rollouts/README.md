@@ -1,5 +1,9 @@
 # Cloud Native Argo Rollouts Canary Deployment
 
+| :warning: WARNING          |
+|:---------------------------|
+| Work in progress           |
+
 ## Shop application
  
 We are going to use very simple applications to test canary deployment. We have create two Quarkus applications `Products` and `Discounts`
