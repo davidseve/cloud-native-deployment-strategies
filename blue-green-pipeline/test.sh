@@ -2,6 +2,7 @@
 rm -rf /tmp/deployment
 mkdir /tmp/deployment
 
+git checkout https://github.com/davidseve/cloud-native-blue-green.git
 git checkout -b blue-green
 git push origin blue-green
 

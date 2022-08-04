@@ -18,7 +18,7 @@ spec:
     description: The application git repository url
   - name: SOURCE_GIT_REVISION
     type: string
-    default: main
+    default: blue-green
     description: The application git repository revision
   - name: CONTEXT_DIR
     type: string

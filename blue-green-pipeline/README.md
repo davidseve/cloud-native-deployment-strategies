@@ -334,15 +334,23 @@ This is our current status:
 ### Step 1 - Deploy new version
  
 We will start deploying a new version v1.1.1 in the offline color. But instead of going manually to see which is the offline color and deploy the new version on it, let's let the pipeline find the current offline color and automatically deploy the new version, with no manual intervention.
-We will use the already created pipelinerun to execute the first step with the new version v1.1.1
+We will use the already created pipelinerun.
+
+Those are the main tasks that are executed:
+- Change new tag image values in the right color and commit the changes.
+- Execute E2E test to validate the new version.
+- Change the application configuration values to use the online services and commit the changes.
+- Scale Up the offline color and commit the changes.
+
 ```
 cd blue-green-pipeline/pipelines/run-products
 oc create -f 1-pipelinerun-products-new-version.yaml -n gitops
 ```
-
 ![Pipeline step 1](../images/pipeline-step-1.png)
- 
-The pipeline has committed the changes in GitHub. ArgoCD will refresh the status after some minutes. If you don't want to wait you can refresh it manually from ArgoCD UI.
+
+This pipeline may take more time because we are doing three different commits, so ArgoCD has to synchronize one in order to continue with the pipeline. If you want to make it faster you can refresh ArgoCD manually after each  `commit-*` step.
+
+
 ![Refresh Shop](../images/ArgoCD-Shop-Refresh.png)
  
 After the pipeline finished and ArgoCD has synchronized the changes this will be the `Shop` status:
@@ -355,7 +363,14 @@ See that offline applications have the version v1.1.1 and the new attribute desc
 {
   "products":[
      {
-        "discountInfo":{...},
+        "discountInfo":{
+            "discounts":[...],
+            "metadata":{
+               "version":"v1.0.1",
+               "colour":"blue",
+               "mode":"online" <--
+            }
+        }, 
         "name":"TV 4K",
         "price":"1500€",
         "description":"The best TV" <--
@@ -370,42 +385,16 @@ See that offline applications have the version v1.1.1 and the new attribute desc
 ```
 Functional testing users can execute `Smoke tests` to validate this new v1.1.1 version.
  
-### Step 2 - Change to online configuration
- 
-Now we are going to change the configuration to online and also scale up the application to be ready for final users requests.
-The pipeline first will change the configuration and scale to 0, second will scale up the application to production number of replicas.
- 
-```
-oc create -f 2-pipelinerun-products-configuration.yaml -n gitops
-```
-This step may take more time because we are doing two different commits, so ArgoCD has to synchronize the first one in order to continue with the pipeline. If you want to make it faster you can refresh ArgoCD manually after the step `commit-configuration`.
-
-![Pipeline step 2](../images/pipeline-step-2.png)
- 
-After the pipeline finished and ArgoCD has synchronized the changes this will be the `Shop` status:
-![Shop step 2](../images/blue-green-step-2.png)
-We can see that now offline `Products` is calling `Discounts` online application.
-```json
-"discountInfo":{
-  "discounts":[...],
-  "metadata":{
-     "version":"v1.0.1",
-     "colour":"blue",
-     "mode":"online" <--
-  }
-}
-```
-At this point the application is ready to receive real traffic.
-### Step 3 - Switch new version to Online
+### Step 2 - Switch new version to Online
  
 We are going to open the new version to final users. The pipeline will just change the service to use the other color. Again the pipeline does this automatically without manual intervention. We also `minimize downtime` because it just changes the service label.
 ```
-oc create -f 3-pipelinerun-products-switch.yaml -n gitops
+oc create -f 2-pipelinerun-products-switch.yaml -n gitops
 ```
 
-![Pipeline step 3](../images/pipeline-step-3.png)
+![Pipeline step 2](../images/pipeline-step-3.png)
 After the pipeline finished and ArgoCD has synchronized the changes this will be the `Shop` status:
-![Shop step 3](../images/blue-green-step-3.png)
+![Shop step 2](../images/blue-green-step-3.png)
 **We have in the online environment the new version v1.1.1!!!**
 ```json
 {
@@ -425,16 +414,16 @@ After the pipeline finished and ArgoCD has synchronized the changes this will be
 }
 ```
  
-### Step 3,5 - Rollback
+### Step 2,5 - Rollback
  
 Imagine that something goes wrong, we know that this never happens but just in case. We can do a very `quick rollback` just undoing the change in the `Products` online service. But are we sure that with all the pressure that we will have at this moment, we will find the right service and change the label to the right color. Let's move this pressure to the pipeline. We can have a pipeline for rollback.
 ```
-oc create -f 3-pipelinerun-products-switch-rollback.yaml -n gitops
+oc create -f 2-pipelinerun-products-switch-rollback.yaml -n gitops
 ```
 
-![Pipeline step 3,5 Rollback](../images/pipeline-step-3-rollback.png)
+![Pipeline step 2,5 Rollback](../images/pipeline-step-3-rollback.png)
 After the pipeline finished and ArgoCD has synchronized the changes this will be the `Shop` status:
-![Shop step 3,5 Rollback](../images/blue-green-step-3-5.png)
+![Shop step 2,5 Rollback](../images/blue-green-step-3-5.png)
 We have version v1.0.1 online again.
 ```json
 {
@@ -455,9 +444,9 @@ We have version v1.0.1 online again.
  
 After fixing the issue we can execute the Switch step again.
 ```
-oc create -f 3-pipelinerun-products-switch.yaml -n gitops
+oc create -f 2-pipelinerun-products-switch.yaml -n gitops
 ```
-![Shop step 3](../images/blue-green-step-3.png)
+![Shop step 2](../images/blue-green-step-3.png)
 We have in the online environment the new version v1.1.1 again.
 ```json
 {
@@ -476,16 +465,16 @@ We have in the online environment the new version v1.1.1 again.
   }
 }
 ```
-### Step 4 - Align and scale down Offline
+### Step 3 - Align and scale down Offline
  
 Finally, when online is stable we should align offline with the new version and scale it down. Does not make sense to use the same resources that we have in production.
 ```
-oc create -f 4-pipelinerun-products-scale-down.yaml -n gitops
+oc create -f 3-pipelinerun-products-scale-down.yaml -n gitops
 ```
 
-![Pipeline step 4](../images/pipeline-step-4.png)
+![Pipeline step 3](../images/pipeline-step-4.png)
 After the pipeline finished and ArgoCD has synchronized the changes this will be the `Shop` status:
-![Shop step 4](../images/blue-green-step-4.png)
+![Shop step 3](../images/blue-green-step-4.png)
 We can see that the offline `Products` is calling offline `Discounts` and has the new version v1.1.1
 ```json
 {
