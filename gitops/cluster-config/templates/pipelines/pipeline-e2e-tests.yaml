@@ -2,7 +2,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
-  name: pipeline-blue-green
+  name: pipeline-blue-green-e2e-test
   namespace: gitops
   annotations:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
