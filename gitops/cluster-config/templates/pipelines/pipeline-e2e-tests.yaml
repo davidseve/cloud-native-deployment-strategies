@@ -1,0 +1,58 @@
+{{- if .Values.pipeline.enabled }}
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: pipeline-blue-green-e2e-test
+  namespace: gitops
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  params:
+
+  - name: NAMESPACE
+    type: string
+    default: gitops
+    description: namespace
+  - name: APP
+    type: string
+    description: discounts or products
+  - name: NEW_IMAGE_TAG
+    type: string
+    default: None
+  - name: JQ_PATH
+    type: string
+    default: .metadata  
+
+  workspaces:
+  - name: app-source
+
+  tasks:
+
+  - name: get-application-url-new-image-tag
+    taskRef:
+      name: openshift-client
+    params:
+    - name: SCRIPT
+      value: |
+        host=$(oc get routes $(params.APP)-umbrella-offline -n $(params.NAMESPACE) -o=jsonpath='{.spec.host}')
+        url=http://${host}/$(params.APP)
+        echo $url > $(workspaces.manifest-dir.path)/url
+        cat $(workspaces.manifest-dir.path)/url
+    workspaces:
+    - name: manifest-dir
+      workspace: app-source
+  - name: e2e-test-new-image-tag
+    runAfter:
+    - get-application-url-new-image-tag
+    params:
+      - name: TARGET_VERSION
+        value: $(params.NEW_IMAGE_TAG)
+      - name: JQ_PATH
+        value: $(params.JQ_PATH)
+    taskRef:
+      name: shop-e2e-test
+    timeout: "0h8m30s"
+    workspaces:
+    - name: source
+      workspace: app-source
+{{ end }}

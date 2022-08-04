@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
-  generateName: shop-products-change-configuration-
+  generateName: shop-products-switch-
 spec:
   pipelineRef:
     name: pipeline-blue-green    
@@ -9,15 +9,7 @@ spec:
   - name: APP
     value: products
   - name: STEP
-    value: "change-configuration"
-  - name: REPLICA_COUNT
-    value: "2"
-  - name: SOURCE_GIT_REVISION
-    value: blue-green
-  - name: GIT_USER_NAME
-    value: davidseve
-  - name: GIT_USER_EMAIL
-    value: davidseve16@gmail.com
+    value: "switch"
   workspaces:
   - name: app-source
     persistentVolumeClaim:

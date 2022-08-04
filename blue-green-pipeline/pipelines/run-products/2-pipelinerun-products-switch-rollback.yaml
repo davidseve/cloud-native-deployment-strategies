@@ -1,23 +1,15 @@
 apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
-  generateName: shop-products-scale-down-offline-
+  generateName: shop-products-rollback-
 spec:
   pipelineRef:
     name: pipeline-blue-green    
   params:
   - name: APP
     value: products
-  - name: NEW_IMAGE_TAG
-    value: "v1.1.1"
   - name: STEP
-    value: "scale-down-offline"
-  - name: SOURCE_GIT_REVISION
-    value: blue-green
-  - name: GIT_USER_NAME
-    value: davidseve
-  - name: GIT_USER_EMAIL
-    value: davidseve16@gmail.com
+    value: "switch-rollback"
   workspaces:
   - name: app-source
     persistentVolumeClaim:

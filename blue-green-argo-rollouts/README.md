@@ -1,10 +1,14 @@
-# Cloud Native Argo Rollouts Blue/Green Deployment
+# Cloud Native Blue/Green Deployment Strategy using Argo Rollouts
+
+| :warning: WARNING          |
+|:---------------------------|
+| Work in progress           |
 
 ## Shop application
  
 We are going to use very simple applications to test Blue/Green deployment. We have create two Quarkus applications `Products` and `Discounts`
  
-![Shop Application](../../images/Shop.png)
+![Shop Application](../images/Shop.png)
  
 `Products` call `Discounts` to get the product`s discount and expose an API with a list of products with its discounts.
  
@@ -47,7 +51,7 @@ oc apply -f gitops/gitops-operator.yaml
  
 Once OpenShift GitOps is installed, an instance of Argo CD is automatically installed on the cluster in the `openshift-gitops` namespace and a link to this instance is added to the application launcher in OpenShift Web Console.
  
-![Application Launcher](../../images/gitops-link.png)
+![Application Launcher](../images/gitops-link.png)
  
 ### Log into Argo CD dashboard
  
@@ -59,24 +63,24 @@ oc extract secret/openshift-gitops-cluster -n openshift-gitops --to=-
  
 Click on Argo CD from the OpenShift Web Console application launcher and then log into Argo CD with `admin` username and the password retrieved from the previous step.
  
-![Argo CD](../../images/ArgoCD-login.png)
+![Argo CD](../images/ArgoCD-login.png)
  
  
 ### Configure OpenShift with Argo CD
  
 We are going to follow, as much as we can, a GitOps methodology in this demo. So we will have everything in our Git repository and use **ArgoCD** to deploy it in the cluster.
  
-In the current Git repository, the [gitops/cluster-config](gitops/cluster-config/) directory contains OpenShift cluster configurations such as:
+In the current Git repository, the [gitops/cluster-config](../gitops/cluster-config/) directory contains OpenShift cluster configurations such as:
 - namespaces `gitops`.
 - role binding for ArgoCD to the namespace `gitops`.
 - Argo Rollouts project.
  
-Let's configure Argo CD to recursively sync the content of the [gitops/cluster-config](gitops/cluster-config/) directory to the OpenShift cluster.
+Let's configure Argo CD to recursively sync the content of the [gitops/cluster-config](../gitops/cluster-config/) directory to the OpenShift cluster.
  
 Execute this command to add a new Argo CD application that syncs a Git repository containing cluster configurations with the OpenShift cluster.
  
 ```
-oc apply -f gitops/argo-rollouts/application-cluster-config.yaml
+oc apply -f blue-green-argo-rollouts/application-cluster-config.yaml
 ```
  
 Looking at the Argo CD dashboard, you would notice that an application has been created.
@@ -85,10 +89,38 @@ You can click on the `cluster-configuration` application to check the details of
 
 ### Create Shop application
 
-We are going to create the application `shop`, that we are going to use to test blue/green deployment.
+We are going to create the application `shop`, that we are going to use to test blue/green deployment. Because we will make changes in the application's GitHub repository, we have to use the repository that you have just fork. Please edit the file `blue-green-argo-rollouts/application-shop-blue-green-rollouts.yaml` and set your own GitHub repository in the `reportURL`.
+
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: shop
+  namespace: openshift-gitops
+spec:
+  destination:
+    name: ''
+    namespace: gitops
+    server: 'https://kubernetes.default.svc'
+  source:
+    path: helm/quarkus-helm-umbrella/chart
+    repoURL:  https://github.com/change_me/cloud-native-blue-green.git
+    targetRevision: rollouts
+    helm:
+      parameters:
+      - name: "global.namespace"
+        value: gitops
+      valueFiles:
+        - values/values-rollouts.yaml
+  project: default
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: false
+```
 
 ```
-oc apply -f gitops/argo-rollouts/application-shop-blue-green-rollouts.yaml
+oc apply -f blue-green-argo-rollouts/application-shop-blue-green-rollouts.yaml
 ```
 
 Looking at the Argo CD dashboard, you would notice that we have a new `shop` application.
@@ -129,7 +161,7 @@ We have already deployed the product's version v1.0.1, and we have ready to use 
 ### Step 1 - Deploy new version
  
 We will deploy a new version v1.1.1
-In the file `helm/quarkus-helm-umbrella/chart-blue-green/values/values-rollouts.yaml` under `products-blue` set `tag` value to `v.1.1.1`
+In the file `helm/quarkus-helm-umbrella/chart/values/values-rollouts.yaml` under `products-blue` set `tag` value to `v.1.1.1`
 
 ```yaml
 products-blue:
@@ -146,7 +178,7 @@ git push origin rollouts
 ```
 
  ArgoCD will refresh the status after some minutes. If you don't want to wait you can refresh it manually from ArgoCD UI.
-![Refresh Shop](../../images/ArgoCD-Shop-Refresh.png)
+![Refresh Shop](../images/ArgoCD-Shop-Refresh.png)
  
 **Argo Rollouts** will automatically deploy the new products version and execute the promotion analysis. 
  
