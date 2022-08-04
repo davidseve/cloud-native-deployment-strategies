@@ -1,4 +1,4 @@
-# Cloud Native Blue/Green Deployment Strategy
+# Cloud Native Blue/Green Deployment Strategy using Openshift Pipelines
  
 ## Introduction
  

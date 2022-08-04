@@ -1,4 +1,4 @@
-# Cloud Native Argo Rollouts Canary Deployment Strategy
+# Cloud Native Canary Deployment Strategy using Argo Rollouts
 
 | :warning: WARNING          |
 |:---------------------------|

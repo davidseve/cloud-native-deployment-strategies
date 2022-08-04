@@ -1,4 +1,4 @@
-# Cloud Native Argo Rollouts Canary Deployment Strategy with Service Mesh
+# Cloud Native Canary Deployment Strategy  using Argo Rollouts with Service Mesh
 
 | :warning: WARNING          |
 |:---------------------------|

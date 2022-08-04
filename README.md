@@ -12,7 +12,7 @@ Another important topic in the `Cloud Native` is the `Continuous Delivery`. If w
  
 ## Deployment Strategies
 
-Those are the different `Cloud Native` deployment strategies that we have develop, you can click on each one and test it.
+Those are the different `Cloud Native` deployment strategies that we have developed, you can click on each one and test it.
 
 - [Blue/Green using **Openshift Pipelines**](/blue-green-pipeline)
 - [Blue/Green using **Argo Rollouts**](/blue-green-argo-rollouts)
