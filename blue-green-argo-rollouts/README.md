@@ -129,7 +129,7 @@ We have already deployed the product's version v1.0.1, and we have ready to use 
 ### Step 1 - Deploy new version
  
 We will deploy a new version v1.1.1
-In the file `helm/quarkus-helm-umbrella/chart-blue-green/values/values-rollouts.yaml` under `products-blue` set `tag` value to `v.1.1.1`
+In the file `helm/quarkus-helm-umbrella/chart/values/values-rollouts.yaml` under `products-blue` set `tag` value to `v.1.1.1`
 
 ```yaml
 products-blue:
