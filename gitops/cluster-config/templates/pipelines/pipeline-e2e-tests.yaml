@@ -21,7 +21,10 @@ spec:
     default: None
   - name: JQ_PATH
     type: string
-    default: .metadata  
+    default: .metadata
+  - name: LABEL
+    type: string
+    default: .version   
   - name: MODE
     type: string
     default: offline

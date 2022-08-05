@@ -10,6 +10,7 @@ spec:
   params:
   - name: TARGET_VERSION
   - name: JQ_PATH
+  - name: LABEL
   steps:
   - name: set-results
     image: badouralix/curl-jq
@@ -21,7 +22,7 @@ spec:
         sleep 5
         curl $(cat $(workspaces.source.path)/url) | jq -r '$(params.JQ_PATH)' > metadata
         cat metadata
-        version=$(jq -r '.version' metadata)
+        version=$(jq -r '$(params.LABEL)' metadata)
         echo $version
       done
   workspaces:

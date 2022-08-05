@@ -58,6 +58,9 @@ spec:
   - name: JQ_PATH
     type: string
     default: .metadata  
+  - name: LABEL
+    type: string
+    default: .version  
 
   workspaces:
   - name: app-source
@@ -196,6 +199,8 @@ spec:
         value: $(params.NEW_IMAGE_TAG)
       - name: JQ_PATH
         value: $(params.JQ_PATH)
+      - name: LABEL
+        value: $(params.LABEL)
     taskRef:
       name: shop-e2e-test
     timeout: "0h8m30s"
