@@ -16,12 +16,11 @@ spec:
     image: badouralix/curl-jq
     script: |
       version="none"
-      url=cat $(workspaces.source.path)/url
+      cat $(workspaces.source.path)/url
       while [[ "$version" != "$(params.TARGET_VERSION)" ]]
       do
         sleep 5
-        curl $url > response
-        cat response | jq -r '$(params.JQ_PATH)' > metadata
+        curl $(cat $(workspaces.source.path)/url) | jq -r '$(params.JQ_PATH)' > metadata
         cat metadata
         version=$(jq -r '$(params.LABEL)' metadata)
         echo $version
