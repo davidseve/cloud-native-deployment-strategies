@@ -15,13 +15,13 @@ spec:
     helm:
      parameters:
       - name: "github.token"
-        value: changeme_token
+        value: "changeme_token"
       - name: "github.user"
-        value: changeme_user
+        value: "changeme_user"
       - name: "github.mail"
-        value: changeme_mail
+        value: "changeme_mail"
       - name: "github.repository"
-        value: changeme_repository
+        value: "changeme_repository"
   project: default
   syncPolicy:
     automated:
