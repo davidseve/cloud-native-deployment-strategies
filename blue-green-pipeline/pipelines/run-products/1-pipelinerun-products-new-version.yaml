@@ -12,8 +12,6 @@ spec:
     value: "v1.1.1"
   - name: STEP
     value: "new-version"
-  - name: SOURCE_GIT_REVISION
-    value: blue-green
   - name: REPLICA_COUNT
     value: "2"
   workspaces:
