@@ -238,6 +238,6 @@ kubectl argo rollouts promote products
 To delete all the thing that we have done for the demo you have to_
 - In GitHub delete the branch `rollouts`
 - In ArgoCD delete the application `cluster-configuration` and `shop`
-- In Openshift, go to project `openshift-operators` and delete the installed operators **Openshift GitOps**
+- In Openshift, go to project `openshift-operators` and delete the installed operators **Openshift GitOps** and **Openshift Pipelines**
 
 
