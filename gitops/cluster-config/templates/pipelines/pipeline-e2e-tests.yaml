@@ -22,7 +22,9 @@ spec:
   - name: JQ_PATH
     type: string
     default: .metadata  
-
+  - name: MODE
+    type: string
+    default: offline
   workspaces:
   - name: app-source
 
@@ -34,7 +36,7 @@ spec:
     params:
     - name: SCRIPT
       value: |
-        host=$(oc get routes $(params.APP)-umbrella-offline -n $(params.NAMESPACE) -o=jsonpath='{.spec.host}')
+        host=$(oc get routes $(params.APP)-umbrella-$(params.MODE) -n $(params.NAMESPACE) -o=jsonpath='{.spec.host}')
         url=http://${host}/$(params.APP)
         echo $url > $(workspaces.manifest-dir.path)/url
         cat $(workspaces.manifest-dir.path)/url
