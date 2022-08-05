@@ -62,4 +62,16 @@ spec:
     workspaces:
     - name: source
       workspace: app-source
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  namespace: gitops
+  name: workspace-pvc-shop-cd-e2e-tests
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
 {{ end }}
