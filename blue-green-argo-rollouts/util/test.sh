@@ -5,28 +5,50 @@ cd /tmp/deployment
 
 git clone https://github.com/davidseve/cloud-native-deployment-strategies.git
 cd cloud-native-deployment-strategies
-git checkout -b blue-green
-git push origin blue-green
+git checkout -b rollouts
+git push origin rollouts
 
 oc apply -f gitops/gitops-operator.yaml
 
 sleep 30s
 
-sed -i "s/changeme_token/$1/g" blue-green-pipeline/application-cluster-config.yaml
-sed -i 's/changeme_user/davidseve/g' blue-green-pipeline/application-cluster-config.yaml
-sed -i 's/changeme_mail/davidseve@gmail.com/g' blue-green-pipeline/application-cluster-config.yaml
-sed -i 's/changeme_repository/davidseve/g' blue-green-pipeline/application-cluster-config.yaml
-
-oc apply -f blue-green-pipeline/application-cluster-config.yaml --wait=true
+oc apply -f blue-green-argo-rollouts/application-cluster-config.yaml --wait=true
 
 sleep 1m
 
-sed -i 's/change_me/davidseve/g' blue-green-pipeline/application-shop-blue-green.yaml
+sed -i 's/change_me/davidseve/g' blue-green-argo-rollouts/application-shop-blue-green-rollouts.yaml
 
-oc apply -f blue-green-pipeline/application-shop-blue-green.yaml --wait=true
+oc apply -f blue-green-argo-rollouts/application-shop-blue-green-rollouts.yaml --wait=true
 tkn pipeline start pipeline-blue-green-e2e-test --param NEW_IMAGE_TAG=v1.0.1 --param MODE=online --param LABEL=.version --param APP=products --param NAMESPACE=gitops --param JQ_PATH=.metadata --workspace name=app-source,claimName=workspace-pvc-shop-cd-e2e-tests -n gitops --showlog
 
-cd blue-green-pipeline/pipelines/run-products
+sed '/products-blue/{n;n;n;s/.*/    tag: v1.1.1/}' helm/quarkus-helm-umbrella/chart/values/values-rollouts.yaml
+
+git add helm/quarkus-helm-umbrella/chart/values/values-rollouts.yaml
+git commit -m "Change products version to v1.1.1"
+git push origin rollouts
+
+tkn pipeline start pipeline-blue-green-e2e-test --param NEW_IMAGE_TAG=v1.1.1 --param MODE=offline --param LABEL=.version --param APP=products --param NAMESPACE=gitops --param JQ_PATH=.metadata --workspace name=app-source,claimName=workspace-pvc-shop-cd-e2e-tests -n gitops --showlog
+
+kubectlArgo argo rollouts promote products
+
+tkn pipeline start pipeline-blue-green-e2e-test --param NEW_IMAGE_TAG=v1.1.1 --param MODE=online --param LABEL=.version --param APP=products --param NAMESPACE=gitops --param JQ_PATH=.metadata --workspace name=app-source,claimName=workspace-pvc-shop-cd-e2e-tests -n gitops --showlog
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cd blue-green-argo-rollouts/pipelines/run-products
 oc create -f 1-pipelinerun-products-new-version.yaml -n gitops
 
 oc get service products-umbrella-offline -n gitops --output="jsonpath={.spec.selector.version}" > color

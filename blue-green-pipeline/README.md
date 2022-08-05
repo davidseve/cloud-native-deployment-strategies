@@ -195,7 +195,7 @@ spec:
     server: 'https://kubernetes.default.svc'
   source:
     path: gitops/cluster-config
-    repoURL: 'https://github.com/davidseve/cloud-native-blue-green.git'
+    repoURL: 'https://github.com/davidseve/cloud-native-deployment-strategies.git'
     targetRevision: HEAD
     helm:
      parameters:
@@ -246,7 +246,7 @@ spec:
     server: 'https://kubernetes.default.svc'
   source:
     path: helm/quarkus-helm-umbrella/chart
-    repoURL:  https://github.com/change_me/cloud-native-blue-green.git
+    repoURL:  https://github.com/change_me/cloud-native-deployment-strategies.git
     targetRevision: blue-green
     helm:
       valueFiles:
