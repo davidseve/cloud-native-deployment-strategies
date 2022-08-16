@@ -177,7 +177,12 @@ git commit -m "Change products version to v1.1.1"
 git push origin rollouts
 ```
 
- ArgoCD will refresh the status after some minutes. If you don't want to wait you can refresh it manually from ArgoCD UI.
+ ArgoCD will refresh the status after some minutes. If you don't want to wait you can refresh it manually from ArgoCD UI or configure the Argo CD Git Webhook.[^note2].
+ 
+[^note2]:
+    Here you can see how to configure the Argo CD Git [Webhook]( https://argo-cd.readthedocs.io/en/stable/operator-manual/webhook/)
+    ![Argo CD Git Webhook](../images/ArgoCD-webhook.png)
+.
 ![Refresh Shop](../images/ArgoCD-Shop-Refresh.png)
  
 **Argo Rollouts** will automatically deploy the new products version and execute the promotion analysis. 
