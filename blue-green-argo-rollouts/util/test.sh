@@ -27,6 +27,14 @@ git add helm/quarkus-helm-umbrella/chart/values/values-rollouts.yaml
 git commit -m "Change products version to v1.1.1"
 git push origin rollouts
 
+status=none
+while [[ "$status" != "Paused - BlueGreenPause" ]]
+do
+    sleep 5
+    status=$(kubectlArgo argo rollouts status products -n gitops  --watch=false)
+    echo $status
+done
+
 tkn pipeline start pipeline-blue-green-e2e-test --param NEW_IMAGE_TAG=v1.1.1 --param MODE=offline --param LABEL=.version --param APP=products --param NAMESPACE=gitops --param JQ_PATH=.metadata --workspace name=app-source,claimName=workspace-pvc-shop-cd-e2e-tests -n gitops --showlog
 
 kubectlArgo argo rollouts promote products

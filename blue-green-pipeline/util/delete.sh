@@ -2,6 +2,10 @@
 
 cd /tmp/deployment/cloud-native-deployment-strategies
 
+argocd app delete shop
+argocd app delete cluster-configuration
+sleep 5
+
 oc delete project gitops
 
 oc delete -f blue-green-pipeline/application-shop-blue-green.yaml
@@ -15,3 +19,5 @@ git checkout main
 git branch -d blue-green
 git push origin --delete blue-green
 
+#manual
+#gitops operator

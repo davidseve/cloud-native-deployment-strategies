@@ -14,6 +14,7 @@ spec:
       - name: link-github-token
         image: quay.io/openshift/origin-cli:4.7
         command:
+          - "sleep 10"
           - "oc"
           - "secrets"
           - "link"
