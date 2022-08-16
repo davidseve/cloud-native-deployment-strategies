@@ -182,7 +182,8 @@ git push origin rollouts
 [^note2]:
     Here you can see how to configure the Argo CD Git [Webhook]( https://argo-cd.readthedocs.io/en/stable/operator-manual/webhook/)
     ![Argo CD Git Webhook](../images/ArgoCD-webhook.png)
-.
+
+
 ![Refresh Shop](../images/ArgoCD-Shop-Refresh.png)
  
 **Argo Rollouts** will automatically deploy the new products version and execute the promotion analysis. 
