@@ -348,9 +348,9 @@ oc create -f 1-pipelinerun-products-new-version.yaml -n gitops
 ```
 ![Pipeline step 1](../images/pipeline-step-1.png)
 
-This pipeline may take more time because we are doing three different commits, so ArgoCD has to synchronize one in order to continue with the pipeline. If you want to make it faster you can refresh ArgoCD manually after each  `commit-*` step or configure the Argo CD Git Webhook.[^note].
+This pipeline may take more time because we are doing three different commits, so ArgoCD has to synchronize one in order to continue with the pipeline. If you want to make it faster you can refresh ArgoCD manually after each  `commit-*` step or configure the Argo CD Git Webhook.[^note2].
  
-[^note]:
+[^note2]:
     Here you can see how to configure the Argo CD Git [Webhook]( https://argo-cd.readthedocs.io/en/stable/operator-manual/webhook/)
     ![Argo CD Git Webhook](../images/ArgoCD-webhook.png)
 
