@@ -3,6 +3,8 @@ tags:
   products-green: false
 
 discounts-blue:
+  version: none
+  mode: none
   fullnameOverride: "discounts"
   image:
     tag: v1.0.1
@@ -14,7 +16,8 @@ discounts-blue:
       previewService: "discounts-umbrella-offline"
     
 products-blue:
-  mode: online
+  version: none
+  mode: none
   image:
     tag: v1.0.1
   replicaCount: 2

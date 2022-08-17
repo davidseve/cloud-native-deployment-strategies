@@ -3,7 +3,18 @@
 | :warning: WARNING          |
 |:---------------------------|
 | Work in progress           |
-If you want to know more about Blue/Green deployment read [Blue/Green using **Openshift Pipelines**](/blue-green-pipeline)
+## Introduction
+One important topic in the `Cloud Native` is the `Microservice Architecture`. We are not any more dealing with one monolithic application. We have several applications that have dependencies on each other and also have other dependencies like brokers or data bases.
+ 
+Applications have their own life cycle, so we should be able to execute independent blue/green deployment. All the applications and dependencies will not change its version at the same time.
+ 
+Another important topic in the `Cloud Native` is the `Continuous Delivery`. If we are going to have several applications doing Blue/Green deployment independently we have to automate it. We will use **Helm**, **Argo Rollouts**, **Openshift GitOps** and of course **Red Hat Openshift** to help us.
+ 
+**In the next steps we will see a real example of how to install, deploy and manage the life cycle of Cloud Native applications doing Blue/Green deployment.**
+ 
+If you want to know more about Blue/Green deployment please read [**Blue/Green Deployment**](https://github.com/davidseve/cloud-native-deployment-strategies/tree/main/blue-green-pipeline#bluegreen-deployment)
+
+Let's start with some theory...after it we will have the **hands on example**.
 ## Shop application
  
 We are going to use very simple applications to test Blue/Green deployment. We have create two Quarkus applications `Products` and `Discounts`
@@ -14,27 +25,99 @@ We are going to use very simple applications to test Blue/Green deployment. We h
  
 ## Shop Blue/Green
  
-To achieve blue/green deployment with `Cloud Native` applications we have designed this architecture.
+To achieve blue/green deployment with `Cloud Native` applications using **Argo Rollouts**, we have designed this architecture.
+
+![Shop Blue/Green](../images/Shop-blue-green-rollouts.png)
  
 OpenShift Components - Online
 - Routes and Services declared with suffix -online
 - Routes mapped only to the online services
-- Services mapped to the deployment.
+- Services mapped to the rollout.
  
 OpenShift Components - Offline
 - Routes and Services declared with suffix -offline
 - Routes mapped only to the offline services
-- Services mapped to the deployment
+- Services mapped to the rollout
 
+This is an example of products rollout manifest:
+```yaml
+  strategy:
+    blueGreen:
+      activeService: products-umbrella-online
+      previewService: products-umbrella-offline      
+      autoPromotionEnabled: false
+      prePromotionAnalysis:
+        templates:
+          - templateName: products-analysis-template
+```
  
 ## Shop Umbrella Helm Chart
  
 One of the best ways to package `Cloud Native` applications is `Helm`. In blue/green deployment it makes even more sense.
 We have created a chart for each application that does not know anything about blue/green. Then we pack everything together in an umbrella helm chart.
 
+![Shop Umbrella Helm Chart](../images/Shop-helm-rollouts.png)
+
+In the `Shop Umbrella Chart` we use several times the same charts as helm dependencies but with different names if they are blue/green or online/offline. This will allow us to have different configurations for each color.
+ 
+This is the Chart.yaml
+```
+apiVersion: v2
+name: shop-umbrella-blue-green
+description: A Helm chart for Kubernetes
+type: application
+version: 0.1.0
+appVersion: "1.16.0"
+ 
+dependencies:
+ - name: quarkus-helm-discounts
+   version: 0.1.0
+   alias: discounts-blue
+   tags:
+     - discounts-blue
+ - name: quarkus-helm-discounts
+   version: 0.1.0
+   alias: discounts-green
+   tags:
+     - discounts-green
+ - name: quarkus-base-networking
+   version: 0.1.0
+   alias: discountsNetworkingOnline 
+   tags:
+     - discountsNetworkingOnline
+ - name: quarkus-base-networking
+   version: 0.1.0
+   alias: discountsNetworkingOffline
+   tags:
+     - discountsNetworkingOffline
+ - name: quarkus-helm-products
+   version: 0.1.0
+   alias: products-blue
+   tags:
+     - products-blue
+ - name: quarkus-helm-products
+   version: 0.1.0
+   alias: products-green
+   tags:
+     - products-green
+ - name: quarkus-base-networking
+   version: 0.1.0
+   alias: productsNetworkingOnline
+   tags:
+     - productsNetworkingOnline
+ - name: quarkus-base-networking
+   version: 0.1.0
+   alias: productsNetworkingOffline
+   tags:
+     - productsNetworkingOffline
+```
+
+We have packaged both applications in one chart, but we may have different umbrella charts per application.
 ## Demo!!
 
 First step is to fork this repository, you will have to do some changes and commits. You should clone your forked repository in your local.
+
+If we want to have a `Cloud Native` deployment we can not forget `CI/CD`. **OpenShift GitOps** and **Openshift Pipelines** will help us.
  
 ### Install OpenShift GitOps
  
@@ -65,6 +148,7 @@ Click on Argo CD from the OpenShift Web Console application launcher and then lo
  
 ![Argo CD](../images/ArgoCD-login.png)
  
+![Argo CD](../images/ArgoCD-UI.png)
  
 ### Configure OpenShift with Argo CD
  
@@ -125,6 +209,7 @@ oc apply -f blue-green-argo-rollouts/application-shop-blue-green-rollouts.yaml
 
 Looking at the Argo CD dashboard, you would notice that we have a new `shop` application.
 
+![Argo CD - Cluster Config](../images/ArgoCD-Applications.png)
 
 ## Test Shop application
  
@@ -138,6 +223,38 @@ And the Offline route
 ```
 echo "$(oc get routes products-umbrella-offline -n gitops --template='http://{{.spec.host}}')/products"
 ```
+Notice that in each microservice response we have added metadata information to see better the `version` of each application. This will help us to see the changes while we do the Blue/Green deployment.
+Because right now we have both router against the same rollout revision we will have the same response with version `v1.0.1`:
+```json
+{
+  "products":[
+     {
+        "discountInfo":{
+           "discounts":[
+              {
+                 "name":"BlackFriday",
+                 "price":"1350€",
+                 "discount":"10%"
+              }
+           ],
+           "metadata":{
+              "version":"v1.0.1", <--
+              "colour":"blue",
+              "mode":"online"
+           }
+        },
+        "name":"TV 4K",
+        "price":"1500€"
+     }
+  ],
+  "metadata":{
+     "version":"v1.0.1", <--
+     "colour":"blue",
+     "mode":"online"
+  }
+}
+```
+
 We can also see the rollout`s status[^note].
 
 [^note]:
