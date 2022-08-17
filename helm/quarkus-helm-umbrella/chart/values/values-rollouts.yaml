@@ -4,7 +4,7 @@ tags:
 
 discounts-blue:
   version: none
-  mode: none
+  mode: online
   fullnameOverride: "discounts"
   image:
     tag: v1.0.1
@@ -17,7 +17,7 @@ discounts-blue:
     
 products-blue:
   version: none
-  mode: none
+  mode: online
   image:
     tag: v1.0.1
   replicaCount: 2

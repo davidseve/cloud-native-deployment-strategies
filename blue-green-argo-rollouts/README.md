@@ -58,60 +58,8 @@ We have created a chart for each application that does not know anything about b
 
 ![Shop Umbrella Helm Chart](../images/Shop-helm-rollouts.png)
 
-In the `Shop Umbrella Chart` we use several times the same charts as helm dependencies but with different names if they are blue/green or online/offline. This will allow us to have different configurations for each color.
+In the `Shop Umbrella Chart` we use several times the same charts as helm dependencies but with different names if they are online/offline. This will allow us to have different configurations for each color.
  
-This is the Chart.yaml
-```
-apiVersion: v2
-name: shop-umbrella-blue-green
-description: A Helm chart for Kubernetes
-type: application
-version: 0.1.0
-appVersion: "1.16.0"
- 
-dependencies:
- - name: quarkus-helm-discounts
-   version: 0.1.0
-   alias: discounts-blue
-   tags:
-     - discounts-blue
- - name: quarkus-helm-discounts
-   version: 0.1.0
-   alias: discounts-green
-   tags:
-     - discounts-green
- - name: quarkus-base-networking
-   version: 0.1.0
-   alias: discountsNetworkingOnline 
-   tags:
-     - discountsNetworkingOnline
- - name: quarkus-base-networking
-   version: 0.1.0
-   alias: discountsNetworkingOffline
-   tags:
-     - discountsNetworkingOffline
- - name: quarkus-helm-products
-   version: 0.1.0
-   alias: products-blue
-   tags:
-     - products-blue
- - name: quarkus-helm-products
-   version: 0.1.0
-   alias: products-green
-   tags:
-     - products-green
- - name: quarkus-base-networking
-   version: 0.1.0
-   alias: productsNetworkingOnline
-   tags:
-     - productsNetworkingOnline
- - name: quarkus-base-networking
-   version: 0.1.0
-   alias: productsNetworkingOffline
-   tags:
-     - productsNetworkingOffline
-```
-
 We have packaged both applications in one chart, but we may have different umbrella charts per application.
 ## Demo!!
 
