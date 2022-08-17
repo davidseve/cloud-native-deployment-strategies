@@ -359,7 +359,15 @@ Imagine that something goes wrong, we know that this never happens but just in c
 **Argo Rollouts** has an [undo](https://argoproj.github.io/argo-rollouts/generated/kubectl-argo-rollouts/kubectl-argo-rollouts_undo/) command to do the rollback. Personally I don`t like this procedure because is not aligned with GitOps. The changes that **Argo Rollouts** do does not came from git, so git is OutOfSync with what we have in Openshift.
 In our case the commit that we have done not only change the ReplicaSet but also the ConfigMap. The `undo` command only change the ReplicaSet, so it does not work for us.
 
-I recommend to do the changes in git. We can revert the last commit.
+I recommend to do the changes in git.
+```
+git revert HEAD
+git push origin rollouts
+```
+Execute this command to promote products to version `v1.0.1`:
+```
+kubectl argo rollouts promote products -n gitops
+```
 
 
 ## Delete environment
