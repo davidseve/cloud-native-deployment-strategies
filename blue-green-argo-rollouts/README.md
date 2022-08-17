@@ -3,7 +3,7 @@
 | :warning: WARNING          |
 |:---------------------------|
 | Work in progress           |
-
+If you want to know more about Blue/Green deployment read [Blue/Green using **Openshift Pipelines**](/blue-green-pipeline)
 ## Shop application
  
 We are going to use very simple applications to test Blue/Green deployment. We have create two Quarkus applications `Products` and `Discounts`
