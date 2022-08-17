@@ -175,31 +175,18 @@ Notice that in each microservice response we have added metadata information to 
 Because right now we have both router against the same rollout revision we will have the same response with version `v1.0.1`:
 ```json
 {
-  "products":[
-     {
-        "discountInfo":{
-           "discounts":[
-              {
-                 "name":"BlackFriday",
-                 "price":"1350€",
-                 "discount":"10%"
-              }
-           ],
-           "metadata":{
-              "version":"v1.0.1", <--
-              "colour":"blue",
-              "mode":"online"
-           }
-        },
-        "name":"TV 4K",
-        "price":"1500€"
-     }
-  ],
-  "metadata":{
-     "version":"v1.0.1", <--
-     "colour":"blue",
-     "mode":"online"
-  }
+   "products":[
+      {
+         ...
+         "name":"TV 4K",
+         "price":"1500€"
+      }
+   ],
+   "metadata":{
+      "version":"v1.0.1", <--
+      "colour":"none",
+      "mode":"online"
+   }
 }
 ```
 
@@ -210,6 +197,15 @@ We can also see the rollout`s status[^note].
 
 ```
 kubectl argo rollouts get rollout products --watch -n gitops
+```
+
+```
+NAME                                  KIND        STATUS     AGE INFO
+⟳ products                            Rollout     ✔ Healthy  12m  
+└──# revision:1                                                   
+   └──⧉ products-67fc9fb79b           ReplicaSet  ✔ Healthy  12m  stable,active
+      ├──□ products-67fc9fb79b-49k25  Pod         ✔ Running  12m  ready:1/1
+      └──□ products-67fc9fb79b-p7jk9  Pod         ✔ Running  12m  ready:1/1
 ```
 
  
