@@ -295,8 +295,9 @@ If this dependency is for example a production DB we will create the things that
  
 We are going to open the new version to final users. **Argo Rollouts** will just change the service to use the new release (ReplicaSet).  We also `minimize downtime` because it just changes the service label. And after `scaleDownDelaySeconds` **Argo Rollouts** will delete the first release (v1.0.1).
 
+Execute this command to promote products:
 ```
-kubectl argo rollouts promote products
+kubectl argo rollouts promote products -n gitops
 ```
 
  
