@@ -393,7 +393,7 @@ Functional testing users can execute `Smoke tests` to validate this new v1.1.1 v
  
 ### Step 2 - Switch new version to Online
  
-We are going to open the new version to final users. The pipeline will just change the service to use the other color. Again the pipeline does this automatically without manual intervention. We also `minimize downtime` because it just changes the service label.
+We are going to open the new version to final users. The pipeline will just change the service to use the other color. Again the pipeline does this automatically without manual intervention. We  `minimize downtime` because it just changes the service label.
 ```
 oc create -f 2-pipelinerun-products-switch.yaml -n gitops
 ```
