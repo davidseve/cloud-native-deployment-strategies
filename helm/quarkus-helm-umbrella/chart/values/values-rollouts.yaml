@@ -3,11 +3,11 @@ tags:
   products-green: false
 
 discounts-blue:
-  version: none
   mode: online
   fullnameOverride: "discounts"
   image:
     tag: v1.0.1
+  version: none
   rollouts:
     enabled: true
     blueGreen:
@@ -16,12 +16,12 @@ discounts-blue:
       previewService: "discounts-umbrella-offline"
     
 products-blue:
-  version: none
   mode: online
   image:
     tag: v1.0.1
   replicaCount: 2
   fullnameOverride: "products"
+  version: none
   rollouts:
     enabled: true
     blueGreen:

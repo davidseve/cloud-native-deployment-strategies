@@ -218,7 +218,9 @@ We have split a `Cloud Native` Blue/Green deployment in two steps:
 
  
 We have already deployed the product's version v1.0.1, and we have ready to use a new product's version v1.1.1 that has a new `description` attribute.
- 
+
+This is our current status:
+![Shop initial status](../images/rollout-blue-green-step-0.png)
 ### Step 1 - Deploy new version
  
 We will deploy a new version v1.1.1
@@ -247,10 +249,27 @@ git push origin rollouts
 
 ![Refresh Shop](../images/ArgoCD-Shop-Refresh.png)
  
-**Argo Rollouts** will automatically deploy the new products version and execute the promotion analysis. 
- 
- 
-If the promotion analysis goes well, we can see that offline applications have the version v1.1.1 and the new attribute description, but the online has not changed.
+**Argo Rollouts** will automatically deploy the new products version and execute the `prePromotionAnalysis`. 
+
+```
+NAME                                  KIND         STATUS        AGE  INFO
+⟳ products                            Rollout      ॥ Paused      27m  
+├──# revision:2                                                       
+│  ├──⧉ products-9dc6f576f            ReplicaSet   ✔ Healthy     36s  preview
+│  │  ├──□ products-9dc6f576f-6vqp5   Pod          ✔ Running     36s  ready:1/1
+│  │  └──□ products-9dc6f576f-lmgd7   Pod          ✔ Running     36s  ready:1/1
+│  └──α products-9dc6f576f-2-pre      AnalysisRun  ✔ Successful  31s  ✔ 1
+└──# revision:1                                                       
+   └──⧉ products-67fc9fb79b           ReplicaSet   ✔ Healthy     27m  stable,active
+      ├──□ products-67fc9fb79b-49k25  Pod          ✔ Running     27m  ready:1/1
+      └──□ products-67fc9fb79b-p7jk9  Pod          ✔ Running     27m  ready:1/1
+```
+  
+If the `prePromotionAnalysis` goes well, we can see that offline applications have the version v1.1.1 and the new attribute description, but the online has not changed.
+
+This is our current status:
+![Shop initial status](../images/rollout-blue-green-step-1.png)
+
  
 ```json
 {
