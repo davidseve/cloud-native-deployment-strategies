@@ -268,7 +268,7 @@ NAME                                  KIND         STATUS        AGE  INFO
 If the `prePromotionAnalysis` goes well, we can see that offline applications have the version v1.1.1 and the new attribute description, but the online has not changed.
 
 This is our current status:
-![Shop initial status](../images/rollout-blue-green-step-1.png)
+![Shop Step 1](../images/rollout-blue-green-step-1.png)
 
  
 ```json
@@ -293,15 +293,47 @@ If this dependency is for example a production DB we will create the things that
  
 ### Step 2 - Promote new version
  
-We are going to open the new version to final users. **Argo Rollouts** will just change the service to use the new release (ReplicaSet).  We also `minimize downtime` because it just changes the service label. And after `scaleDownDelaySeconds` **Argo Rollouts** will delete the first release (v1.0.1).
+We are going to open the new version to final users.
 
 Execute this command to promote products:
 ```
 kubectl argo rollouts promote products -n gitops
 ```
 
- 
+First **Argo Rollouts** will just change the service to use the new release (ReplicaSet). We `minimize downtime` because it just changes the service label. 
 
+```
+NAME                                  KIND         STATUS        AGE  INFO
+⟳ products                            Rollout      ✔ Healthy     88m  
+├──# revision:2                                                       
+│  ├──⧉ products-9dc6f576f            ReplicaSet   ✔ Healthy     62m  stable,active
+│  │  ├──□ products-9dc6f576f-6vqp5   Pod          ✔ Running     62m  ready:1/1
+│  │  └──□ products-9dc6f576f-lmgd7   Pod          ✔ Running     62m  ready:1/1
+│  └──α products-9dc6f576f-2-pre      AnalysisRun  ✔ Successful  62m  ✔ 1
+└──# revision:1                                                       
+   └──⧉ products-67fc9fb79b           ReplicaSet   ✔ Healthy     88m  delay:27s
+      ├──□ products-67fc9fb79b-49k25  Pod          ✔ Running     88m  ready:1/1
+      └──□ products-67fc9fb79b-p7jk9  Pod          ✔ Running     88m  ready:1/1
+```
+This is our current status:
+![Shop Step 2 initial](../images/rollout-blue-green-step-2-initial.png)
+
+And after `scaleDownDelaySeconds` **Argo Rollouts** will scale down the first replicaSet (v1.0.1).
+ 
+```
+ NAME                                 KIND         STATUS        AGE  INFO
+⟳ products                           Rollout      ✔ Healthy     89m  
+├──# revision:2                                                      
+│  ├──⧉ products-9dc6f576f           ReplicaSet   ✔ Healthy     62m  stable,active
+│  │  ├──□ products-9dc6f576f-6vqp5  Pod          ✔ Running     62m  ready:1/1
+│  │  └──□ products-9dc6f576f-lmgd7  Pod          ✔ Running     62m  ready:1/1
+│  └──α products-9dc6f576f-2-pre     AnalysisRun  ✔ Successful  62m  ✔ 1
+└──# revision:1                                                      
+   └──⧉ products-67fc9fb79b          ReplicaSet   • ScaledDown  89m  
+```
+
+This is our final status:
+![Shop Step 2 initial](../images/rollout-blue-green-step-2.png)
 
 **We have in the online environment the new version v1.1.1!!!**
 ```json
@@ -319,7 +351,17 @@ kubectl argo rollouts promote products -n gitops
   }
 }
 ```
- 
+
+### Step 2.5 - Rollback
+
+Imagine that something goes wrong, we know that this never happens but just in case. We can do a very `quick rollback` just undoing the change in the `Products` online service.
+
+**Argo Rollouts** has an [undo](https://argoproj.github.io/argo-rollouts/generated/kubectl-argo-rollouts/kubectl-argo-rollouts_undo/) command to do the rollback. Personally I don`t like this procedure because is not aligned with GitOps. The changes that **Argo Rollouts** do does not came from git, so git is OutOfSync with what we have in Openshift.
+In our case the commit that we have done not only change the ReplicaSet but also the ConfigMap. The `undo` command only change the ReplicaSet, so it does not work for us.
+
+I recommend to do the changes in git. We can revert the last commit.
+
+
 ## Delete environment
  
 To delete all the thing that we have done for the demo you have to_
