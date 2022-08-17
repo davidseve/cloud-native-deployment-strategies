@@ -27,7 +27,7 @@ We are going to use very simple applications to test Blue/Green deployment. We h
  
 To achieve blue/green deployment with `Cloud Native` applications using **Argo Rollouts**, we have designed this architecture.
 
-![Shop Blue/Green](../images/Shop-blue-green-rollouts.png)
+![Shop initial status](../images/rollout-blue-green-step-0.png)
  
 OpenShift Components - Online
 - Routes and Services declared with suffix -online
@@ -356,19 +356,20 @@ This is our final status:
 
 Imagine that something goes wrong, we know that this never happens but just in case. We can do a very `quick rollback` just undoing the change in the `Products` online service.
 
-**Argo Rollouts** has an [undo](https://argoproj.github.io/argo-rollouts/generated/kubectl-argo-rollouts/kubectl-argo-rollouts_undo/) command to do the rollback. Personally I don`t like this procedure because is not aligned with GitOps. The changes that **Argo Rollouts** do does not came from git, so git is OutOfSync with what we have in Openshift.
+**Argo Rollouts** has an [undo](https://argoproj.github.io/argo-rollouts/generated/kubectl-argo-rollouts/kubectl-argo-rollouts_undo/) command to do the rollback. Personally I don't like this procedure because is not aligned with GitOps. The changes that **Argo Rollouts** do does not came from git, so git is OutOfSync with what we have in Openshift.
 In our case the commit that we have done not only change the ReplicaSet but also the ConfigMap. The `undo` command only change the ReplicaSet, so it does not work for us.
 
-I recommend to do the changes in git.
+I recommend to do the changes in git. We will revert the las commit
 ```
 git revert HEAD
 git push origin rollouts
 ```
+**ArgoCD** will get the changes and apply them. **Argo Rollouts** will create a new revision with the previous version.
 Execute this command to promote products to version `v1.0.1`:
 ```
 kubectl argo rollouts promote products -n gitops
 ```
-
+The rollback is done!
 
 ## Delete environment
  
