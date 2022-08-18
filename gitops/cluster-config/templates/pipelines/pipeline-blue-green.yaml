@@ -86,6 +86,7 @@ spec:
     runAfter:
     - git-clone
     taskRef:
+      kind: Task
       name: openshift-client
     params:
     - name: SCRIPT
@@ -100,15 +101,19 @@ spec:
     runAfter:
     - get-offline-colour
     taskSpec:
+      metadata: {}
       steps:
       - name: set-results
         image: registry.access.redhat.com/ubi8/ubi-minimal:8.3
+        resources: {}
         script: |
           #!/usr/bin/env bash
           cat $(workspaces.source.path)/version
           cat $(workspaces.source.path)/version > tekton/results/version
       results:
-      - name: version
+      - description: ''	
+        name: version	
+      spec: null
       workspaces:
       - name: source
     workspaces:
@@ -136,16 +141,24 @@ spec:
       - name: REPLICA_COUNT
         value: $(params.REPLICA_COUNT)
     taskSpec:
+      resources: {}
       params:
       - name: CONTEXT_DIR
+        type: string
       - name: APP
-      - name: NEW_IMAGE_TAG 
+        type: string
+      - name: NEW_IMAGE_TAG
+        type: string
       - name: COLOUR
-      - name: VALUES_FILE 
+        type: string
+      - name: VALUES_FILE
+        type: string
       - name: REPLICA_COUNT
+        type: string
       steps:
       - name: change-new-image-tag
         image: registry.access.redhat.com/ubi8/ubi-minimal:8.3
+        resources: {}
         script: |
           #!/usr/bin/env bash
           cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
@@ -161,6 +174,7 @@ spec:
     runAfter:
     - change-new-image-tag
     taskRef:
+      kind: Task
       name: git-cli
     params:
       - name: GIT_USER_NAME
@@ -180,6 +194,7 @@ spec:
     runAfter:
     - commit-new-image-tag
     taskRef:
+      kind: Task
       name: openshift-client
     params:
     - name: SCRIPT
@@ -202,8 +217,9 @@ spec:
       - name: LABEL
         value: $(params.LABEL)
     taskRef:
+      kind: Task
       name: shop-e2e-test
-    timeout: "0h8m30s"
+    timeout: "8m30s"
     workspaces:
     - name: source
       workspace: app-source
@@ -220,13 +236,19 @@ spec:
       - name: VALUES_FILE
         value: $(params.VALUES_FILE)        
     taskSpec:
+      resources: {}
       params:
       - name: CONTEXT_DIR
+        type: string
       - name: APP
+        type: string
       - name: COLOUR
-      - name: VALUES_FILE   
+        type: string
+      - name: VALUES_FILE
+        type: string   
       steps:
       - name: change-configuration
+        resources: {}
         image: registry.access.redhat.com/ubi8/ubi-minimal:8.3
         script: |
           #!/usr/bin/env bash
@@ -244,6 +266,7 @@ spec:
     runAfter:
     - change-configuration
     taskRef:
+      kind: Task
       name: git-cli
     params:
       - name: GIT_USER_NAME
@@ -264,6 +287,7 @@ spec:
     runAfter:
     - commit-configuration
     taskRef:
+      kind: Task
       name: openshift-client
     params: 
     - name: SCRIPT
@@ -296,15 +320,22 @@ spec:
       - name: VALUES_FILE
         value: $(params.VALUES_FILE)        
     taskSpec:
+      resources: {}
       params:
       - name: CONTEXT_DIR
+        type: string
       - name: APP
-      - name: REPLICA_COUNT 
+        type: string
+      - name: REPLICA_COUNT
+        type: string
       - name: COLOUR
-      - name: VALUES_FILE 
+        type: string
+      - name: VALUES_FILE
+        type: string
       steps:
       - name: change-scale-up
         image: registry.access.redhat.com/ubi8/ubi-minimal:8.3
+        resources: {}
         script: |
           #!/usr/bin/env bash
           cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
@@ -320,6 +351,7 @@ spec:
     runAfter:
     - change-scale-up
     taskRef:
+      kind: Task
       name: git-cli
     params:
       - name: GIT_USER_NAME
@@ -353,14 +385,20 @@ spec:
       - name: VALUES_FILE
         value: $(params.VALUES_FILE)         
     taskSpec:
+      resources: {}
       params:
       - name: CONTEXT_DIR
+        type: string
       - name: APP
-      - name: COLOUR 
+        type: string
+      - name: COLOUR
+        type: string
       - name: VALUES_FILE
+        type: string
       steps:
       - name: change-switch
         image: registry.access.redhat.com/ubi8/ubi-minimal:8.3
+        resources: {}
         script: |
           #!/usr/bin/env bash
           cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
@@ -376,6 +414,7 @@ spec:
     runAfter:
     - change-switch
     taskRef:
+      kind: Task
       name: git-cli
     params:
       - name: GIT_USER_NAME
@@ -410,15 +449,22 @@ spec:
       - name: VALUES_FILE
         value: $(params.VALUES_FILE)            
     taskSpec:
+      resources: {}
       params:
       - name: CONTEXT_DIR
+        type: string
       - name: APP
-      - name: NEW_IMAGE_TAG 
-      - name: COLOUR 
-      - name: VALUES_FILE   
+        type: string
+      - name: NEW_IMAGE_TAG
+        type: string
+      - name: COLOUR
+        type: string 
+      - name: VALUES_FILE
+        type: string
       steps:
       - name: scale-down-offline
         image: registry.access.redhat.com/ubi8/ubi-minimal:8.3
+        resources: {}
         script: |
           #!/bin/bash
           cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
@@ -448,6 +494,7 @@ spec:
     runAfter:
     - change-scale-down-offline
     taskRef:
+      kind: Task
       name: git-cli
     params:
       - name: GIT_USER_NAME
@@ -481,14 +528,20 @@ spec:
       - name: VALUES_FILE
         value: $(params.VALUES_FILE)         
     taskSpec:
+      metadata: {}
       params:
       - name: CONTEXT_DIR
+        type: string
       - name: APP
-      - name: COLOUR 
+        type: string
+      - name: COLOUR
+        type: string 
       - name: VALUES_FILE
+        type: string
       steps:
       - name: change-switch
         image: registry.access.redhat.com/ubi8/ubi-minimal:8.3
+        metadata: {}
         script: |
           #!/usr/bin/env bash
           cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
@@ -515,6 +568,7 @@ spec:
     runAfter:
     - switch-rollback
     taskRef:
+      kind: Task
       name: git-cli
     params:
       - name: GIT_USER_NAME
