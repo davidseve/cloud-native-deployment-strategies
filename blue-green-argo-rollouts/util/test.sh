@@ -12,6 +12,7 @@ oc apply -f gitops/gitops-operator.yaml
 
 sleep 30s
 
+sed '/pipeline.enabled/{n;s/.*/        value: "true"/}' blue-green-argo-rollouts/application-cluster-config.yaml
 oc apply -f blue-green-argo-rollouts/application-cluster-config.yaml --wait=true
 
 sleep 1m
