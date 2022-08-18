@@ -19,7 +19,7 @@ Another important topic in the `Cloud Native` is the `Continuous Delivery`. If w
 Those are the different `Cloud Native` deployment strategies that we have developed, you can click on each one and test it.
 
 - [Blue/Green using **Openshift Pipelines**](/blue-green-pipeline)
-- [Blue/Green using **Argo Rollouts** (Work in progress)](/blue-green-argo-rollouts)
+- [Blue/Green using **Argo Rollouts**](/blue-green-argo-rollouts)
 - [Canary using **Argo Rollouts** (Work in progress)](/canary-argo-rollouts)
 - [Canary using **Openshift Service Mesh** (Work in progress)](/canary-service-mesh)
 - [Canary using **Argo Rollouts** and **Openshift Service Mesh** (Work in progress)](/canary-rollouts-service-mesh)

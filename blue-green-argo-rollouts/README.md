@@ -1,14 +1,11 @@
 # Cloud Native Blue/Green Deployment Strategy using Argo Rollouts
 
-| :warning: WARNING          |
-|:---------------------------|
-| Work in progress           |
 ## Introduction
 One important topic in the `Cloud Native` is the `Microservice Architecture`. We are not any more dealing with one monolithic application. We have several applications that have dependencies on each other and also have other dependencies like brokers or data bases.
  
 Applications have their own life cycle, so we should be able to execute independent blue/green deployment. All the applications and dependencies will not change its version at the same time.
  
-Another important topic in the `Cloud Native` is the `Continuous Delivery`. If we are going to have several applications doing Blue/Green deployment independently we have to automate it. We will use **Helm**, **Argo Rollouts**, **Openshift GitOps** and of course **Red Hat Openshift** to help us.
+Another important topic in the `Cloud Native` is `Continuous Delivery`. If we are going to have several applications doing Blue/Green deployment independently we have to automate it. We will use **Helm**, **Argo Rollouts**, **Openshift GitOps** and of course **Red Hat Openshift** to help us.
  
 **In the next steps we will see a real example of how to install, deploy and manage the life cycle of Cloud Native applications doing Blue/Green deployment.**
  
@@ -17,7 +14,7 @@ If you want to know more about Blue/Green deployment please read [**Blue/Green D
 Let's start with some theory...after it we will have the **hands on example**.
 ## Shop application
  
-We are going to use very simple applications to test Blue/Green deployment. We have create two Quarkus applications `Products` and `Discounts`
+We are going to use very simple applications to test Blue/Green deployment. We have created two Quarkus applications `Products` and `Discounts`
  
 ![Shop Application](../images/Shop.png)
  
@@ -63,13 +60,13 @@ In the `Shop Umbrella Chart` we use several times the same charts as helm depend
 We have packaged both applications in one chart, but we may have different umbrella charts per application.
 ## Demo!!
 
-First step is to fork this repository, you will have to do some changes and commits. You should clone your forked repository in your local.
+The first step is to fork this repository, you will have to do some changes and commits. You should clone your forked repository in your local.
 
 If we want to have a `Cloud Native` deployment we can not forget `CI/CD`. **OpenShift GitOps** and **Openshift Pipelines** will help us.
  
 ### Install OpenShift GitOps
  
-Go to the folder where you have clone your forked repository and create a new branch `rollouts`
+Go to the folder where you have cloned your forked repository and create a new branch `rollouts`
 ```
 git checkout -b rollouts
 git push origin rollouts
@@ -121,7 +118,7 @@ You can click on the `cluster-configuration` application to check the details of
 
 ### Create Shop application
 
-We are going to create the application `shop`, that we are going to use to test blue/green deployment. Because we will make changes in the application's GitHub repository, we have to use the repository that you have just fork. Please edit the file `blue-green-argo-rollouts/application-shop-blue-green-rollouts.yaml` and set your own GitHub repository in the `reportURL`.
+We are going to create the application `shop`, that we are going to use to test blue/green deployment. Because we will make changes in the application's GitHub repository, we have to use the repository that you have just forked. Please edit the file `blue-green-argo-rollouts/application-shop-blue-green-rollouts.yaml` and set your own GitHub repository in the `reportURL`.
 
 ```yaml
 apiVersion: argoproj.io/v1alpha1
@@ -172,7 +169,7 @@ And the Offline route
 echo "$(oc get routes products-umbrella-offline -n gitops --template='http://{{.spec.host}}')/products"
 ```
 Notice that in each microservice response we have added metadata information to see better the `version` of each application. This will help us to see the changes while we do the Blue/Green deployment.
-Because right now we have both router against the same rollout revision we will have the same response with version `v1.0.1`:
+Because right now we have both routers against the same rollout revision we will have the same response with version `v1.0.1`:
 ```json
 {
    "products":[
@@ -211,17 +208,17 @@ NAME                                  KIND        STATUS     AGE INFO
  
 ## Products Blue/Green deployment
  
-We have split a `Cloud Native` Blue/Green deployment in two steps:
-1. Deploy new version.
-2. Promote new version
+We have split a `Cloud Native` Blue/Green deployment into two steps:
+1. Deploy a new version.
+2. Promote a new version
  
 
  
-We have already deployed the product's version v1.0.1, and we have ready to use a new product's version v1.1.1 that has a new `description` attribute.
+We have already deployed the products version v1.0.1, and we are ready to use a new products version v1.1.1 that has a new `description` attribute.
 
 This is our current status:
 ![Shop initial status](../images/rollout-blue-green-step-0.png)
-### Step 1 - Deploy new version
+### Step 1 - Deploy a new version
  
 We will deploy a new version v1.1.1
 In the file `helm/quarkus-helm-umbrella/chart/values/values-rollouts.yaml` under `products-blue` set `tag` value to `v.1.1.1`
@@ -265,7 +262,7 @@ NAME                                  KIND         STATUS        AGE  INFO
       └──□ products-67fc9fb79b-p7jk9  Pod          ✔ Running     27m  ready:1/1
 ```
   
-If the `prePromotionAnalysis` goes well, we can see that offline applications have the version v1.1.1 and the new attribute description, but the online has not changed.
+If the `prePromotionAnalysis` goes well, we can see that offline applications have the version v1.1.1 and the new attribute description, but the online version has not changed.
 
 This is our current status:
 ![Shop Step 1](../images/rollout-blue-green-step-1.png)
@@ -291,7 +288,7 @@ Functional testing users can execute `Smoke tests` to validate this new v1.1.1 v
 We have to be careful with those tests in a production environment because the product microservice will call the online dependencies.
 If this dependency is for example a production DB we will create the things that our `Smoke tests` do.
  
-### Step 2 - Promote new version
+### Step 2 - Promote a new version
  
 We are going to open the new version to final users.
 
@@ -356,10 +353,10 @@ This is our final status:
 
 Imagine that something goes wrong, we know that this never happens but just in case. We can do a very `quick rollback` just undoing the change in the `Products` online service.
 
-**Argo Rollouts** has an [undo](https://argoproj.github.io/argo-rollouts/generated/kubectl-argo-rollouts/kubectl-argo-rollouts_undo/) command to do the rollback. Personally I don't like this procedure because is not aligned with GitOps. The changes that **Argo Rollouts** do does not came from git, so git is OutOfSync with what we have in Openshift.
-In our case the commit that we have done not only change the ReplicaSet but also the ConfigMap. The `undo` command only change the ReplicaSet, so it does not work for us.
+**Argo Rollouts** has an [undo](https://argoproj.github.io/argo-rollouts/generated/kubectl-argo-rollouts/kubectl-argo-rollouts_undo/) command to do the rollback. Personally, I don't like this procedure because it is not aligned with GitOps. The changes that **Argo Rollouts** do does not come from git, so git is OutOfSync with what we have in Openshift.
+In our case the commit that we have done not only changes the ReplicaSet but also the ConfigMap. The `undo` command only changes the ReplicaSet, so it does not work for us.
 
-I recommend to do the changes in git. We will revert the las commit
+I recommend doing the changes in git. We will revert the last commit
 ```
 git revert HEAD
 git push origin rollouts

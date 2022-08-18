@@ -6,7 +6,7 @@ One important topic in the `Cloud Native` is the `Microservice Architecture`. We
  
 Applications have their own life cycle, so we should be able to execute independent blue/green deployment. All the applications and dependencies will not change its version at the same time.
  
-Another important topic in the `Cloud Native` is the `Continuous Delivery`. If we are going to have several applications doing Blue/Green deployment independently we have to automate it. We will use **Helm**, **Openshift Pipelines**, **Openshift GitOps** and of course **Red Hat Openshift** to help us.
+Another important topic in the `Cloud Native` is `Continuous Delivery`. If we are going to have several applications doing Blue/Green deployment independently we have to automate it. We will use **Helm**, **Openshift Pipelines**, **Openshift GitOps** and of course **Red Hat Openshift** to help us.
  
 **In the next steps we will see a real example of how to install, deploy and manage the life cycle of Cloud Native applications doing Blue/Green deployment.**
  
@@ -41,7 +41,7 @@ However, meanwhile we are going to do the switch, we have to be ready to do a ra
 It is also very important to keep **backwards compatibility**. Without it, we can not do independent Blue/Green deployments.
 ## Shop application
  
-We are going to use very simple applications to test Blue/Green deployment. We have create two Quarkus applications `Products` and `Discounts`
+We are going to use very simple applications to test Blue/Green deployment. We have created two Quarkus applications `Products` and `Discounts`
  
 ![Shop Application](../images/Shop.png)
  
@@ -130,13 +130,13 @@ We have packaged both applications in one chart, but we may have different umbre
  
 ## Demo!!
  
-First step is to fork this repository, you will have to do some changes and commits. You should clone your forked repository in your local.
+The first step is to fork this repository, you will have to do some changes and commits. You should clone your forked repository in your local.
  
  
 If we want to have a `Cloud Native` deployment we can not forget `CI/CD`. **OpenShift GitOps** and **Openshift Pipelines** will help us.
 ### Install OpenShift GitOps
  
-Go to the folder where you have clone your forked repository and create a new branch `blue-green`
+Go to the folder where you have cloned your forked repository and create a new branch `blue-green`
 ```
 git checkout -b blue-green
 git push origin blue-green
@@ -231,7 +231,7 @@ You can click on the `cluster-configuration` application to check the details of
 
 ### Create Shop application
 
-We are going to create the application `shop`, that we are going to use to test blue/green deployment. Because we will make changes in the application's GitHub repository, we have to use the repository that you have just fork. Please edit the file `blue-green-pipeline/application-shop-blue-green.yaml` and set your own GitHub repository in the `reportURL`.
+We are going to create the application `shop`, that we are going to use to test blue/green deployment. Because we will make changes in the application's GitHub repository, we have to use the repository that you have just forked. Please edit the file `blue-green-pipeline/application-shop-blue-green.yaml` and set your own GitHub repository in the `reportURL`.
 
 ```yaml
 apiVersion: argoproj.io/v1alpha1
@@ -317,7 +317,7 @@ Because right now we have the same version v1.0.1 in both colors we will have al
  
 ## Products Blue/Green deployment
  
-We have split a `Cloud Native` Blue/Green deployment in four steps:
+We have split a `Cloud Native` Blue/Green deployment into four steps:
 1. Deploy new version.
 2. Change to online configuration.
 3. Switch new version to Online.
@@ -325,7 +325,7 @@ We have split a `Cloud Native` Blue/Green deployment in four steps:
  
 
  
-We have already deployed the product's version v1.0.1, and we have ready to use a new product's version v1.1.1 that has a new `description` attribute.
+We have already deployed the products version v1.0.1, and we are ready to use a new products version v1.1.1 that has a new `description` attribute.
  
 This is our current status:
 ![Shop initial status](../images/blue-green-step-0.png)
