@@ -141,7 +141,7 @@ spec:
       - name: REPLICA_COUNT
         value: $(params.REPLICA_COUNT)
     taskSpec:
-      resources: {}
+      metadata: {}
       params:
       - name: CONTEXT_DIR
         type: string
@@ -236,7 +236,7 @@ spec:
       - name: VALUES_FILE
         value: $(params.VALUES_FILE)        
     taskSpec:
-      resources: {}
+      metadata: {}
       params:
       - name: CONTEXT_DIR
         type: string
@@ -320,7 +320,7 @@ spec:
       - name: VALUES_FILE
         value: $(params.VALUES_FILE)        
     taskSpec:
-      resources: {}
+      metadata: {}
       params:
       - name: CONTEXT_DIR
         type: string
@@ -385,7 +385,7 @@ spec:
       - name: VALUES_FILE
         value: $(params.VALUES_FILE)         
     taskSpec:
-      resources: {}
+      metadata: {}
       params:
       - name: CONTEXT_DIR
         type: string
@@ -449,7 +449,7 @@ spec:
       - name: VALUES_FILE
         value: $(params.VALUES_FILE)            
     taskSpec:
-      resources: {}
+      metadata: {}
       params:
       - name: CONTEXT_DIR
         type: string
@@ -541,7 +541,7 @@ spec:
       steps:
       - name: change-switch
         image: registry.access.redhat.com/ubi8/ubi-minimal:8.3
-        metadata: {}
+        resources: {}
         script: |
           #!/usr/bin/env bash
           cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
