@@ -12,7 +12,7 @@ oc apply -f gitops/gitops-operator.yaml
 
 sleep 30s
 
-sed '/pipeline.enabled/{n;s/.*/        value: "true"/}' blue-green-argo-rollouts/application-cluster-config.yaml
+sed -i '/pipeline.enabled/{n;s/.*/        value: "true"/}' blue-green-argo-rollouts/application-cluster-config.yaml
 oc apply -f blue-green-argo-rollouts/application-cluster-config.yaml --wait=true
 
 sleep 1m
@@ -43,8 +43,15 @@ kubectlArgo argo rollouts promote products -n gitops
 
 tkn pipeline start pipeline-blue-green-e2e-test --param NEW_IMAGE_TAG=v1.1.1 --param MODE=online --param LABEL=.version --param APP=products --param NAMESPACE=gitops --param JQ_PATH=.metadata --workspace name=app-source,claimName=workspace-pvc-shop-cd-e2e-tests -n gitops --showlog
 
-git revert HEAD
+git revert HEAD --no-edit
 git push origin rollouts
+status=none
+while [[ "$status" != "Paused - BlueGreenPause" ]]
+do
+    sleep 5
+    status=$(kubectlArgo argo rollouts status products -n gitops  --watch=false)
+    echo $status
+done
 kubectlArgo argo rollouts promote products -n gitops
 
 tkn pipeline start pipeline-blue-green-e2e-test --param NEW_IMAGE_TAG=v1.0.1 --param MODE=online --param LABEL=.version --param APP=products --param NAMESPACE=gitops --param JQ_PATH=.metadata --workspace name=app-source,claimName=workspace-pvc-shop-cd-e2e-tests -n gitops --showlog
