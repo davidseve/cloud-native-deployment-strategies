@@ -8,6 +8,7 @@ discounts-blue:
   fullnameOverride: "discounts"
   image:
     tag: v1.0.1
+  version: none
   rollouts:
     enabled: true
     canary:
@@ -19,7 +20,8 @@ discounts-blue:
 products-blue:
   mode: online
   image:
-    tag: v1.1.1
+    tag: v1.0.1
+  version: none
   replicaCount: 4
   fullnameOverride: "products"
   rollouts:
