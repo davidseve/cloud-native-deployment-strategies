@@ -9,7 +9,10 @@ discounts-blue:
   version: none
   rollouts:
     enabled: true
+    analysisService: "discounts-umbrella-offline"
     canary:
+      stableService: "discounts-umbrella-online"
+      canaryService: "discounts-umbrella-offline"
       steps:
         - setWeight: 50
         - pause:
