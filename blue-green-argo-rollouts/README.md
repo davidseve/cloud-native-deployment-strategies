@@ -51,6 +51,7 @@ This is an example of products rollout manifest:
           - templateName: products-analysis-template
 ```
  
+We have defined an active or online service 'products-umbrella-online' and a preview or offline service 'products-umbrella-offline'. Final user will always use 'products-umbrella-online'. We have created an AnalysisTemplate 'products-analysis-template' that just validates the health of the application, for production environments a better analysis should be done. **Argo Rollouts** use this AnalysisTemplate to validate a new version and set it ready to be promoted or not. To learn more, please read [this](https://argoproj.github.io/argo-rollouts/features/bluegreen/).
 ## Shop Umbrella Helm Chart
  
 One of the best ways to package `Cloud Native` applications is `Helm`. In blue/green deployment it makes even more sense.
@@ -356,7 +357,7 @@ This is our final status:
 
 Imagine that something goes wrong, we know that this never happens but just in case. We can do a very `quick rollback` just undoing the change in the `Products` online service.
 
-**Argo Rollouts** has an [undo](https://argoproj.github.io/argo-rollouts/generated/kubectl-argo-rollouts/kubectl-argo-rollouts_undo/) command to do the rollback. Personally, I don't like this procedure because it is not aligned with GitOps. The changes that **Argo Rollouts** do does not come from git, so git is OutOfSync with what we have in Openshift.
+**Argo Rollouts** has an [undo](https://argoproj.github.io/argo-rollouts/generated/kubectl-argo-rollouts/kubectl-argo-rollouts_undo/) command to do the rollback. In my opinion, I don't like this procedure because it is not aligned with GitOps. The changes that **Argo Rollouts** do does not come from git, so git is OutOfSync with what we have in Openshift.
 In our case the commit that we have done not only changes the ReplicaSet but also the ConfigMap. The `undo` command only changes the ReplicaSet, so it does not work for us.
 
 I recommend doing the changes in git. We will revert the last commit
