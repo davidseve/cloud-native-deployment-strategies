@@ -8,6 +8,15 @@ cd cloud-native-deployment-strategies
 git checkout -b canary 
 git push origin canary 
 
+oc apply -f gitops/gitops-operator.yaml
+
+sleep 30s
+
+sed -i '/pipeline.enabled/{n;s/.*/        value: "true"/}' canary-argo-rollouts/application-cluster-config.yaml
+oc apply -f canary-argo-rollouts/application-cluster-config.yaml --wait=true
+
+sleep 1m
+
 sed -i 's/change_me/davidseve/g' canary-argo-rollouts/application-shop-canary-rollouts.yaml
 
 oc apply -f canary-argo-rollouts/application-shop-canary-rollouts.yaml --wait=true

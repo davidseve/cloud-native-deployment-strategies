@@ -1,4 +1,4 @@
-{{- if .Values.rollouts.enabled }}
+{{- if .Values.rollouts.blueGreen.enabled }}
 apiVersion: argoproj.io/v1alpha1
 kind: AnalysisTemplate
 metadata:
@@ -11,6 +11,6 @@ spec:
     successCondition: result == 'UP'
     provider:
       web:
-        url: "http://{{ .Values.rollouts.analysisService }}.{{ .Values.global.namespace }}.svc.cluster.local:8080/q/health/ready"
+        url: "http://{{ .Values.rollouts.blueGreen.previewService }}.{{ .Values.global.namespace }}.svc.cluster.local:8080/q/health/ready"
         jsonPath: "{$.status}"
 {{- end }}
