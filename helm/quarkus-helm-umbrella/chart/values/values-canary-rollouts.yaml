@@ -1,6 +1,8 @@
 tags:
   discounts-green: false
   products-green: false
+  discountsNetworkingOffline: false
+  productosNetworkingOffline: false
 
 discounts-blue:
   fullnameOverride: "discounts"
