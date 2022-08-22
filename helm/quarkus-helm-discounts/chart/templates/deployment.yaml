@@ -102,8 +102,5 @@ spec:
 {{- with .Values.rollouts.canary }}
   strategy:
     canary:
-      analysis:
-        templates:
-        - templateName: {{ include "discounts.fullname" $ }}-analysis-template
       {{- toYaml .| nindent 6 }}
 {{- end }}
