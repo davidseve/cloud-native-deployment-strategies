@@ -24,10 +24,10 @@ products-blue:
   fullnameOverride: "products"
   rollouts:
     enabled: true
-    analysisService: "discounts-umbrella-offline"
+    analysisService: "products-umbrella-offline"
     canary:
-      stableService: "discounts-umbrella-online"
-      canaryService: "discounts-umbrella-offline"
+      stableService: "products-umbrella-online"
+      canaryService: "products-umbrella-offline"
       steps:
         - setWeight: 25
         - pause:
