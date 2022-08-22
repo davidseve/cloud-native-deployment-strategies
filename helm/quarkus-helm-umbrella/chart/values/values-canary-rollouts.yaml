@@ -1,8 +1,6 @@
 tags:
   discounts-green: false
   products-green: false
-  discountsNetworkingOffline: false
-  productsNetworkingOffline: false
 
 discounts-blue:
   fullnameOverride: "discounts"
@@ -26,7 +24,10 @@ products-blue:
   fullnameOverride: "products"
   rollouts:
     enabled: true
+    analysisService: "discounts-umbrella-offline"
     canary:
+      stableService: "discounts-umbrella-online"
+      canaryService: "discounts-umbrella-offline"
       steps:
         - setWeight: 25
         - pause:
