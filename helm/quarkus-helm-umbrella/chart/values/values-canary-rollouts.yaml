@@ -2,7 +2,7 @@ tags:
   discounts-green: false
   products-green: false
   discountsNetworkingOffline: false
-  productosNetworkingOffline: false
+  productsNetworkingOffline: false
 
 discounts-blue:
   fullnameOverride: "discounts"
