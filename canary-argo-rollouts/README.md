@@ -3,3 +3,367 @@
 | :warning: WARNING          |
 |:---------------------------|
 | Work in progress           |
+
+## Introduction
+
+One important topic in the `Cloud Native` is the `Microservice Architecture`. We are not any more dealing with one monolithic application. We have several applications that have dependencies on each other and also have other dependencies like brokers or data bases.
+ 
+Applications have their own life cycle, so we should be able to execute independent canary deployment. All the applications and dependencies will not change its version at the same time.
+ 
+Another important topic in the `Cloud Native` is `Continuous Delivery`. If we are going to have several applications doing canary deployment independently we have to automate it. We will use **Helm**, **Argo Rollouts**, **Openshift GitOps** and of course **Red Hat Openshift** to help us.
+
+[**Argo Rollouts**](https://argoproj.github.io/argo-rollouts/) is a Kubernetes controller and set of CRDs which provide advanced deployment capabilities such as blue-green, canary, canary analysis, experimentation, and progressive delivery features to Kubernetes.
+In this demo we are going to use canary capabilities.
+ 
+**In the next steps we will see a real example of how to install, deploy and manage the life cycle of Cloud Native applications doing canary deployment using Argo Rollouts.**
+
+Let's start with some theory...after it we will have the **hands on example**.
+
+## Canary Deployment
+
+A canary rollout is a deployment strategy where the operator releases a new version of their application to a small percentage of the production traffic.
+## Shop application
+ 
+We are going to use very simple applications to test canary deployment. We have created two Quarkus applications `Products` and `Discounts`
+ 
+![Shop Application](../images/Shop.png)
+ 
+`Products` call `Discounts` to get the product`s discount and expose an API with a list of products with its discounts.
+ 
+## Shop Canary
+ 
+To achieve canary deployment with `Cloud Native` applications using **Argo Rollouts**, we have designed this architecture.
+
+![Shop initial status](../images/canary-rollout-initial.png)
+ 
+OpenShift Components - Online
+- Routes and Services declared with suffix -online
+- Routes mapped only to the online services
+- Services mapped to the rollout.
+
+In Blue/Green deployment we always have an offline service to test the version that is not in production. In the case of canary deployment we do not need it because progressively we will have the new version in production. 
+
+
+We have defined an active or online service 'products-umbrella-online'. Final user will always use 'products-umbrella-online'. When a new version is deployed **Argo Rollouts** create a new revision (ReplicaSet). The number of replicas in the new release increase base on the information in the steps, the number of replicas in the old release decrease in the same number. We have configure a pause duration between each step. To learn more, please read [this](https://argoproj.github.io/argo-rollouts/features/canary/).
+
+
+## Shop Umbrella Helm Chart
+ 
+One of the best ways to package `Cloud Native` applications is `Helm`. In canary deployment it makes even more sense.
+We have created a chart for each application that does not know anything about canary. Then we pack everything together in an umbrella helm chart.
+
+![Shop Umbrella Helm Chart](../images/Shop-helm-canary-rollouts.png)
+
+In the `Shop Umbrella Chart` we use several times the same charts as helm dependencies but with different names.
+ 
+We have packaged both applications in one chart, but we may have different umbrella charts per application.
+
+## Demo!!
+
+The first step is to fork this repository, you will have to do some changes and commits. You should clone your forked repository in your local.
+
+If we want to have a `Cloud Native` deployment we can not forget `CI/CD`. **OpenShift GitOps** will help us.
+ 
+### Install OpenShift GitOps
+ 
+Go to the folder where you have cloned your forked repository and create a new branch `canary`
+```
+git checkout -b canary
+git push origin canary
+```
+ 
+Log into OpenShift as a cluster admin and install the OpenShift GitOps operator with the following command. This may take some minutes.
+```
+oc apply -f gitops/gitops-operator.yaml
+```
+ 
+Once OpenShift GitOps is installed, an instance of Argo CD is automatically installed on the cluster in the `openshift-gitops` namespace and a link to this instance is added to the application launcher in OpenShift Web Console.
+ 
+![Application Launcher](../images/gitops-link.png)
+ 
+### Log into Argo CD dashboard
+ 
+Argo CD upon installation generates an initial admin password which is stored in a Kubernetes secret. In order to retrieve this password, run the following command to decrypt the admin password:
+ 
+```
+oc extract secret/openshift-gitops-cluster -n openshift-gitops --to=-
+```
+ 
+Click on Argo CD from the OpenShift Web Console application launcher and then log into Argo CD with `admin` username and the password retrieved from the previous step.
+ 
+![Argo CD](../images/ArgoCD-login.png)
+ 
+![Argo CD](../images/ArgoCD-UI.png)
+ 
+### Configure OpenShift with Argo CD
+ 
+We are going to follow, as much as we can, a GitOps methodology in this demo. So we will have everything in our Git repository and use **ArgoCD** to deploy it in the cluster.
+ 
+In the current Git repository, the [gitops/cluster-config](../gitops/cluster-config/) directory contains OpenShift cluster configurations such as:
+- namespaces `gitops`.
+- role binding for ArgoCD to the namespace `gitops`.
+- Argo Rollouts project.
+ 
+Let's configure Argo CD to recursively sync the content of the [gitops/cluster-config](../gitops/cluster-config/) directory to the OpenShift cluster.
+ 
+Execute this command to add a new Argo CD application that syncs a Git repository containing cluster configurations with the OpenShift cluster.
+ 
+```
+oc apply -f canary-argo-rollouts/application-cluster-config.yaml
+```
+ 
+Looking at the Argo CD dashboard, you would notice that an application has been created.
+
+You can click on the `cluster-configuration` application to check the details of sync resources and their status on the cluster.
+
+### Create Shop application
+
+We are going to create the application `shop`, that we will use to test canary deployment. Because we will make changes in the application's GitHub repository, we have to use the repository that you have just forked. Please edit the file `canary-argo-rollouts/application-shop-canary-rollouts.yaml` and set your own GitHub repository in the `reportURL`.
+
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: shop
+  namespace: openshift-gitops
+spec:
+  destination:
+    name: ''
+    namespace: gitops
+    server: 'https://kubernetes.default.svc'
+  source:
+    path: helm/quarkus-helm-umbrella/chart
+    repoURL:  https://github.com/change_me/cloud-native-deployment-strategies.git
+    targetRevision: canary
+    helm:
+      parameters:
+      - name: "global.namespace"
+        value: gitops
+      valueFiles:
+        - values/values-canary-rollouts.yaml
+  project: default
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: false
+
+```
+
+```
+oc apply -f canary-argo-rollouts/application-shop-canary-rollouts.yaml
+```
+
+Looking at the Argo CD dashboard, you would notice that we have a new `shop` application.
+
+![Argo CD - Cluster Config](../images/ArgoCD-Applications.png)
+
+## Test Shop application
+ 
+We have deployed the `shop` with ArgoCD. We can test that it is up and running.
+ 
+We have to get the Online route
+```
+echo "$(oc get routes products-umbrella-online -n gitops --template='http://{{.spec.host}}')/products"
+```
+
+Notice that in each microservice response we have added metadata information to see better the `version` of each application. This will help us to see the changes while we do the canary deployment.
+We can see that the current version is `v1.0.1`:
+```json
+{
+   "products":[
+      {
+         ...
+         "name":"TV 4K",
+         "price":"1500€"
+      }
+   ],
+   "metadata":{
+      "version":"v1.0.1", <--
+      "colour":"none",
+      "mode":"online"
+   }
+}
+```
+
+We can also see the rollout`s status[^note].
+
+[^note]:
+    Argo Rollouts offers a Kubectl plugin to enrich the experience with Rollouts https://argoproj.github.io/argo-rollouts/installation/#kubectl-plugin-installation 
+
+```
+kubectl argo rollouts get rollout products --watch -n gitops
+```
+
+```
+TODO
+NAME                                  KIND        STATUS     AGE INFO
+⟳ products                            Rollout     ✔ Healthy  12m  
+└──# revision:1                                                   
+   └──⧉ products-67fc9fb79b           ReplicaSet  ✔ Healthy  12m  stable,active
+      ├──□ products-67fc9fb79b-49k25  Pod         ✔ Running  12m  ready:1/1
+      └──□ products-67fc9fb79b-p7jk9  Pod         ✔ Running  12m  ready:1/1
+```
+
+ 
+## Products Blue/Green deployment
+ 
+We have already deployed the products version v1.0.1 with 4 replicas, and we are ready to use a new products version v1.1.1 that has a new `description` attribute.
+
+This is our current status:
+![Shop initial status](../images/canary-rollout-step-0.png)
+
+This is how we have configure **Argo Rollouts** for this demo:
+```yaml
+  strategy:
+    canary:
+      steps:
+        - setWeight: 10
+        - pause:
+            duration: 30s
+        - setWeight: 50
+        - pause:
+            duration: 30s
+```
+
+We have split a `Cloud Native` Canary deployment into three automatic step:
+1. Deploy canary version for 10%
+2. Scale canary version to 50%
+3. Scale canary version to 100%
+
+This is just an example. The key point here is that, very easily we can have the canary deployment that better fit our needs. In order to make this demo faster we have not set a pause with out duration in any step, so  **Argo Rollouts** will go throw each step automatically.
+### Step 1 - Deploy canary version for 25%
+ 
+We will deploy a new version v1.1.1
+In the file `helm/quarkus-helm-umbrella/chart/values/values-canary-rollouts.yaml` under `products-blue` set `tag` value to `v.1.1.1`
+
+```yaml
+products-blue:
+  mode: online
+  image:
+    tag: v1.1.1
+```
+
+**Argo Rollouts** will automatically deploy a new products revision. The canary version will be 10% of the replicas. In this demo we are no using [traffic management](https://argoproj.github.io/argo-rollouts/features/traffic-management/) the Rollout makes a best effort attempt to achieve the percentage listed in the last setWeight step between the new and old version. This means that it will create only one replica in the new revision, because is rounded up. All the requests are load balanced between the old and the new replicas.
+
+Push the changes to start the deployment.
+```
+git add .
+git commit -m "Change products version to v1.1.1"
+git push origin canary
+```
+
+ ArgoCD will refresh the status after some minutes. If you don't want to wait you can refresh it manually from ArgoCD UI or configure the Argo CD Git Webhook.[^note2].
+ 
+[^note2]:
+    Here you can see how to configure the Argo CD Git [Webhook]( https://argo-cd.readthedocs.io/en/stable/operator-manual/webhook/)
+    ![Argo CD Git Webhook](../images/ArgoCD-webhook.png)
+
+![Refresh Shop](../images/ArgoCD-Shop-Refresh.png)
+
+This is our current status:
+![Shop Step 1](../images/canary-rollout-step-1.png)
+
+
+```
+TODO
+NAME                                  KIND         STATUS        AGE  INFO
+⟳ products                            Rollout      ॥ Paused      27m  
+├──# revision:2                                                       
+│  ├──⧉ products-9dc6f576f            ReplicaSet   ✔ Healthy     36s  preview
+│  │  ├──□ products-9dc6f576f-6vqp5   Pod          ✔ Running     36s  ready:1/1
+│  │  └──□ products-9dc6f576f-lmgd7   Pod          ✔ Running     36s  ready:1/1
+│  └──α products-9dc6f576f-2-pre      AnalysisRun  ✔ Successful  31s  ✔ 1
+└──# revision:1                                                       
+   └──⧉ products-67fc9fb79b           ReplicaSet   ✔ Healthy     27m  stable,active
+      ├──□ products-67fc9fb79b-49k25  Pod          ✔ Running     27m  ready:1/1
+      └──□ products-67fc9fb79b-p7jk9  Pod          ✔ Running     27m  ready:1/1
+```
+
+### Step 2 - Scale canary version to 50%
+After 30 seconds **Argo Rollouts** automatically will increase the number of replicas in the new release to 2. Instead of increase automatically after 30 seconds we can configure **Argo Rollouts** to wait indefinitely until that `Pause` condition is removed. But this is nor part of this demo.
+This is our current status:
+![Shop Step 1](../images/canary-rollout-step-2.png)
+
+```
+TODO
+```
+
+### Step 3 - Scale canary version to 100%
+After other 30 seconds **Argo Rollouts** will increase the number of replicas in the new release to 4 and scale down the old revision.
+
+This is our current status:
+![Shop Step 1](../images/canary-rollout-step-3.png)
+
+```
+TODO
+```
+
+**We have in the online environment the new version v1.1.1!!!**
+```json
+{
+  "products":[
+     {
+        "discountInfo":{...},
+        "name":"TV 4K",
+        "price":"1500€",
+        "description":"The best TV" <--
+     }
+  ],
+  "metadata":{
+     "version":"v1.1.1", <--
+  }
+}
+```
+
+### Rollback
+
+Imagine that something goes wrong, we know that this never happens but just in case. We can do a very `quick rollback` just undoing the change.
+
+**Argo Rollouts** has an [undo](https://argoproj.github.io/argo-rollouts/generated/kubectl-argo-rollouts/kubectl-argo-rollouts_undo/) command to do the rollback. In my opinion, I don't like this procedure because it is not aligned with GitOps. The changes that **Argo Rollouts** do does not come from git, so git is OutOfSync with what we have in Openshift.
+In our case the commit that we have done not only changes the ReplicaSet but also the ConfigMap. The `undo` command only changes the ReplicaSet, so it does not work for us.
+
+I recommend doing the changes in git. We will revert the last commit
+```
+git revert HEAD --no-edit
+```
+
+If we just revert the changes in git we will go back to the previous version. But **Argo Rollouts** will take this revert as a new release so it will do it throw the steps that we have configured. We want a `quick rollback` we don not want a step by step revert. To achieved the `quick rollback` we will configure **Argo Rollouts** with out steps for the rollback.
+
+Because we have our **Argo Rollouts** configuration as values in our Helm Chart, we have just to edit the values.yaml that we are using.
+
+In the file `helm/quarkus-helm-umbrella/chart/values/values-canary-rollouts.yaml` under `products-blue` under the `steps` delete all the steps and only set one step `- setWeight: 100`
+
+`helm/quarkus-helm-umbrella/chart/values/values-canary-rollouts.yaml` should looks like:
+```yaml
+products-blue:
+  mode: online
+  image:
+    tag: v1.0.1
+  version: none
+  replicaCount: 4
+  fullnameOverride: "products"
+  rollouts:
+    enabled: true
+    canary:
+      steps:
+        - setWeight: 100
+```
+
+Execute those command to push the changes:
+```
+git add .
+git commit -m "delete steps for rollout"
+git push origin canary
+```
+**ArgoCD** will get the changes and apply them. **Argo Rollouts** will create a new revision with the previous version.
+
+The rollback is done!
+
+## Delete environment
+ 
+To delete all the thing that we have done for the demo you have to_
+- In GitHub delete the branch `canary`
+- In ArgoCD delete the application `cluster-configuration` and `shop`
+- In Openshift, go to project `openshift-operators` and delete the installed operators **Openshift GitOps**.
+
+

@@ -66,7 +66,7 @@ We have packaged both applications in one chart, but we may have different umbre
 
 The first step is to fork this repository, you will have to do some changes and commits. You should clone your forked repository in your local.
 
-If we want to have a `Cloud Native` deployment we can not forget `CI/CD`. **OpenShift GitOps** and **Openshift Pipelines** will help us.
+If we want to have a `Cloud Native` deployment we can not forget `CI/CD`. **OpenShift GitOps** will help us.
  
 ### Install OpenShift GitOps
  
@@ -377,6 +377,6 @@ The rollback is done!
 To delete all the thing that we have done for the demo you have to_
 - In GitHub delete the branch `rollouts`
 - In ArgoCD delete the application `cluster-configuration` and `shop`
-- In Openshift, go to project `openshift-operators` and delete the installed operators **Openshift GitOps** and **Openshift Pipelines**
+- In Openshift, go to project `openshift-operators` and delete the installed operators **Openshift GitOps**.
 
 
