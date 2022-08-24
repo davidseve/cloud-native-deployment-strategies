@@ -196,13 +196,14 @@ kubectl argo rollouts get rollout products --watch -n gitops
 ```
 
 ```
-TODO
-NAME                                  KIND        STATUS     AGE INFO
-⟳ products                            Rollout     ✔ Healthy  12m  
+NAME                                  KIND        STATUS     AGE  INFO
+⟳ products                            Rollout     ✔ Healthy  38s  
 └──# revision:1                                                   
-   └──⧉ products-67fc9fb79b           ReplicaSet  ✔ Healthy  12m  stable,active
-      ├──□ products-67fc9fb79b-49k25  Pod         ✔ Running  12m  ready:1/1
-      └──□ products-67fc9fb79b-p7jk9  Pod         ✔ Running  12m  ready:1/1
+   └──⧉ products-67fc9fb79b           ReplicaSet  ✔ Healthy  38s  stable
+      ├──□ products-67fc9fb79b-4ql4z  Pod         ✔ Running  38s  ready:1/1
+      ├──□ products-67fc9fb79b-7c4jw  Pod         ✔ Running  38s  ready:1/1
+      ├──□ products-67fc9fb79b-lz86j  Pod         ✔ Running  38s  ready:1/1
+      └──□ products-67fc9fb79b-xlkhp  Pod         ✔ Running  38s  ready:1/1
 ```
 
  
@@ -263,20 +264,20 @@ git push origin canary
 This is our current status:
 ![Shop Step 1](../images/canary-rollout-step-1.png)
 
-
 ```
-TODO
-NAME                                  KIND         STATUS        AGE  INFO
-⟳ products                            Rollout      ॥ Paused      27m  
-├──# revision:2                                                       
-│  ├──⧉ products-9dc6f576f            ReplicaSet   ✔ Healthy     36s  preview
-│  │  ├──□ products-9dc6f576f-6vqp5   Pod          ✔ Running     36s  ready:1/1
-│  │  └──□ products-9dc6f576f-lmgd7   Pod          ✔ Running     36s  ready:1/1
-│  └──α products-9dc6f576f-2-pre      AnalysisRun  ✔ Successful  31s  ✔ 1
-└──# revision:1                                                       
-   └──⧉ products-67fc9fb79b           ReplicaSet   ✔ Healthy     27m  stable,active
-      ├──□ products-67fc9fb79b-49k25  Pod          ✔ Running     27m  ready:1/1
-      └──□ products-67fc9fb79b-p7jk9  Pod          ✔ Running     27m  ready:1/1
+kubectl argo rollouts get rollout products --watch -n gitops
+```
+```
+NAME                                  KIND        STATUS     AGE    INFO
+⟳ products                            Rollout     ॥ Paused   3m13s  
+├──# revision:2                                                     
+│  └──⧉ products-9dc6f576f            ReplicaSet  ✔ Healthy  8s     canary
+│     └──□ products-9dc6f576f-fwq8m   Pod         ✔ Running  8s     ready:1/1
+└──# revision:1                                                     
+   └──⧉ products-67fc9fb79b           ReplicaSet  ✔ Healthy  3m13s  stable
+      ├──□ products-67fc9fb79b-4ql4z  Pod         ✔ Running  3m13s  ready:1/1
+      ├──□ products-67fc9fb79b-lz86j  Pod         ✔ Running  3m13s  ready:1/1
+      └──□ products-67fc9fb79b-xlkhp  Pod         ✔ Running  3m13s  ready:1/1
 ```
 
 In the products url`s response you will have the new version in 25% of the requests.
@@ -317,10 +318,22 @@ Old revision:
 ### Step 2 - Scale canary version to 50%
 After 30 seconds **Argo Rollouts** automatically will increase the number of replicas in the new release to 2. Instead of increase automatically after 30 seconds we can configure **Argo Rollouts** to wait indefinitely until that `Pause` condition is removed. But this is not part of this demo.
 This is our current status:
-![Shop Step 1](../images/canary-rollout-step-2.png)
+![Shop Step 2](../images/canary-rollout-step-2.png)
 
 ```
-TODO
+kubectl argo rollouts get rollout products --watch -n gitops
+```
+```
+NAME                                  KIND        STATUS     AGE    INFO
+⟳ products                            Rollout     ॥ Paused   3m47s  
+├──# revision:2                                                     
+│  └──⧉ products-9dc6f576f            ReplicaSet  ✔ Healthy  42s    canary
+│     ├──□ products-9dc6f576f-fwq8m   Pod         ✔ Running  42s    ready:1/1
+│     └──□ products-9dc6f576f-8qppq   Pod         ✔ Running  6s     ready:1/1
+└──# revision:1                                                     
+   └──⧉ products-67fc9fb79b           ReplicaSet  ✔ Healthy  3m47s  stable
+      ├──□ products-67fc9fb79b-lz86j  Pod         ✔ Running  3m47s  ready:1/1
+      └──□ products-67fc9fb79b-xlkhp  Pod         ✔ Running  3m47s  ready:1/1
 ```
 
 ### Step 3 - Scale canary version to 100%
@@ -330,7 +343,19 @@ This is our current status:
 ![Shop Step 1](../images/canary-rollout-step-3.png)
 
 ```
-TODO
+kubectl argo rollouts get rollout products --watch -n gitops
+```
+```
+NAME                                 KIND        STATUS        AGE    INFO
+⟳ products                           Rollout     ✔ Healthy     4m32s  
+├──# revision:2                                                       
+│  └──⧉ products-9dc6f576f           ReplicaSet  ✔ Healthy     87s    stable
+│     ├──□ products-9dc6f576f-fwq8m  Pod         ✔ Running     87s    ready:1/1
+│     ├──□ products-9dc6f576f-8qppq  Pod         ✔ Running     51s    ready:1/1
+│     ├──□ products-9dc6f576f-5ch92  Pod         ✔ Running     17s    ready:1/1
+│     └──□ products-9dc6f576f-kmvdh  Pod         ✔ Running     17s    ready:1/1
+└──# revision:1                                                       
+   └──⧉ products-67fc9fb79b          ReplicaSet  • ScaledDown  4m32s  
 ```
 
 **We have in the online environment the new version v1.1.1!!!**
