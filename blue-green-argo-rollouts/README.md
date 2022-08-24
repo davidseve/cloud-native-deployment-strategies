@@ -224,8 +224,7 @@ This is our current status:
 ![Shop initial status](../images/rollout-blue-green-step-0.png)
 ### Step 1 - Deploy a new version
  
-We will deploy a new version v1.1.1
-In the file `helm/quarkus-helm-umbrella/chart/values/values-rollouts.yaml` under `products-blue` set `tag` value to `v.1.1.1`
+We will deploy a new version v1.1.1. To do it, we have to edit the file `helm/quarkus-helm-umbrella/chart/values/values-rollouts.yaml` under `products-blue` set `tag` value to `v.1.1.1`
 
 ```yaml
 products-blue:

@@ -22,6 +22,7 @@ Let's start with some theory...after it we will have the **hands on example**.
 ## Canary Deployment
 
 A canary rollout is a deployment strategy where the operator releases a new version of their application to a small percentage of the production traffic.
+TODO add more info
 ## Shop application
  
 We are going to use very simple applications to test canary deployment. We have created two Quarkus applications `Products` and `Discounts`
@@ -44,7 +45,7 @@ OpenShift Components - Online
 In Blue/Green deployment we always have an offline service to test the version that is not in production. In the case of canary deployment we do not need it because progressively we will have the new version in production. 
 
 
-We have defined an active or online service 'products-umbrella-online'. Final user will always use 'products-umbrella-online'. When a new version is deployed **Argo Rollouts** create a new revision (ReplicaSet). The number of replicas in the new release increase base on the information in the steps, the number of replicas in the old release decrease in the same number. We have configure a pause duration between each step. To learn more, please read [this](https://argoproj.github.io/argo-rollouts/features/canary/).
+We have defined an active or online service 'products-umbrella-online'. Final user will always use 'products-umbrella-online'. When a new version is deployed **Argo Rollouts** create a new revision (ReplicaSet). The number of replicas in the new release increases based on the information in the steps, the number of replicas in the old release decreases in the same number. We have configured a pause duration between each step. To learn more about **Argo Rollouts**, please read [this](https://argoproj.github.io/argo-rollouts/features/canary/).
 
 
 ## Shop Umbrella Helm Chart
@@ -205,7 +206,7 @@ NAME                                  KIND        STATUS     AGE INFO
 ```
 
  
-## Products Blue/Green deployment
+## Products Canary deployment
  
 We have already deployed the products version v1.0.1 with 4 replicas, and we are ready to use a new products version v1.1.1 that has a new `description` attribute.
 
@@ -230,11 +231,10 @@ We have split a `Cloud Native` Canary deployment into three automatic step:
 2. Scale canary version to 50%
 3. Scale canary version to 100%
 
-This is just an example. The key point here is that, very easily we can have the canary deployment that better fit our needs. In order to make this demo faster we have not set a pause with out duration in any step, so  **Argo Rollouts** will go throw each step automatically.
-### Step 1 - Deploy canary version for 25%
+This is just an example. The key point here is that, very easily we can have the canary deployment that better fits our needs. In order to make this demo faster we have not set a pause with out duration in any step, so  **Argo Rollouts** will go throw each step automatically.
+### Step 1 - Deploy canary version for 10%
  
-We will deploy a new version v1.1.1
-In the file `helm/quarkus-helm-umbrella/chart/values/values-canary-rollouts.yaml` under `products-blue` set `tag` value to `v.1.1.1`
+We will deploy a new version v1.1.1. To do it, we have to edit the file `helm/quarkus-helm-umbrella/chart/values/values-canary-rollouts.yaml` under `products-blue` set `tag` value to `v.1.1.1`
 
 ```yaml
 products-blue:
@@ -243,7 +243,7 @@ products-blue:
     tag: v1.1.1
 ```
 
-**Argo Rollouts** will automatically deploy a new products revision. The canary version will be 10% of the replicas. In this demo we are no using [traffic management](https://argoproj.github.io/argo-rollouts/features/traffic-management/) the Rollout makes a best effort attempt to achieve the percentage listed in the last setWeight step between the new and old version. This means that it will create only one replica in the new revision, because is rounded up. All the requests are load balanced between the old and the new replicas.
+**Argo Rollouts** will automatically deploy a new products revision. The canary version will be 10% of the replicas. In this demo we are no using [traffic management](https://argoproj.github.io/argo-rollouts/features/traffic-management/) the Rollout makes a best effort attempt to achieve the percentage listed in the last setWeight step between the new and old version. This means that it will create only one replica in the new revision, because it is rounded up. All the requests are load balanced between the old and the new replicas.
 
 Push the changes to start the deployment.
 ```
@@ -279,8 +279,43 @@ NAME                                  KIND         STATUS        AGE  INFO
       └──□ products-67fc9fb79b-p7jk9  Pod          ✔ Running     27m  ready:1/1
 ```
 
+In the products url`s response you will have the new version in 25% of the requests.
+
+New revision:
+```json
+{
+  "products":[
+     {
+        "discountInfo":{...},
+        "name":"TV 4K",
+        "price":"1500€",
+        "description":"The best TV" <--
+     }
+  ],
+  "metadata":{
+     "version":"v1.1.1", <--
+  }
+}
+```
+
+Old revision:
+```json
+{
+  "products":[
+     {
+        "discountInfo":{...},
+        "name":"TV 4K",
+        "price":"1500€"
+     }
+  ],
+  "metadata":{
+     "version":"v1.101", <--
+  }
+}
+```
+
 ### Step 2 - Scale canary version to 50%
-After 30 seconds **Argo Rollouts** automatically will increase the number of replicas in the new release to 2. Instead of increase automatically after 30 seconds we can configure **Argo Rollouts** to wait indefinitely until that `Pause` condition is removed. But this is nor part of this demo.
+After 30 seconds **Argo Rollouts** automatically will increase the number of replicas in the new release to 2. Instead of increase automatically after 30 seconds we can configure **Argo Rollouts** to wait indefinitely until that `Pause` condition is removed. But this is not part of this demo.
 This is our current status:
 ![Shop Step 1](../images/canary-rollout-step-2.png)
 
@@ -327,7 +362,7 @@ I recommend doing the changes in git. We will revert the last commit
 git revert HEAD --no-edit
 ```
 
-If we just revert the changes in git we will go back to the previous version. But **Argo Rollouts** will take this revert as a new release so it will do it throw the steps that we have configured. We want a `quick rollback` we don not want a step by step revert. To achieved the `quick rollback` we will configure **Argo Rollouts** with out steps for the rollback.
+If we just revert the changes in git we will go back to the previous version. But **Argo Rollouts** will take this revert as a new release so it will do it throw the steps that we have configured. We want a `quick rollback` we don't want a step by step revert. To achieved the `quick rollback` we will configure **Argo Rollouts** without steps for the rollback.
 
 Because we have our **Argo Rollouts** configuration as values in our Helm Chart, we have just to edit the values.yaml that we are using.
 
@@ -352,12 +387,14 @@ products-blue:
 Execute those command to push the changes:
 ```
 git add .
-git commit -m "delete steps for rollout"
+git commit -m "delete steps for rollback"
 git push origin canary
 ```
 **ArgoCD** will get the changes and apply them. **Argo Rollouts** will create a new revision with the previous version.
 
 The rollback is done!
+
+To get the application ready for a new release we should configure again the  **Argo Rollouts** with the steps.
 
 ## Delete environment
  
@@ -365,5 +402,6 @@ To delete all the thing that we have done for the demo you have to_
 - In GitHub delete the branch `canary`
 - In ArgoCD delete the application `cluster-configuration` and `shop`
 - In Openshift, go to project `openshift-operators` and delete the installed operators **Openshift GitOps**.
+
 
 
