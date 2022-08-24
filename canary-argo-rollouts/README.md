@@ -1,9 +1,5 @@
 # Cloud Native Canary Deployment Strategy using Argo Rollouts
 
-| :warning: WARNING          |
-|:---------------------------|
-| Work in progress           |
-
 ## Introduction
 
 One important topic in the `Cloud Native` is the `Microservice Architecture`. We are not any more dealing with one monolithic application. We have several applications that have dependencies on each other and also have other dependencies like brokers or data bases.
@@ -21,8 +17,8 @@ Let's start with some theory...after it we will have the **hands on example**.
 
 ## Canary Deployment
 
-A canary rollout is a deployment strategy where the operator releases a new version of their application to a small percentage of the production traffic.
-TODO add more info
+A canary deployment is a strategy where the operator releases a new version of their application to a small percentage of the production traffic. This small percentage may test the new version and provide feedback. If the new version is working well the operator may increase the percentage, till all the traffic is using the new version. Unlike Blue/Green, canary deployments are smoother, and failures have limited impact. 
+
 ## Shop application
  
 We are going to use very simple applications to test canary deployment. We have created two Quarkus applications `Products` and `Discounts`
