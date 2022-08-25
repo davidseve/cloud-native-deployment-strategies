@@ -1,0 +1,39 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: guestbook
+spec:
+  generators:
+  - list:
+      elements:
+      - namespace: gitops-dev
+      - namespace: gitops-preprod
+      - namespace: gitops-prod
+  template:
+    metadata:
+      name: '{{namespace}}-cluster-configuration'
+      namespace: openshift-gitops
+    spec:
+      destination:
+        name: ''
+        namespace: openshift-gitops
+        server: 'https://kubernetes.default.svc'
+      source:
+        path: gitops/cluster-config
+        repoURL: 'https://github.com/davidseve/cloud-native-deployment-strategies.git'
+        targetRevision: HEAD
+        helm:
+        parameters:
+          - name: "github.token"
+            value: "changeme_token"
+          - name: "github.user"
+            value: "changeme_user"
+          - name: "github.mail"
+            value: "changeme_mail"
+          - name: "github.repository"
+            value: "changeme_repository"
+      project: default
+      syncPolicy:
+        automated:
+          prune: false
+          selfHeal: false

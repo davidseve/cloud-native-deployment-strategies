@@ -2,7 +2,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  namespace: gitops
+  namespace: {{ .Values.namespace }}
   generateName: link-github-token-
   annotations:
     argocd.argoproj.io/hook: Sync
@@ -20,7 +20,7 @@ spec:
           - "pipeline"
           - "github-token"
           - "-n"
-          - "gitops"
+          - "{{ .Values.namespace }}"
       restartPolicy: Never
   backoffLimit: 10
 {{ end }}

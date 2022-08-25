@@ -1,3 +1,4 @@
+namespace: gitops
 istio:
   enabled: false
 pipeline:

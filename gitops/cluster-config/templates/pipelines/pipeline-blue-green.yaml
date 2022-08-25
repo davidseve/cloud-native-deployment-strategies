@@ -3,7 +3,7 @@ apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
   name: pipeline-blue-green
-  namespace: gitops
+  namespace: {{ .Values.namespace }}
   annotations:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
@@ -30,7 +30,7 @@ spec:
     description: Helm release version
   - name: NAMESPACE
     type: string
-    default: gitops
+    default: {{ .Values.namespace }}
     description: namespace
   - name: OVERWRITE_VALUES
     type: string
@@ -588,7 +588,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  namespace: gitops
+  namespace: {{ .Values.namespace }}
   name: workspace-pvc-shop-cd-new-version
 spec:
   accessModes:

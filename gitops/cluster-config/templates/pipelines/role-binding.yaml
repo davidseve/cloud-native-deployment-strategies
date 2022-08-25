@@ -3,7 +3,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: gitops-edit-pipeline
-  namespace: gitops
+  namespace: {{ .Values.namespace }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -11,13 +11,13 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: pipeline
-  namespace: gitops
+  namespace: {{ .Values.namespace }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: gitops-admin
-  namespace: gitops
+  namespace: {{ .Values.namespace }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -25,5 +25,5 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: default
-  namespace: gitops
+  namespace: {{ .Values.namespace }}
 {{ end }}
