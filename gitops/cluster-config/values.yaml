@@ -5,6 +5,7 @@ pipeline:
   enabled: true
 bluegreen:
   enabled: true
+  valuesyaml: values/values.yaml
 argorollouts:
   enabled: false
 github:

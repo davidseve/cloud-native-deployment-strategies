@@ -37,7 +37,7 @@ spec:
     default: ""
   - name: VALUES_FILE
     type: string
-    default: "values/values.yaml" 
+    default: {{ .Values.bluegreen.valuesyaml }} 
   - name: APP
     type: string
     description: discounts or products
