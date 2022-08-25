@@ -22,17 +22,19 @@ spec:
         repoURL: 'https://github.com/davidseve/cloud-native-deployment-strategies.git'
         targetRevision: multienv
         helm:
-        parameters:
-          - name: "github.token"
-            value: "changeme_token"
-          - name: "github.user"
-            value: "changeme_user"
-          - name: "github.mail"
-            value: "changeme_mail"
-          - name: "github.repository"
-            value: "changeme_repository"
-          - name: "namespace"
-            value: '{{namespace}}'
+          parameters:
+            - name: "github.token"
+              value: "changeme_token"
+            - name: "github.user"
+              value: "changeme_user"
+            - name: "github.mail"
+              value: "changeme_mail"
+            - name: "github.repository"
+              value: "changeme_repository"
+            - name: "bluegreen.valuesyaml"
+              value: 'values/envs/values-{{namespace}}.yaml'
+            - name: "namespace"
+              value: '{{namespace}}'
       project: default
       syncPolicy:
         automated:
