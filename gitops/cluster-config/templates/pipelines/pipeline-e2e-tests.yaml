@@ -3,7 +3,7 @@ apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
   name: pipeline-blue-green-e2e-test
-  namespace: gitops
+  namespace: {{ .Values.namespace }}
   annotations:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
@@ -11,7 +11,7 @@ spec:
 
   - name: NAMESPACE
     type: string
-    default: gitops
+    default: {{ .Values.namespace }}
     description: namespace
   - name: APP
     type: string
@@ -75,7 +75,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  namespace: gitops
+  namespace: {{ .Values.namespace }}
   name: workspace-pvc-shop-cd-e2e-tests
 spec:
   accessModes:
