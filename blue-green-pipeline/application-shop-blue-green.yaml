@@ -6,7 +6,7 @@ metadata:
 spec:
   destination:
     name: ''
-    namespace: testdemo
+    namespace: gitops
     server: 'https://kubernetes.default.svc'
   source:
     path: helm/quarkus-helm-umbrella/chart
