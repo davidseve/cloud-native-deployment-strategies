@@ -11,7 +11,7 @@ spec:
   source:
     path: gitops/cluster-config
     repoURL: 'https://github.com/davidseve/cloud-native-deployment-strategies.git'
-    targetRevision: namespace_values
+    targetRevision: HEAD
     helm:
      parameters:
       - name: "github.token"
@@ -22,6 +22,8 @@ spec:
         value: "changeme_mail"
       - name: "github.repository"
         value: "changeme_repository"
+      - name: "namespace"
+        value: "testdemo"
   project: default
   syncPolicy:
     automated:
