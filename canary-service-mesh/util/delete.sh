@@ -20,7 +20,7 @@ oc delete clusterserviceversion openshift-pipelines-operator-rh.v1.6.3 -n opensh
 
 oc delete subscription openshift-gitops-operator -n openshift-operators
 oc delete clusterserviceversion openshift-gitops-operator.v1.5.5 -n openshift-operators
-
+#TODO delete the other operators
 git checkout main
 git branch -d mesh
 git push origin --delete mesh

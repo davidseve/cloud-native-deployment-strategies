@@ -8,5 +8,5 @@ metadata:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
   members:
-    - gitops
+    - {{ .Values.namespace }}
 {{ end }}
