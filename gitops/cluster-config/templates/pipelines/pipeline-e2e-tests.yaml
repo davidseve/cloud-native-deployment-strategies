@@ -28,6 +28,9 @@ spec:
   - name: MODE
     type: string
     default: offline
+  - name: MESH
+    type: string
+    default: "false" 
   workspaces:
   - name: app-source
 
@@ -40,7 +43,11 @@ spec:
     params:
     - name: SCRIPT
       value: |
-        host=$(oc get routes $(params.APP)-umbrella-$(params.MODE) -n $(params.NAMESPACE) -o=jsonpath='{.spec.host}')
+        if [ $MESH = "true" ]; then
+          host=$(oc get routes istio-ingressgateway -n istio-system -o=jsonpath='{.spec.host}')
+        else
+          host=$(oc get routes $(params.APP)-umbrella-$(params.MODE) -n $(params.NAMESPACE) -o=jsonpath='{.spec.host}')
+        fi
         url=http://${host}/$(params.APP)
         echo $url > $(workspaces.manifest-dir.path)/url
         cat $(workspaces.manifest-dir.path)/url

@@ -23,7 +23,7 @@ products-green:
   replicaCount: 1
   image:
     tag: v1.0.1
-  mode: offline
+  mode: online
 products-blue:
   replicaCount: 2
   image:
@@ -34,7 +34,7 @@ discounts-green:
   replicaCount: 1
   image:
     tag: v1.0.1
-  mode: offline
+  mode: online
 discounts-blue:
   replicaCount: 2
   image:
