@@ -9,7 +9,7 @@ cd /tmp/deployment
 
 git clone https://github.com/davidseve/cloud-native-deployment-strategies.git
 cd cloud-native-deployment-strategies
-git checkout -b blue-green
+git checkout blue-green
 git push origin blue-green
 
 oc apply -f gitops/gitops-operator.yaml

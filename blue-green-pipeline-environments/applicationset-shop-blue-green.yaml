@@ -20,7 +20,7 @@ spec:
       source:
         path: helm/quarkus-helm-umbrella/chart
         repoURL:  https://github.com/change_me/cloud-native-deployment-strategies.git
-        targetRevision: '{{namespace}}'
+        targetRevision: blue-green
         helm:
           valueFiles:
             - values/envs/values-{{namespace}}.yaml
