@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: shop
+spec:
+  generators:
+  - list:
+      elements:
+      - namespace: gitops-pre
+      - namespace: gitops-prod
+  template:
+    metadata:
+      name:  '{{namespace}}-shop'
+      namespace: openshift-gitops
+    spec:
+      destination:
+        name: ''
+        namespace: '{{namespace}}'
+        server: 'https://kubernetes.default.svc'
+      source:
+        path: helm/quarkus-helm-umbrella/chart
+        repoURL:  https://github.com/change_me/cloud-native-deployment-strategies.git
+        targetRevision: '{{namespace}}'
+        helm:
+          valueFiles:
+            - values/envs/values-{{namespace}}.yaml
+      project: default
+      syncPolicy:
+        automated:
+          prune: false
+          selfHeal: false
