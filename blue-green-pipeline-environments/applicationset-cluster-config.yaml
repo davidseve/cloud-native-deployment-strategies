@@ -20,7 +20,7 @@ spec:
       source:
         path: gitops/cluster-config
         repoURL: 'https://github.com/davidseve/cloud-native-deployment-strategies.git'
-        targetRevision: multienv
+        targetRevision: HEAD
         helm:
           parameters:
             - name: "github.token"
