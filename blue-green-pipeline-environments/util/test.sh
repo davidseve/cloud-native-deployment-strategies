@@ -9,6 +9,11 @@ cd /tmp/deployment
 
 git clone https://github.com/davidseve/cloud-native-deployment-strategies.git
 cd cloud-native-deployment-strategies
+#To work with a branch that is not main. ./test.sh ghp_JGFDSFIGJSODIJGF no helm_base
+if [ ${3:-no} != "no" ]
+then
+    git checkout $3
+fi
 git checkout -b blue-green
 git push origin blue-green
 
