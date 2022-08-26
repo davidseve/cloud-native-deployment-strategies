@@ -10,12 +10,25 @@ git push origin rollouts
 
 oc apply -f gitops/gitops-operator.yaml
 
-sleep 30s
+#First time we install operators take logger
+if [ ${2:-no} = "no" ]
+then
+    sleep 30s
+else
+    sleep 1m
+fi
+
 
 sed -i '/pipeline.enabled/{n;s/.*/        value: "true"/}' blue-green-argo-rollouts/application-cluster-config.yaml
 oc apply -f blue-green-argo-rollouts/application-cluster-config.yaml --wait=true
 
-sleep 1m
+#First time we install operators take logger
+if [ ${2:-no} = "no" ]
+then
+    sleep 1m
+else
+    sleep 2m
+fi
 
 sed -i 's/change_me/davidseve/g' blue-green-argo-rollouts/application-shop-blue-green-rollouts.yaml
 

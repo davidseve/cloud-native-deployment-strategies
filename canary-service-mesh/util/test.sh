@@ -10,12 +10,24 @@ git push origin mesh
 
 oc apply -f gitops/gitops-operator.yaml
 
-sleep 30s
+#First time we install operators take logger
+if [ ${2:-no} = "no" ]
+then
+    sleep 30s
+else
+    sleep 1m
+fi
 
 sed -i '/pipeline.enabled/{n;s/.*/        value: "true"/}' canary-service-mesh/application-cluster-config.yaml
 oc apply -f canary-service-mesh/application-cluster-config.yaml --wait=true
 
-sleep 2m
+#First time we install operators take logger
+if [ ${2:-no} = "no" ]
+then
+    sleep 2m
+else
+    sleep 4m
+fi
 
 sed -i 's/change_me/davidseve/g' canary-service-mesh/application-shop-mesh.yaml
 
