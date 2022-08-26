@@ -9,21 +9,43 @@ cd /tmp/deployment
 
 git clone https://github.com/davidseve/cloud-native-deployment-strategies.git
 cd cloud-native-deployment-strategies
+#To work with a branch that is not main. ./test.sh ghp_JGFDSFIGJSODIJGF no helm_base
+if [ ${3:-no} != "no" ]
+then
+    git checkout $3
+fi
 git checkout -b blue-green
 git push origin blue-green
 
 oc apply -f gitops/gitops-operator.yaml
 
-sleep 30s
+#First time we install operators take logger
+if [ ${2:-no} = "no" ]
+then
+    sleep 30s
+else
+    sleep 1m
+fi
+
 
 sed -i "s/changeme_token/$1/g" blue-green-pipeline/application-cluster-config.yaml
 sed -i 's/changeme_user/davidseve/g' blue-green-pipeline/application-cluster-config.yaml
 sed -i 's/changeme_mail/davidseve@gmail.com/g' blue-green-pipeline/application-cluster-config.yaml
 sed -i 's/changeme_repository/davidseve/g' blue-green-pipeline/application-cluster-config.yaml
-
+#To work with a branch that is not main. ./test.sh ghp_JGFDSFIGJSODIJGF no helm_base
+if [ ${3:-no} != "no" ]
+then
+    sed -i "s/HEAD/$3/g" blue-green-pipeline/application-cluster-config.yaml
+fi
 oc apply -f blue-green-pipeline/application-cluster-config.yaml --wait=true
 
-sleep 1m
+#First time we install operators take logger
+if [ ${2:-no} = "no" ]
+then
+    sleep 1m
+else
+    sleep 2m
+fi
 
 sed -i 's/change_me/davidseve/g' blue-green-pipeline/application-shop-blue-green.yaml
 
@@ -70,8 +92,8 @@ tkn pipeline start pipeline-blue-green-e2e-test --param NEW_IMAGE_TAG=v1.1.1 --p
 oc create -f 3-pipelinerun-products-scale-down.yaml -n gitops
 sleep 30s
 
-tkn pipeline start pipeline-blue-green-e2e-test --param NEW_IMAGE_TAG=online --param MODE=online --param LABEL=.mode --param APP=products --param NAMESPACE=gitops  --param MESH=False --param JQ_PATH=.products[0].discountInfo.metadata --workspace name=app-source,claimName=workspace-pvc-shop-cd-e2e-tests -n gitops
-tkn pipeline start pipeline-blue-green-e2e-test --param NEW_IMAGE_TAG=v1.1.1 --param MODE=offline --param LABEL=.version --param APP=products --param NAMESPACE=gitops  --param MESH=False --param JQ_PATH=.metadata --workspace name=app-source,claimName=workspace-pvc-shop-cd-e2e-tests -n gitops
+tkn pipeline start pipeline-blue-green-e2e-test --param NEW_IMAGE_TAG=online --param MODE=online --param LABEL=.mode --param APP=products --param NAMESPACE=gitops  --param MESH=False --param JQ_PATH=.products[0].discountInfo.metadata --workspace name=app-source,claimName=workspace-pvc-shop-cd-e2e-tests -n gitops --showlog
+tkn pipeline start pipeline-blue-green-e2e-test --param NEW_IMAGE_TAG=v1.1.1 --param MODE=offline --param LABEL=.version --param APP=products --param NAMESPACE=gitops  --param MESH=False --param JQ_PATH=.metadata --workspace name=app-source,claimName=workspace-pvc-shop-cd-e2e-tests -n gitops --showlog
 tkn pipeline start pipeline-blue-green-e2e-test --param NEW_IMAGE_TAG=v1.1.1 --param MODE=online --param LABEL=.version --param APP=products --param NAMESPACE=gitops  --param MESH=False --param JQ_PATH=.metadata --workspace name=app-source,claimName=workspace-pvc-shop-cd-e2e-tests -n gitops --showlog
 
 

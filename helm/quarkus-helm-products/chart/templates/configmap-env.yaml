@@ -5,25 +5,9 @@ metadata:
   labels:
     {{- include "products.labels" $ | nindent 4 }}
 data:
-  application.version: {{ .Values.image.tag }}
-  application.colour: {{ .Values.version }}
   application.mode: {{ .Values.mode }} 
-
 
   quarkus.rest-client.discounts-api.url: {{  printf "http://discounts-umbrella-%s:8080" .Values.mode }}
   quarkus.rest-client.discounts-api.scope: javax.inject.RequestScoped
   #quarkus.rest-client.discounts-api.connection-pool-size: "50"
   quarkus.rest-client.discounts-api.connection-ttl: "1"
-
-  quarkus.log.level: {{ .Values.log.level }}
-
-  # quarkus.http.ssl-port: "8443"
-  # quarkus.http.ssl.certificate.file: "/var/run/secret/kubernetes.io/ssl/cert.pem"
-  # quarkus.http.ssl.certificate.key-file: "/var/run/secret/kubernetes.io/ssl/key.pem"
-
-  quarkus.jaeger.service-name: {{ include "products.fullname" $ | quote }}
-  quarkus.jaeger.sampler-type: "const"
-  quarkus.jaeger.sampler-param: "1"
-  quarkus.jaeger.endpoint: {{ .Values.jaeger.endpoint | quote }}
-  quarkus.jaeger.propagation: "b3"
-  quarkus.jaeger.reporter-log-spans: "true"

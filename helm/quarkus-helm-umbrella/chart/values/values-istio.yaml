@@ -20,24 +20,28 @@ global:
 
 
 products-green:
-  replicaCount: 1
-  image:
-    tag: v1.0.1
+  quarkus-base:
+    replicaCount: 1
+    image:
+      tag: v1.0.1
   mode: online
 products-blue:
-  replicaCount: 2
-  image:
-    tag: v1.0.1
+  quarkus-base:
+    replicaCount: 2
+    image:
+      tag: v1.0.1
   mode: online
 
 discounts-green:
-  replicaCount: 1
-  image:
-    tag: v1.0.1
+  quarkus-base:
+    replicaCount: 1
+    image:
+      tag: v1.0.1
   mode: online
 discounts-blue:
-  replicaCount: 2
-  image:
-    tag: v1.0.1
+  quarkus-base:
+    replicaCount: 2
+    image:
+      tag: v1.0.1
   mode: online
 

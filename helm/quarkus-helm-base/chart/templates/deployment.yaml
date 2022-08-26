@@ -6,9 +6,9 @@ apiVersion: apps/v1
 kind: Deployment
 {{- end }}
 metadata:
-  name: {{ include "products.fullname" . }}
+  name: {{ include "quarkus.fullname" . }}
   labels:
-    {{- include "products.labels" . | nindent 4 }}
+    {{- include "quarkus.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
@@ -16,7 +16,7 @@ spec:
   {{- end }}
   selector:
     matchLabels:
-      {{- include "products.selectorLabels" . | nindent 6 }}
+      {{- include "quarkus.selectorLabels" . | nindent 6 }}
       {{- with .Values.version }}
       version: {{ . }}
       {{- end }}
@@ -30,7 +30,7 @@ spec:
         {{- end }}
       {{- end }}
       labels:
-        {{- include "products.selectorLabels" . | nindent 8 }}
+        {{- include "quarkus.selectorLabels" . | nindent 8 }}
         {{- with .Values.version }}
         version: {{ . }}
         {{- end }}
@@ -39,7 +39,7 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "products.serviceAccountName" . }}
+      serviceAccountName: {{ include "quarkus.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
@@ -54,7 +54,9 @@ spec:
               protocol: TCP
           envFrom:
           - configMapRef:
-              name: "{{ include "products.fullname" $ }}-configmap-env"
+              name: "{{ include "quarkus.fullname" $ }}-configmap-env"
+          - configMapRef:
+              name: "{{ include "quarkus.fullname" $ }}-configmap-env-base"
           livenessProbe:
             failureThreshold: 3
             httpGet:
@@ -94,7 +96,7 @@ spec:
     blueGreen: 
       prePromotionAnalysis:
           templates:
-          - templateName: {{ include "products.fullname" . }}-analysis-template
+          - templateName: {{ include "quarkus.fullname" . }}-analysis-template
       activeService: {{ .Values.rollouts.blueGreen.activeService }}
       previewService: {{ .Values.rollouts.blueGreen.previewService }}
       autoPromotionEnabled: {{ .Values.rollouts.blueGreen.autoPromotionEnabled }}

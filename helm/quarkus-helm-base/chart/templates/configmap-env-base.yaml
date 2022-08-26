@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "{{ include "quarkus.fullname" . }}-configmap-env-base"
+  labels:
+    {{- include "quarkus.labels" . | nindent 4 }}
+data:
+  application.version: {{ .Values.image.tag }}
+  application.colour: {{ .Values.version }}
+  
+  quarkus.log.level: {{ .Values.log.level }}
+
+  # quarkus.http.ssl-port: "8443"
+  # quarkus.http.ssl.certificate.file: "/var/run/secret/kubernetes.io/ssl/cert.pem"
+  # quarkus.http.ssl.certificate.key-file: "/var/run/secret/kubernetes.io/ssl/key.pem"
+
+  quarkus.jaeger.service-name: {{ include "quarkus.fullname" $ | quote }}
+  quarkus.jaeger.sampler-type: "const"
+  quarkus.jaeger.sampler-param: "1"
+  quarkus.jaeger.endpoint: {{ .Values.jaeger.endpoint | quote }}
+  quarkus.jaeger.propagation: "b3"
+  quarkus.jaeger.reporter-log-spans: "true"

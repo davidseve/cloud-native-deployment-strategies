@@ -4,30 +4,34 @@ tags:
 
 discounts-blue:
   mode: online
-  fullnameOverride: "discounts"
-  image:
-    tag: v1.0.1
-  version: none
-  rollouts:
-    enabled: true
-    blueGreen:
+  quarkus-base:
+    fullnameOverride: "discounts"
+    image:
+      tag: v1.0.1
+    version: none
+    rollouts:
       enabled: true
-      activeService: "discounts-umbrella-online"
-      previewService: "discounts-umbrella-offline"
-    
+      blueGreen:
+        enabled: true
+        activeService: "discounts-umbrella-online"
+        previewService: "discounts-umbrella-offline"
+  fullnameOverride: "discounts"
+  
 products-blue:
   mode: online
-  image:
-    tag: v1.0.1
-  replicaCount: 2
-  fullnameOverride: "products"
-  version: none
-  rollouts:
-    enabled: true
-    blueGreen:
+  quarkus-base:
+    image:
+      tag: v1.0.1
+    replicaCount: 2
+    fullnameOverride: "products"
+    version: none
+    rollouts:
       enabled: true
-      activeService: "products-umbrella-online"
-      previewService: "products-umbrella-offline"
+      blueGreen:
+        enabled: true
+        activeService: "products-umbrella-online"
+        previewService: "products-umbrella-offline"
+  fullnameOverride: "products"
 
 global:
   namespace: test
