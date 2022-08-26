@@ -5,6 +5,7 @@ tags:
 discounts-blue:
   mode: online
   quarkus-base:
+    fullnameOverride: "discounts"
     image:
       tag: v1.0.1
     version: none
@@ -14,13 +15,15 @@ discounts-blue:
         enabled: true
         activeService: "discounts-umbrella-online"
         previewService: "discounts-umbrella-offline"
-    
+  fullnameOverride: "discounts"
+  
 products-blue:
   mode: online
   quarkus-base:
     image:
       tag: v1.0.1
     replicaCount: 2
+    fullnameOverride: "products"
     version: none
     rollouts:
       enabled: true
@@ -28,6 +31,7 @@ products-blue:
         enabled: true
         activeService: "products-umbrella-online"
         previewService: "products-umbrella-offline"
+  fullnameOverride: "products"
 
 global:
   namespace: test
