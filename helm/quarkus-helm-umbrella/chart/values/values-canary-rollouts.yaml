@@ -7,7 +7,6 @@ tags:
 discounts-blue:
   mode: online
   quarkus-base:
-    fullnameOverride: "discounts"
     image:
       tag: v1.0.1
     version: none
@@ -26,7 +25,6 @@ products-blue:
       tag: v1.0.1
     version: none
     replicaCount: 4
-    fullnameOverride: "products"
     rollouts:
       enabled: true
       canary:

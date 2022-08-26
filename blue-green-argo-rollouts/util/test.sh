@@ -5,25 +5,35 @@ cd /tmp/deployment
 
 git clone https://github.com/davidseve/cloud-native-deployment-strategies.git
 cd cloud-native-deployment-strategies
+#To work with a branch that is not main. ./test.sh no helm_base
+if [ ${2:-no} != "no" ]
+then
+    git checkout $2
+fi
 git checkout -b rollouts
 git push origin rollouts
 
 oc apply -f gitops/gitops-operator.yaml
 
 #First time we install operators take logger
-if [ ${2:-no} = "no" ]
+if [ ${1:-no} = "no" ]
 then
     sleep 30s
 else
     sleep 1m
 fi
 
+#To work with a branch that is not main. ./test.sh no helm_base
+if [ ${2:-no} != "no" ]
+then
+    sed -i "s/HEAD/$2/g" blue-green-argo-rollouts/application-cluster-config.yaml
+fi
 
 sed -i '/pipeline.enabled/{n;s/.*/        value: "true"/}' blue-green-argo-rollouts/application-cluster-config.yaml
 oc apply -f blue-green-argo-rollouts/application-cluster-config.yaml --wait=true
 
 #First time we install operators take logger
-if [ ${2:-no} = "no" ]
+if [ ${1:-no} = "no" ]
 then
     sleep 1m
 else

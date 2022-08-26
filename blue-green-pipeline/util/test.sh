@@ -9,6 +9,11 @@ cd /tmp/deployment
 
 git clone https://github.com/davidseve/cloud-native-deployment-strategies.git
 cd cloud-native-deployment-strategies
+#To work with a branch that is not main. ./test.sh ghp_JGFDSFIGJSODIJGF no helm_base
+if [ ${3:-no} != "no" ]
+then
+    git checkout $3
+fi
 git checkout -b blue-green
 git push origin blue-green
 
@@ -27,7 +32,11 @@ sed -i "s/changeme_token/$1/g" blue-green-pipeline/application-cluster-config.ya
 sed -i 's/changeme_user/davidseve/g' blue-green-pipeline/application-cluster-config.yaml
 sed -i 's/changeme_mail/davidseve@gmail.com/g' blue-green-pipeline/application-cluster-config.yaml
 sed -i 's/changeme_repository/davidseve/g' blue-green-pipeline/application-cluster-config.yaml
-
+#To work with a branch that is not main. ./test.sh ghp_JGFDSFIGJSODIJGF no helm_base
+if [ ${3:-no} != "no" ]
+then
+    sed -i "s/HEAD/$3/g" blue-green-pipeline/application-cluster-config.yaml
+fi
 oc apply -f blue-green-pipeline/application-cluster-config.yaml --wait=true
 
 #First time we install operators take logger

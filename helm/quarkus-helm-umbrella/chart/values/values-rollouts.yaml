@@ -5,7 +5,6 @@ tags:
 discounts-blue:
   mode: online
   quarkus-base:
-    fullnameOverride: "discounts"
     image:
       tag: v1.0.1
     version: none
@@ -22,7 +21,6 @@ products-blue:
     image:
       tag: v1.0.1
     replicaCount: 2
-    fullnameOverride: "products"
     version: none
     rollouts:
       enabled: true
