@@ -5,13 +5,18 @@ cd /tmp/deployment
 
 git clone https://github.com/davidseve/cloud-native-deployment-strategies.git
 cd cloud-native-deployment-strategies
+#To work with a branch that is not main. ./test.sh no helm_base
+if [ ${2:-no} != "no" ]
+then
+    git checkout $2
+fi
 git checkout -b canary 
 git push origin canary 
 
 oc apply -f gitops/gitops-operator.yaml
 
 #First time we install operators take logger
-if [ ${2:-no} = "no" ]
+if [ ${1:-no} = "no" ]
 then
     sleep 30s
 else
@@ -22,7 +27,7 @@ sed -i '/pipeline.enabled/{n;s/.*/        value: "true"/}' canary-argo-rollouts/
 oc apply -f canary-argo-rollouts/application-cluster-config.yaml --wait=true
 
 #First time we install operators take logger
-if [ ${2:-no} = "no" ]
+if [ ${1:-no} = "no" ]
 then
     sleep 1m
 else

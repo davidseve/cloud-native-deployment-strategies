@@ -7,6 +7,7 @@ tags:
 discounts-blue:
   mode: online
   quarkus-base:
+    fullnameOverride: "discounts"
     image:
       tag: v1.0.1
     version: none
@@ -17,6 +18,7 @@ discounts-blue:
           - setWeight: 50
           - pause:
               duration: 1m
+  fullnameOverride: "discounts"
     
 products-blue:
   mode: online
@@ -25,6 +27,7 @@ products-blue:
       tag: v1.0.1
     version: none
     replicaCount: 4
+    fullnameOverride: "products"
     rollouts:
       enabled: true
       canary:
@@ -35,6 +38,8 @@ products-blue:
           - setWeight: 50
           - pause:
               duration: 30s
+  fullnameOverride: "products"
+  
 global:
   namespace: test
   #needed for rollouts analysis
