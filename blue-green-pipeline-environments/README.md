@@ -275,11 +275,11 @@ We have deployed the `gitops-pre-shop` with ArgoCD. We can test that it is up an
  
 We have to get the Online route
 ```
-echo "$(oc get routes products-umbrella-online -n gitops-prod --template='http://{{.spec.host}}')/products"
+echo "$(oc get routes products-umbrella-online -n gitops-pre --template='http://{{.spec.host}}')/products"
 ```
 And the Offline route
 ```
-echo "$(oc get routes products-umbrella-offline -n gitops-prod --template='http://{{.spec.host}}')/products"
+echo "$(oc get routes products-umbrella-offline -n gitops-pre --template='http://{{.spec.host}}')/products"
 ```
 Notice that in each microservice response we have added metadata information to see better the `version`, `color`, `mode` of each application. This will help us to see the changes while we do the Blue/Green deployment.
 Because right now we have the same version v1.0.1 in both colors we will have almost the same response, only the mode will change.
@@ -346,7 +346,7 @@ Those are the main tasks that are executed:
 
 ```
 cd blue-green-pipeline-environments/pipelines/run-products
-oc create -f 1-pipelinerun-products-new-version.yaml -n gitops-prod
+oc create -f 1-pipelinerun-products-new-version.yaml -n gitops-pre
 ```
 ![Pipeline step 1](../images/pipeline-step-1.png)
 
@@ -397,7 +397,7 @@ Functional testing users can execute `Smoke tests` to validate this new v1.1.1 v
  
 We are going to open the new version to final users. The pipeline will just change the service to use the other color. Again the pipeline does this automatically without manual intervention. We  `minimize downtime` because it just changes the service label.
 ```
-oc create -f 2-pipelinerun-products-switch.yaml -n gitops-prod
+oc create -f 2-pipelinerun-products-switch.yaml -n gitops-pre
 ```
 
 ![Pipeline step 2](../images/pipeline-step-3.png)
@@ -426,7 +426,7 @@ After the pipeline finished and ArgoCD has synchronized the changes this will be
  
 Imagine that something goes wrong, we know that this never happens but just in case. We can do a very `quick rollback` just undoing the change in the `Products` online service. But are we sure that with all the pressure that we will have at this moment, we will find the right service and change the label to the right color. Let's move this pressure to the pipeline. We can have a pipeline for rollback.
 ```
-oc create -f 2-pipelinerun-products-switch-rollback.yaml -n gitops-prod
+oc create -f 2-pipelinerun-products-switch-rollback.yaml -n gitops-pre
 ```
 
 ![Pipeline step 2,5 Rollback](../images/pipeline-step-3-rollback.png)
@@ -452,7 +452,7 @@ We have version v1.0.1 online again.
  
 After fixing the issue we can execute the Switch step again.
 ```
-oc create -f 2-pipelinerun-products-switch.yaml -n gitops-prod
+oc create -f 2-pipelinerun-products-switch.yaml -n gitops-pre
 ```
 ![Shop step 2](../images/blue-green-step-3.png)
 We have in the online environment the new version v1.1.1 again.
@@ -477,7 +477,7 @@ We have in the online environment the new version v1.1.1 again.
  
 Finally, when online is stable we should align offline with the new version and scale it down. Does not make sense to use the same resources that we have in production.
 ```
-oc create -f 3-pipelinerun-products-scale-down.yaml -n gitops-prod
+oc create -f 3-pipelinerun-products-scale-down.yaml -n gitops-pre
 ```
 
 ![Pipeline step 3](../images/pipeline-step-4.png)
