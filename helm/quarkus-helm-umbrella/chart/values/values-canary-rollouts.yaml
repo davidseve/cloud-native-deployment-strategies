@@ -5,35 +5,38 @@ tags:
   productsNetworkingOffline: false
 
 discounts-blue:
-  fullnameOverride: "discounts"
-  image:
-    tag: v1.0.1
-  version: none
-  rollouts:
-    enabled: true
-    canary:
-      steps:
-        - setWeight: 50
-        - pause:
-            duration: 1m
+  mode: online
+  quarkus-base:
+    fullnameOverride: "discounts"
+    image:
+      tag: v1.0.1
+    version: none
+    rollouts:
+      enabled: true
+      canary:
+        steps:
+          - setWeight: 50
+          - pause:
+              duration: 1m
     
 products-blue:
   mode: online
-  image:
-    tag: v1.0.1
-  version: none
-  replicaCount: 4
-  fullnameOverride: "products"
-  rollouts:
-    enabled: true
-    canary:
-      steps:
-        - setWeight: 25
-        - pause:
-            duration: 30s
-        - setWeight: 50
-        - pause:
-            duration: 30s
+  quarkus-base:
+    image:
+      tag: v1.0.1
+    version: none
+    replicaCount: 4
+    fullnameOverride: "products"
+    rollouts:
+      enabled: true
+      canary:
+        steps:
+          - setWeight: 25
+          - pause:
+              duration: 30s
+          - setWeight: 50
+          - pause:
+              duration: 30s
 global:
   namespace: test
   #needed for rollouts analysis
