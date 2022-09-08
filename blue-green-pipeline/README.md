@@ -317,7 +317,7 @@ Because right now we have the same version v1.0.1 in both colors we will have al
  
 ## Products Blue/Green deployment
  
-We have split a `Cloud Native` Blue/Green deployment into four steps:
+We have split a `Cloud Native` Blue/Green deployment into three steps:
 1. Deploy new version.
 2. Switch new version to Online.
    - Rollback
