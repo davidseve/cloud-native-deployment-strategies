@@ -319,9 +319,9 @@ Because right now we have the same version v1.0.1 in both colors we will have al
  
 We have split a `Cloud Native` Blue/Green deployment into four steps:
 1. Deploy new version.
-2. Change to online configuration.
-3. Switch new version to Online.
-4. Align and scale down Offline.
+2. Switch new version to Online.
+   - Rollback
+3. Align and scale down Offline.
  
 
  
