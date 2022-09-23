@@ -27,7 +27,7 @@ Disadvantages:
 - Backwards compatibility
  
  
-![Blue/Green](../images/blue-green.png)
+![Blue/Green](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/blue-green.png)
  
 We have two versions up and running in production, online and offline. The routers and services never change, they are always online or offline.
 Because we have an offline version, we can do **smoke test** before switching it to online.
