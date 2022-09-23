@@ -429,7 +429,7 @@ git push origin canary
 **ArgoCD** will get the changes and apply them. **Argo Rollouts** will create a new revision with the previous version.
 
 The rollback is done!
-
+![Shop Step Rollback](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-Rollback.png)
 To get the application ready for a new release we should configure again the  **Argo Rollouts** with the steps.
 
 ## Delete environment
