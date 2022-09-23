@@ -1,11 +1,11 @@
 # Cloud Native Blue/Green Deployment Strategy using Argo Rollouts
 
 ## Introduction
-One important topic in the `Cloud Native` is the `Microservice Architecture`. We are not any more dealing with one monolithic application. We have several applications that have dependencies on each other and also have other dependencies like brokers or data bases.
+One important topic in the `Cloud Native` is the `Microservice Architecture`. We are not any more dealing with one monolithic application. We have several applications that have dependencies on each other and also have other dependencies like brokers or databases.
  
-Applications have their own life cycle, so we should be able to execute independent blue/green deployment. All the applications and dependencies will not change its version at the same time.
+Applications have their own life cycle, so we should be able to execute independent Blue/Green deployment. All the applications and dependencies will not change their version at the same time.
  
-Another important topic in the `Cloud Native` is `Continuous Delivery`. If we are going to have several applications doing Blue/Green deployment independently we have to automate it. We will use **Helm**, **Argo Rollouts**, **Openshift GitOps** and of course **Red Hat Openshift** to help us.
+Another important topic in the `Cloud Native` is `Continuous Delivery`. If we are going to have several applications doing Blue/Green deployment independently we have to automate it. We will use **Helm**, **Argo Rollouts**, **Openshift GitOps**, and of course **Red Hat Openshift** to help us.
 
 [**Argo Rollouts**](https://argoproj.github.io/argo-rollouts/) is a Kubernetes controller and set of CRDs which provide advanced deployment capabilities such as blue-green, canary, canary analysis, experimentation, and progressive delivery features to Kubernetes.
 In this demo we are going to use blue-green capabilities.
@@ -14,7 +14,7 @@ In this demo we are going to use blue-green capabilities.
  
 If you want to know more about Blue/Green deployment please read [**Blue/Green Deployment**](https://github.com/davidseve/cloud-native-deployment-strategies/tree/main/blue-green-pipeline#bluegreen-deployment)
 
-Let's start with some theory...after it we will have the **hands on example**.
+Let's start with some theory...after it, we will have the **hands-on example**.
 ## Shop application
  
 We are going to use very simple applications to test Blue/Green deployment. We have created two Quarkus applications `Products` and `Discounts`
@@ -25,17 +25,19 @@ We are going to use very simple applications to test Blue/Green deployment. We h
  
 ## Shop Blue/Green
  
-To achieve blue/green deployment with `Cloud Native` applications using **Argo Rollouts**, we have designed this architecture.
+To achieve Blue/Green deployment with `Cloud Native` applications using **Argo Rollouts**, we have designed this architecture.
 
 ![Shop initial status](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/rollout-blue-green-step-0.png)
  
 OpenShift Components - Online
-- Routes and Services declared with suffix -online
+
+- Routes and Services declared with the suffix -online
 - Routes mapped only to the online services
 - Services mapped to the rollout.
  
 OpenShift Components - Offline
-- Routes and Services declared with suffix -offline
+
+- Routes and Services declared with the suffix -offline
 - Routes mapped only to the offline services
 - Services mapped to the rollout
 
@@ -54,8 +56,8 @@ This is an example of products rollout manifest:
 We have defined an active or online service 'products-umbrella-online' and a preview or offline service 'products-umbrella-offline'. Final user will always use 'products-umbrella-online'. We have created an AnalysisTemplate 'products-analysis-template' that just validates the health of the application, for production environments a better analysis should be done. **Argo Rollouts** use this AnalysisTemplate to validate a new version and set it ready to be promoted or not. To learn more, please read [this](https://argoproj.github.io/argo-rollouts/features/bluegreen/).
 ## Shop Umbrella Helm Chart
  
-One of the best ways to package `Cloud Native` applications is `Helm`. In blue/green deployment it makes even more sense.
-We have created a chart for each application that does not know anything about blue/green. Then we pack everything together in an umbrella helm chart.
+One of the best ways to package `Cloud Native` applications is `Helm`. In Blue/Green deployment it makes even more sense.
+We have created a chart for each application that does not know anything about Blue/Green. Then we pack everything together in an umbrella helm chart.
 
 ![Shop Umbrella Helm Chart](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/Shop-helm-rollouts.png)
 
@@ -72,7 +74,7 @@ We have packaged both applications in one chart, but we may have different umbre
 - [oc 4.10](https://docs.openshift.com/container-platform/4.10/cli_reference/openshift_cli/getting-started-cli.html)
 - [Argo Rollouts CLI](https://argoproj.github.io/argo-rollouts/installation/#kubectl-plugin-installation )
 
-We have prepare a GitHub [repository](https://github.com/davidseve/cloud-native-deployment-strategies) for this demo. As part of the demo, you will have to do some changes and commits. So **it is important that you fork the repository and clone it in your local**.
+We have a GitHub [repository](https://github.com/davidseve/cloud-native-deployment-strategies) for this demo. As part of the demo, you will have to do some changes and commits. So **it is important that you fork the repository and clone it in your local**.
 
 ```
 git clone https://github.com/your_user/cloud-native-deployment-strategies
@@ -115,12 +117,13 @@ Click on Argo CD from the OpenShift Web Console application launcher and then lo
  
 We are going to follow, as much as we can, a GitOps methodology in this demo. So we will have everything in our Git repository and use **ArgoCD** to deploy it in the cluster.
  
-In the current Git repository, the [gitops/cluster-config](../gitops/cluster-config/) directory contains OpenShift cluster configurations such as:
+In the current Git repository, the [gitops/cluster-config](https://github.com/davidseve/cloud-native-deployment-strategies/tree/main/gitops/cluster-config) directory contains OpenShift cluster configurations such as:
+
 - namespaces `gitops`.
 - role binding for ArgoCD to the namespace `gitops`.
 - Argo Rollouts project.
  
-Let's configure Argo CD to recursively sync the content of the [gitops/cluster-config](../gitops/cluster-config/) directory to the OpenShift cluster.
+Let's configure Argo CD to recursively sync the content of the [gitops/cluster-config](https://github.com/davidseve/cloud-native-deployment-strategies/tree/main/gitops/cluster-config) directory into the OpenShift cluster.
  
 Execute this command to add a new Argo CD application that syncs a Git repository containing cluster configurations with the OpenShift cluster.
  
@@ -134,7 +137,7 @@ You can click on the `cluster-configuration` application to check the details of
 
 ### Create Shop application
 
-We are going to create the application `shop`, that we will use to test blue/green deployment. Because we will make changes in the application's GitHub repository, we have to use the repository that you have just forked. Please edit the file `blue-green-argo-rollouts/application-shop-blue-green-rollouts.yaml` and set your own GitHub repository in the `reportURL`.
+We are going to create the application `shop`, that we will use to test Blue/Green deployment. Because we will make changes in the application's GitHub repository, we have to use the repository that you have just forked. Please edit the file `blue-green-argo-rollouts/application-shop-blue-green-rollouts.yaml` and set your own GitHub repository in the `reportURL`.
 
 ```yaml
 apiVersion: argoproj.io/v1alpha1
@@ -225,6 +228,7 @@ NAME                                  KIND        STATUS     AGE INFO
 ## Products Blue/Green deployment
  
 We have split a `Cloud Native` Blue/Green deployment into two steps:
+
 1. Deploy a new version.
 2. Promote a new version
  
@@ -277,7 +281,7 @@ NAME                                  KIND         STATUS        AGE  INFO
       └──□ products-67fc9fb79b-p7jk9  Pod          ✔ Running     27m  ready:1/1
 ```
   
-If the `prePromotionAnalysis` goes well, we can see that offline applications have the version v1.1.1 and the new attribute description, but the online version has not changed.
+If the `prePromotionAnalysis` goes well, we can see that offline applications have version v1.1.1 and the new attribute description, but the online version has not changed.
 
 This is our current status:
 ![Shop Step 1](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/rollout-blue-green-step-1.png)
@@ -385,7 +389,8 @@ The rollback is done!
 
 ## Delete environment
  
-To delete all the thing that we have done for the demo you have to_
+To delete all the things that we have done for the demo you have to:
+
 - In GitHub delete the branch `rollouts`
 - In ArgoCD delete the application `cluster-configuration` and `shop`
 - In Openshift, go to project `openshift-operators` and delete the installed operators **Openshift GitOps**.

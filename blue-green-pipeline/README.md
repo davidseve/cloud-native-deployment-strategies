@@ -2,15 +2,15 @@
  
 ## Introduction
  
-One important topic in the `Cloud Native` is the `Microservice Architecture`. We are not any more dealing with one monolithic application. We have several applications that have dependencies on each other and also have other dependencies like brokers or data bases.
+One important topic in the `Cloud Native` is the `Microservice Architecture`. We are not any more dealing with one monolithic application. We have several applications that have dependencies on each other and also have other dependencies like brokers or databases.
  
-Applications have their own life cycle, so we should be able to execute independent blue/green deployment. All the applications and dependencies will not change its version at the same time.
+Applications have their own life cycle, so we should be able to execute independent Blue/Green deployment. All the applications and dependencies will not change their version at the same time.
  
-Another important topic in the `Cloud Native` is `Continuous Delivery`. If we are going to have several applications doing Blue/Green deployment independently we have to automate it. We will use **Helm**, **Openshift Pipelines**, **Openshift GitOps** and of course **Red Hat Openshift** to help us.
+Another important topic in the `Cloud Native` is `Continuous Delivery`. If we are going to have several applications doing Blue/Green deployment independently we have to automate it. We will use **Helm**, **Openshift Pipelines**, **Openshift GitOps**, and of course **Red Hat Openshift** to help us.
  
 **In the next steps we will see a real example of how to install, deploy and manage the life cycle of Cloud Native applications doing Blue/Green deployment.**
  
-Let's start with some theory...after it we will have the **hands on example**.
+Let's start with some theory...after it, we will have the **hands-on example**.
  
 ## Blue/Green Deployment
  
@@ -18,13 +18,15 @@ Blue green deployment is an application release model that transfers user traffi
 The old version can be called the blue environment while the new version can be known as the green environment. Once production traffic is transferred from blue to green, blue can standby in case of rollback or pulled from production and updated to become the template upon which the next update is made.
  
 Advantages:
+
 - Minimize downtime
 - Rapid way to rollback
 - Smoke testing
  
 Disadvantages:
+
 - Doubling of total resources
-- Backwards compatibility
+- Backward compatibility
  
  
 ![Blue/Green](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/blue-green.png)
@@ -38,7 +40,7 @@ When a new version is ready to be used by the users we only change the deploymen
 There is **minimum downtime** and we can do a **rapid rollback** just undoing the changes in the services.
  
 However, meanwhile we are going to do the switch, we have to be ready to do a rapid rollback. We need the **doubling or total resources** (we will see how to minimize this).
-It is also very important to keep **backwards compatibility**. Without it, we can not do independent Blue/Green deployments.
+It is also very important to keep **backward compatibility**. Without it, we can not do independent Blue/Green deployments.
 ## Shop application
  
 We are going to use very simple applications to test Blue/Green deployment. We have created two Quarkus applications `Products` and `Discounts`
@@ -49,30 +51,32 @@ We are going to use very simple applications to test Blue/Green deployment. We h
  
 ## Shop Blue/Green
  
-To achieve blue/green deployment with `Cloud Native` applications we have designed this architecture.
+To achieve Blue/Green deployment with `Cloud Native` applications we have designed this architecture.
  
 ![Shop Blue/Green](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/Shop-blue-green.png)
  
 OpenShift Components - Online
-- Routes and Services declared with suffix -online
+
+- Routes and Services declared with the suffix -online
 - Routes mapped only to the online services
 - Services mapped to the deployment with the color flag (Green or Orange)
  
 OpenShift Components - Offline
-- Routes and Services declared with suffix -offline
+
+- Routes and Services declared with the suffix -offline
 - Routes mapped only to the offline services
 - Services mapped to the deployment with the color flag (Green or Orange)
  
-Notice that the routers and services do not have color, this is because they never change, they are always online or offline. However deployments and pods will change their version.
+**Notice that the routers and services do not have color, this is because they never change, they are always online or offline. However, deployments and pods will change their version.**
  
 ## Shop Umbrella Helm Chart
  
-One of the best ways to package `Cloud Native` applications is `Helm`. In blue/green deployment it makes even more sense.
-We have created a chart for each application that does not know anything about blue/green. Then we pack everything together in an umbrella helm chart.
+One of the best ways to package `Cloud Native` applications is `Helm`. In Blue/Green deployment it makes even more sense.
+We have created a chart for each application that does not know anything about Blue/Green. Then we pack everything together in an umbrella helm chart.
  
 ![Shop Umbrella Helm Chart](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/Shop-helm.png)
  
-In the `Shop Umbrella Chart` we use several times the same charts as helm dependencies but with different names if they are blue/green or online/offline. This will allow us to have different configurations for each color.
+In the `Shop Umbrella Chart` we use several times the same charts as helm dependencies but with different names if they are Blue/Green or online/offline. This will allow us to have different configurations for each color.
  
 This is the Chart.yaml
 ```
@@ -137,7 +141,7 @@ We have packaged both applications in one chart, but we may have different umbre
 - [GitHub account](https://github.com/)
 - [oc 4.10](https://docs.openshift.com/container-platform/4.10/cli_reference/openshift_cli/getting-started-cli.html)
  
-We have prepare a GitHub [repository](https://github.com/davidseve/cloud-native-deployment-strategies) for this demo. As part of the demo, you will have to do some changes and commits. So **it is important that you fork the repository and clone it in your local**.
+We have a GitHub [repository](https://github.com/davidseve/cloud-native-deployment-strategies) for this demo. As part of the demo, you will have to do some changes and commits. So **it is important that you fork the repository and clone it in your local**.
 
 ```
 git clone https://github.com/your_user/cloud-native-deployment-strategies
@@ -180,18 +184,19 @@ Click on Argo CD from the OpenShift Web Console application launcher and then lo
  
 We are going to follow, as much as we can, a GitOps methodology in this demo. So we will have everything in our Git repository and use **ArgoCD** to deploy it in the cluster.
  
-In the current Git repository, the [gitops/cluster-config](../gitops/cluster-config/) directory contains OpenShift cluster configurations such as:
+In the current Git repository, the [gitops/cluster-config](https://github.com/davidseve/cloud-native-deployment-strategies/tree/main/gitops/cluster-config) directory contains OpenShift cluster configurations such as:
+
 - namespaces `gitops`.
 - operator **Openshift Pipelines**.
 - cluster role `tekton-admin-view`.
 - role binding for ArgoCD and Pipelines to the namespace `gitops`.
-- `pipelines-blue-green` the pipelines that we will see later for blue/green deployment.
+- `pipelines-blue-green` the pipelines that we will see later for Blue/Green deployment.
 - Tekton cluster role.
 - Tekton tasks for git and Openshift clients.
  
-Let's configure Argo CD to recursively sync the content of the [gitops/cluster-config](../gitops/cluster-config/) directory to the OpenShift cluster.
+Let's configure Argo CD to recursively sync the content of the [gitops/cluster-config](https://github.com/davidseve/cloud-native-deployment-strategies/tree/main/gitops/cluster-config) directory into the OpenShift cluster.
 
-But first we have to set your GutHub credentials. Please edit the file `blue-green-pipeline/application-cluster-config.yaml`. It should looks like:
+But first, we have to set your GitHub credentials. Please edit the file `blue-green-pipeline/application-cluster-config.yaml`. It should look like this:
 
 ```yaml
 apiVersion: argoproj.io/v1alpha1
@@ -215,7 +220,7 @@ spec:
       - name: "github.user"
         value: "davidseve"
       - name: "github.mail"
-        value: "davidseve16@gmail.com"
+        value: "dseveria@redhat.com"
       - name: "github.repository"
         value: davidseve
   project: default
@@ -234,7 +239,7 @@ oc apply -f blue-green-pipeline/application-cluster-config.yaml
 Looking at the Argo CD dashboard, you would notice that an application has been created[^note].
  
 [^note]:
-    `cluster-configuration` will have status `Progressing` till we execute the first pipeline.
+    `cluster-configuration` will have the status `Progressing` till we execute the first pipeline.
 
 You can click on the `cluster-configuration` application to check the details of sync resources and their status on the cluster.
  
@@ -242,7 +247,7 @@ You can click on the `cluster-configuration` application to check the details of
 
 ### Create Shop application
 
-We are going to create the application `shop`, that we will use to test blue/green deployment. Because we will make changes in the application's GitHub repository, we have to use the repository that you have just forked. Please edit the file `blue-green-pipeline/application-shop-blue-green.yaml` and set your own GitHub repository in the `reportURL`.
+We are going to create the application `shop`, that we will use to test Blue/Green deployment. Because we will make changes in the application's GitHub repository, we have to use the repository that you have just forked. Please edit the file `blue-green-pipeline/application-shop-blue-green.yaml` and set your own GitHub repository in the `reportURL`.
 
 ```yaml
 apiVersion: argoproj.io/v1alpha1
@@ -290,7 +295,7 @@ And the Offline route
 ```
 echo "$(oc get routes products-umbrella-offline -n gitops --template='http://{{.spec.host}}')/products"
 ```
-Notice that in each microservice response we have added metadata information to see better the `version`, `color`, `mode` of each application. This will help us to see the changes while we do the Blue/Green deployment.
+Notice that in each microservice response we have added metadata information to see better the `version`, `color`, and `mode` of each application. This will help us to see the changes while we do the Blue/Green deployment.
 Because right now we have the same version v1.0.1 in both colors we will have almost the same response, only the mode will change.
 ```json
 {
@@ -325,6 +330,7 @@ Because right now we have the same version v1.0.1 in both colors we will have al
 ## Products Blue/Green deployment
  
 We have split a `Cloud Native` Blue/Green deployment into three steps:
+
 1. Deploy new version.
 2. Switch new version to Online.
    - Rollback
@@ -340,10 +346,11 @@ This is our current status:
  
 ### Step 1 - Deploy new version
  
-We will start deploying a new version v1.1.1 in the offline color. But instead of going manually to see which is the offline color and deploy the new version on it, let's let the pipeline find the current offline color and automatically deploy the new version, with no manual intervention.
+We will start deploying a new version v1.1.1 in the offline color. But instead of going manually to see which is the offline color and deploying the new version on it, let's let the pipeline find the current offline color and automatically deploy the new version, with no manual intervention.
 We will use the already created pipelinerun.
 
 Those are the main tasks that are executed:
+
 - Change new tag image values in the right color and commit the changes.
 - Execute E2E test to validate the new version.
 - Change the application configuration values to use the online services and commit the changes.
@@ -355,7 +362,7 @@ oc create -f 1-pipelinerun-products-new-version.yaml -n gitops
 ```
 ![Pipeline step 1](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/pipeline-step-1.png)
 
-This pipeline may take more time because we are doing three different commits, so ArgoCD has to synchronize one in order to continue with the pipeline. If you want to make it faster you can refresh ArgoCD manually after each  `commit-*` step or configure the Argo CD Git Webhook.[^note2].
+This pipeline may take more time because we are doing three different commits, so ArgoCD has to synchronize them in order to continue with the pipeline. If you want to make it faster, you can refresh ArgoCD manually after each  `commit-*` step or configure the Argo CD Git Webhook.[^note2].
  
 [^note2]:
     Here you can see how to configure the Argo CD Git [Webhook]( https://argo-cd.readthedocs.io/en/stable/operator-manual/webhook/)
@@ -366,11 +373,11 @@ This pipeline may take more time because we are doing three different commits, s
 
 ![Refresh Shop](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/ArgoCD-Shop-Refresh.png)
  
-After the pipeline finished and ArgoCD has synchronized the changes this will be the `Shop` status:
+After the pipeline is finished and ArgoCD has synchronized the changes this will be the `Shop` status:
 ![Shop step 1](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/blue-green-step-1.png)
  
  
-See that offline applications have the version v1.1.1 and the new attribute description, but the online has not changed.
+See that offline applications have version v1.1.1 and the new attribute description, but the online has not changed.
  
 ```json
 {
@@ -406,7 +413,7 @@ oc create -f 2-pipelinerun-products-switch.yaml -n gitops
 ```
 
 ![Pipeline step 2](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/pipeline-step-3.png)
-After the pipeline finished and ArgoCD has synchronized the changes this will be the `Shop` status:
+After the pipeline is finished and ArgoCD has synchronized the changes this will be the `Shop` status:
 ![Shop step 2](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/blue-green-step-3.png)
 **We have in the online environment the new version v1.1.1!!!**
 ```json
@@ -429,13 +436,13 @@ After the pipeline finished and ArgoCD has synchronized the changes this will be
  
 ### Step 2,5 - Rollback
  
-Imagine that something goes wrong, we know that this never happens but just in case. We can do a very `quick rollback` just undoing the change in the `Products` online service. But are we sure that with all the pressure that we will have at this moment, we will find the right service and change the label to the right color. Let's move this pressure to the pipeline. We can have a pipeline for rollback.
+Imagine that something goes wrong, we know that this never happens but just in case. We can do a very `quick rollback` just undoing the change in the `Products` online service. But, are we sure that with all the pressure that we will have at this moment, we will find the right service and change the label to the right color? Let's move this pressure to the pipeline. We can have a pipeline for rollback.
 ```
 oc create -f 2-pipelinerun-products-switch-rollback.yaml -n gitops
 ```
 
 ![Pipeline step 2,5 Rollback](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/pipeline-step-3-rollback.png)
-After the pipeline finished and ArgoCD has synchronized the changes this will be the `Shop` status:
+After the pipeline is finished and ArgoCD has synchronized the changes this will be the `Shop` status:
 ![Shop step 2,5 Rollback](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/blue-green-step-3-5.png)
 We have version v1.0.1 online again.
 ```json
@@ -480,13 +487,13 @@ We have in the online environment the new version v1.1.1 again.
 ```
 ### Step 3 - Align and scale down Offline
  
-Finally, when online is stable we should align offline with the new version and scale it down. Does not make sense to use the same resources that we have in production.
+Finally, when online is stable we should align offline with the new version and scale it down. Does not make sense to use the same resources that we have in online.
 ```
 oc create -f 3-pipelinerun-products-scale-down.yaml -n gitops
 ```
 
 ![Pipeline step 3](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/pipeline-step-4.png)
-After the pipeline finished and ArgoCD has synchronized the changes this will be the `Shop` status:
+After the pipeline is finished and ArgoCD has synchronized the changes this will be the `Shop` status:
 ![Shop step 3](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/blue-green-step-4.png)
 We can see that the offline `Products` is calling offline `Discounts` and has the new version v1.1.1
 ```json
@@ -522,7 +529,8 @@ We can see that the offline `Products` is calling offline `Discounts` and has th
 ```
 ## Delete environment
  
-To delete all the thing that we have done for the demo you have to_
+To delete all the things that we have done for the demo you have to:
+
 - In GitHub delete the branch `blue-green`
 - In ArgoCD delete the application `cluster-configuration` and `shop`
 - In Openshift, go to project `openshift-operators` and delete the installed operators **Openshift GitOps** and **Openshift Pipelines**

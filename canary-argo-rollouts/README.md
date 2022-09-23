@@ -2,18 +2,18 @@
 
 ## Introduction
 
-One important topic in the `Cloud Native` is the `Microservice Architecture`. We are not any more dealing with one monolithic application. We have several applications that have dependencies on each other and also have other dependencies like brokers or data bases.
+One important topic in the `Cloud Native` is the `Microservice Architecture`. We are not any more dealing with one monolithic application. We have several applications that have dependencies on each other and also have other dependencies like brokers or databases.
  
-Applications have their own life cycle, so we should be able to execute independent canary deployment. All the applications and dependencies will not change its version at the same time.
+Applications have their own life cycle, so we should be able to execute independent canary deployment. All the applications and dependencies will not change their version at the same time.
  
-Another important topic in the `Cloud Native` is `Continuous Delivery`. If we are going to have several applications doing canary deployment independently we have to automate it. We will use **Helm**, **Argo Rollouts**, **Openshift GitOps** and of course **Red Hat Openshift** to help us.
+Another important topic in the `Cloud Native` is `Continuous Delivery`. If we are going to have several applications doing canary deployment independently we have to automate it. We will use **Helm**, **Argo Rollouts**, **Openshift GitOps**, and of course **Red Hat Openshift** to help us.
 
 [**Argo Rollouts**](https://argoproj.github.io/argo-rollouts/) is a Kubernetes controller and set of CRDs which provide advanced deployment capabilities such as blue-green, canary, canary analysis, experimentation, and progressive delivery features to Kubernetes.
 In this demo we are going to use canary capabilities.
  
 **In the next steps we will see a real example of how to install, deploy and manage the life cycle of Cloud Native applications doing canary deployment using Argo Rollouts.**
 
-Let's start with some theory...after it we will have the **hands on example**.
+Let's start with some theory...after it, we will have the **hands-on example**.
 
 ## Canary Deployment
 
@@ -34,7 +34,8 @@ To achieve canary deployment with `Cloud Native` applications using **Argo Rollo
 ![Shop initial status](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-initial.png)
  
 OpenShift Components - Online
-- Routes and Services declared with suffix -online
+
+- Routes and Services declared with the suffix -online
 - Routes mapped only to the online services
 - Services mapped to the rollout.
 
@@ -65,7 +66,7 @@ We have packaged both applications in one chart, but we may have different umbre
 - [oc 4.10](https://docs.openshift.com/container-platform/4.10/cli_reference/openshift_cli/getting-started-cli.html)
 - [Argo Rollouts CLI](https://argoproj.github.io/argo-rollouts/installation/#kubectl-plugin-installation )
 
-We have prepare a GitHub [repository](https://github.com/davidseve/cloud-native-deployment-strategies) for this demo. As part of the demo, you will have to do some changes and commits. So **it is important that you fork the repository and clone it in your local**.
+We have a GitHub [repository](https://github.com/davidseve/cloud-native-deployment-strategies) for this demo. As part of the demo, you will have to do some changes and commits. So **it is important that you fork the repository and clone it in your local**.
 
 ```
 git clone https://github.com/your_user/cloud-native-deployment-strategies
@@ -108,12 +109,13 @@ Click on Argo CD from the OpenShift Web Console application launcher and then lo
  
 We are going to follow, as much as we can, a GitOps methodology in this demo. So we will have everything in our Git repository and use **ArgoCD** to deploy it in the cluster.
  
-In the current Git repository, the [gitops/cluster-config](../gitops/cluster-config/) directory contains OpenShift cluster configurations such as:
+In the current Git repository, the [gitops/cluster-config](https://github.com/davidseve/cloud-native-deployment-strategies/tree/main/gitops/cluster-config) directory contains OpenShift cluster configurations such as:
+
 - namespaces `gitops`.
 - role binding for ArgoCD to the namespace `gitops`.
 - Argo Rollouts project.
  
-Let's configure Argo CD to recursively sync the content of the [gitops/cluster-config](../gitops/cluster-config/) directory to the OpenShift cluster.
+Let's configure Argo CD to recursively sync the content of the [gitops/cluster-config](https://github.com/davidseve/cloud-native-deployment-strategies/tree/main/gitops/cluster-config) directory into the OpenShift cluster.
  
 Execute this command to add a new Argo CD application that syncs a Git repository containing cluster configurations with the OpenShift cluster.
  
@@ -236,6 +238,7 @@ This is how we have configure **Argo Rollouts** for this demo:
 ```
 
 We have split a `Cloud Native` Canary deployment into three automatic step:
+
 1. Deploy canary version for 10%
 2. Scale canary version to 50%
 3. Scale canary version to 100%
@@ -431,7 +434,8 @@ To get the application ready for a new release we should configure again the  **
 
 ## Delete environment
  
-To delete all the thing that we have done for the demo you have to_
+To delete all the things that we have done for the demo you have to:
+
 - In GitHub delete the branch `canary`
 - In ArgoCD delete the application `cluster-configuration` and `shop`
 - In Openshift, go to project `openshift-operators` and delete the installed operators **Openshift GitOps**.

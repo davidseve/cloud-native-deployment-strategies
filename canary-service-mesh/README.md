@@ -26,7 +26,7 @@ We have created a chart for each application that does not know anything about c
 - [GitHub account](https://github.com/)
 - [oc 4.10](https://docs.openshift.com/container-platform/4.10/cli_reference/openshift_cli/getting-started-cli.html)
  
-We have prepare a GitHub [repository](https://github.com/davidseve/cloud-native-deployment-strategies) for this demo. As part of the demo, you will have to do some changes and commits. So **it is important that you fork the repository and clone it in your local**.
+We have a GitHub [repository](https://github.com/davidseve/cloud-native-deployment-strategies) for this demo. As part of the demo, you will have to do some changes and commits. So **it is important that you fork the repository and clone it in your local**.
 
 ```
 git clone https://github.com/your_user/cloud-native-deployment-strategies
@@ -67,7 +67,8 @@ Click on Argo CD from the OpenShift Web Console application launcher and then lo
  
 We are going to follow, as much as we can, a GitOps methodology in this demo. So we will have everything in our Git repository and use **ArgoCD** to deploy it in the cluster.
  
-In the current Git repository, the [gitops/cluster-config](../gitops/cluster-config/) directory contains OpenShift cluster configurations such as:
+In the current Git repository, the [gitops/cluster-config](https://github.com/davidseve/cloud-native-deployment-strategies/tree/main/gitops/cluster-config) directory contains OpenShift cluster configurations such as:
+
 - namespaces `gitops`.
 - role binding for ArgoCD to the namespace `gitops`.
 - **OpenShift Service Mesh**
@@ -75,7 +76,7 @@ In the current Git repository, the [gitops/cluster-config](../gitops/cluster-con
 - **OpenShift Elasticsearch Operator**
 - **Red Hat OpenShift distributed tracing platform**
  
-Let's configure Argo CD to recursively sync the content of the [gitops/cluster-config](../gitops/cluster-config/) directory to the OpenShift cluster.
+Let's configure Argo CD to recursively sync the content of the [gitops/cluster-config](https://github.com/davidseve/cloud-native-deployment-strategies/tree/main/gitops/cluster-config) directory into the OpenShift cluster.
  
 Execute this command to add a new Argo CD application that syncs a Git repository containing cluster configurations with the OpenShift cluster.
  
@@ -110,7 +111,8 @@ oc get routes istio-ingressgateway -n istio-system --template='http://{{.spec.ho
  
 ## Delete environment
  
-To delete all the thing that we have done for the demo you have to_
+To delete all the things that we have done for the demo you have to:
+
 - In GitHub delete the branch `rollouts`
 - In ArgoCD delete the application `cluster-configuration` and `shop`
 - In Openshift, go to project `openshift-operators` and delete the installed operators **Openshift GitOps**, **OpenShift Service Mesh**, **Kiali Operator**, **OpenShift Elasticsearch Operator**, **Red Hat OpenShift distributed tracing platform**

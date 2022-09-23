@@ -6,11 +6,11 @@
 
 ## Introduction
  
-One important topic in the `Cloud Native` is the `Microservice Architecture`. We are not any more dealing with one monolithic application. We have several applications that have dependencies on each other and also have other dependencies like brokers or data bases.
+One important topic in the `Cloud Native` is the `Microservice Architecture`. We are not any more dealing with one monolithic application. We have several applications that have dependencies on each other and also have other dependencies like brokers or databases.
  
-Applications have their own life cycle, so we should be able to execute independent deployment. All the applications and dependencies will not change its version at the same time.
+Applications have their own life cycle, so we should be able to execute independent deployment. All the applications and dependencies will not change their version at the same time.
  
-Another important topic in the `Cloud Native` is the `Continuous Delivery`. If we are going to have several applications doing deployments independently we have to automate it. We will use **Helm**, **Openshift GitOps** and of course **Red Hat Openshift** to help us.
+Another important topic in the `Cloud Native` is the `Continuous Delivery`. If we are going to have several applications doing deployments independently we have to automate it. We will use **Helm**, **Openshift GitOps**, and of course **Red Hat Openshift** to help us.
  
 **In this repository we are going to test and compare different deployments strategies with `Cloud Native` applications. We will see real examples of how to install, deploy and manage the life cycle of `Cloud Native` applications using those strategies.**
  
@@ -29,11 +29,13 @@ Those are the different `Cloud Native` deployment strategies that we have develo
 Those are the advantages and disadvantages of all of those deployment strategies:
 
 Advantages:
+
 - Minimize downtime
 - Rapid way to rollback
  
 Disadvantages:
-- Backwards compatibility
+
+- Backward compatibility
 
 ## Deployment Strategies comparison
 
