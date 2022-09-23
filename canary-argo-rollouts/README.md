@@ -255,7 +255,7 @@ products-blue:
     tag: v1.1.1
 ```
 
-**Argo Rollouts** will automatically deploy a new products revision. The canary version will be 10% of the replicas. In this demo we are no using [traffic management](https://argoproj.github.io/argo-rollouts/features/traffic-management/) the Rollout makes a best effort attempt to achieve the percentage listed in the last setWeight step between the new and old version. This means that it will create only one replica in the new revision, because it is rounded up. All the requests are load balanced between the old and the new replicas.
+**Argo Rollouts** will automatically deploy a new products revision. The canary version will be 10% of the replicas. In this demo we are no using [traffic management](https://argoproj.github.io/argo-rollouts/features/traffic-management/). **Argo Rollouts** makes a best effort attempt to achieve the percentage listed in the last setWeight step between the new and old version. This means that it will create only one replica in the new revision, because it is rounded up. All the requests are load balanced between the old and the new replicas.
 
 Push the changes to start the deployment.
 ```
@@ -321,7 +321,7 @@ Old revision:
      }
   ],
   "metadata":{
-     "version":"v1.101", <--
+     "version":"v1.0.1", <--
   }
 }
 ```
