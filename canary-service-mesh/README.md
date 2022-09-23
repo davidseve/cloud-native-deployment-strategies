@@ -19,7 +19,18 @@ We have created a chart for each application that does not know anything about c
 
 ## Demo!!
 
-First step is to fork this repository, you will have to do some changes and commits. You should clone your forked repository in your local.
+### Prerequisites:
+
+- **Red Hat Openshift 4.10** with admin rights. You can use (Red Hat Openshift Local](https://developers.redhat.com/products/openshift-local/overview).
+- [Git](https://git-scm.com/) installed on your local PC.
+- [GitHub account](https://github.com/)
+- [oc 4.10](https://docs.openshift.com/container-platform/4.10/cli_reference/openshift_cli/getting-started-cli.html)
+ 
+We have prepare a GitHub [repository](https://github.com/davidseve/cloud-native-deployment-strategies) for this demo. As part of the demo, you will have to do some changes and commits. So **it is important that you fork the repository and clone it in your local**.
+
+```
+git clone https://github.com/your_user/cloud-native-deployment-strategies
+```
  
 ### Install OpenShift GitOps
  

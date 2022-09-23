@@ -129,15 +129,26 @@ dependencies:
 We have packaged both applications in one chart, but we may have different umbrella charts per application.
  
 ## Demo!!
+
+### Prerequisites:
+
+- **Red Hat Openshift 4.10** with admin rights. You can use (Red Hat Openshift Local](https://developers.redhat.com/products/openshift-local/overview).
+- [Git](https://git-scm.com/) installed on your local PC.
+- [GitHub account](https://github.com/)
+- [oc 4.10](https://docs.openshift.com/container-platform/4.10/cli_reference/openshift_cli/getting-started-cli.html)
  
-The first step is to fork this repository, you will have to do some changes and commits. You should clone your forked repository in your local.
+We have prepare a GitHub [repository](https://github.com/davidseve/cloud-native-deployment-strategies) for this demo. As part of the demo, you will have to do some changes and commits. So **it is important that you fork the repository and clone it in your local**.
+
+```
+git clone https://github.com/your_user/cloud-native-deployment-strategies
+```
  
- 
-If we want to have a `Cloud Native` deployment we can not forget `CI/CD`. **OpenShift GitOps** and **Openshift Pipelines** will help us.
+If we want to have a `Cloud Native` deployment we can not forget `CI/CD`. **Red Hat OpenShift GitOps** and **Red Hat Openshift Pipelines** will help us.
 ### Install OpenShift GitOps
  
 Go to the folder where you have cloned your forked repository and create a new branch `blue-green`
 ```
+cd cloud-native-deployment-strategies
 git checkout -b blue-green
 git push origin blue-green
 ```
@@ -310,10 +321,6 @@ Because right now we have the same version v1.0.1 in both colors we will have al
   }
 }
 ```
- 
- 
- 
- 
  
 ## Products Blue/Green deployment
  
