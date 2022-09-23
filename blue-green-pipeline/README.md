@@ -132,8 +132,8 @@ We have packaged both applications in one chart, but we may have different umbre
 
 ### Prerequisites:
 
-- **Red Hat Openshift 4.10** with admin rights. You can use (Red Hat Openshift Local](https://developers.redhat.com/products/openshift-local/overview).
-- [Git](https://git-scm.com/) installed on your local PC.
+- **Red Hat Openshift 4.10** with admin rights. You can use [Red Hat Openshift Local](https://developers.redhat.com/products/openshift-local/overview).
+- [Git](https://git-scm.com/)
 - [GitHub account](https://github.com/)
 - [oc 4.10](https://docs.openshift.com/container-platform/4.10/cli_reference/openshift_cli/getting-started-cli.html)
  
