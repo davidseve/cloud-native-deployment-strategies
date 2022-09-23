@@ -430,6 +430,20 @@ git push origin canary
 
 The rollback is done!
 ![Shop Step Rollback](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-Rollback.png)
+```json
+{
+  "products":[
+     {
+        "discountInfo":{...},
+        "name":"TV 4K",
+        "price":"1500€"
+     }
+  ],
+  "metadata":{
+     "version":"v1.0.1", <--
+  }
+}
+```
 To get the application ready for a new release we should configure again the  **Argo Rollouts** with the steps.
 
 ## Delete environment
