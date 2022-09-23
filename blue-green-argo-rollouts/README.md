@@ -349,7 +349,7 @@ And after `scaleDownDelaySeconds` **Argo Rollouts** will scale down the first re
 ```
 
 This is our final status:
-![Shop Step 2 initial](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/rollout-blue-green-step-2.png)
+![Shop Step 2](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/rollout-blue-green-step-2.png)
 
 **We have in the online environment the new version v1.1.1!!!**
 ```json
@@ -381,12 +381,31 @@ git revert HEAD
 git push origin rollouts
 ```
 **ArgoCD** will get the changes and apply them. **Argo Rollouts** will create a new revision with the previous version.
+
+![Shop Step Rollback initial](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/rollout-blue-green-step-rollback-initial.png)
+
 Execute this command to promote products to version `v1.0.1`:
 ```
 kubectl argo rollouts promote products -n gitops
 ```
 The rollback is done!
-
+![Shop Step Rollback](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/rollout-blue-green-step-rollback.png)
+```json
+{
+   "products":[
+      {
+         ...
+         "name":"TV 4K",
+         "price":"1500€"
+      }
+   ],
+   "metadata":{
+      "version":"v1.0.1", <--
+      "colour":"none",
+      "mode":"online"
+   }
+}
+```
 ## Delete environment
  
 To delete all the things that we have done for the demo you have to:
