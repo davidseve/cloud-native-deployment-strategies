@@ -33,7 +33,7 @@ We have two versions up and running in production, online and offline. The route
 Because we have an offline version, we can do **smoke test** before switching it to online.
 When a new version is ready to be used by the users we only change the deployment that the online service is using.
  
-![Blue/Green Switch](../images/blue-green-switch.png)
+![Blue/Green Switch](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/blue-green-switch.png)
  
 There is **minimum downtime** and we can do a **rapid rollback** just undoing the changes in the services.
  
@@ -43,7 +43,7 @@ It is also very important to keep **backwards compatibility**. Without it, we ca
  
 We are going to use very simple applications to test Blue/Green deployment. We have created two Quarkus applications `Products` and `Discounts`
  
-![Shop Application](../images/Shop.png)
+![Shop Application](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/Shop.png)
  
 `Products` call `Discounts` to get the product`s discount and expose an API with a list of products with its discounts.
  
@@ -51,7 +51,7 @@ We are going to use very simple applications to test Blue/Green deployment. We h
  
 To achieve blue/green deployment with `Cloud Native` applications we have designed this architecture.
  
-![Shop Blue/Green](../images/Shop-blue-green.png)
+![Shop Blue/Green](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/Shop-blue-green.png)
  
 OpenShift Components - Online
 - Routes and Services declared with suffix -online
@@ -70,7 +70,7 @@ Notice that the routers and services do not have color, this is because they nev
 One of the best ways to package `Cloud Native` applications is `Helm`. In blue/green deployment it makes even more sense.
 We have created a chart for each application that does not know anything about blue/green. Then we pack everything together in an umbrella helm chart.
  
-![Shop Umbrella Helm Chart](../images/Shop-helm.png)
+![Shop Umbrella Helm Chart](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/Shop-helm.png)
  
 In the `Shop Umbrella Chart` we use several times the same charts as helm dependencies but with different names if they are blue/green or online/offline. This will allow us to have different configurations for each color.
  
@@ -160,7 +160,7 @@ oc apply -f gitops/gitops-operator.yaml
  
 Once OpenShift GitOps is installed, an instance of Argo CD is automatically installed on the cluster in the `openshift-gitops` namespace and a link to this instance is added to the application launcher in OpenShift Web Console.
  
-![Application Launcher](../images/gitops-link.png)
+![Application Launcher](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/gitops-link.png)
  
 ### Log into Argo CD dashboard
  
@@ -172,9 +172,9 @@ oc extract secret/openshift-gitops-cluster -n openshift-gitops --to=-
  
 Click on Argo CD from the OpenShift Web Console application launcher and then log into Argo CD with `admin` username and the password retrieved from the previous step.
  
-![Argo CD](../images/ArgoCD-login.png)
+![Argo CD](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/ArgoCD-login.png)
  
-![Argo CD](../images/ArgoCD-UI.png)
+![Argo CD](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/ArgoCD-UI.png)
  
 ### Configure OpenShift with Argo CD
  
@@ -238,7 +238,7 @@ Looking at the Argo CD dashboard, you would notice that an application has been 
 
 You can click on the `cluster-configuration` application to check the details of sync resources and their status on the cluster.
  
-![Argo CD - Cluster Config](../images/application-cluster-config-sync.png)
+![Argo CD - Cluster Config](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/application-cluster-config-sync.png)
 
 ### Create Shop application
 
@@ -275,7 +275,7 @@ oc apply -f blue-green-pipeline/application-shop-blue-green.yaml
 
 Looking at the Argo CD dashboard, you would notice that we have a new `shop` application.
 
-![Argo CD - Cluster Config](../images/ArgoCD-Applications.png)
+![Argo CD - Cluster Config](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/ArgoCD-Applications.png)
 
 
 ## Test Shop application
@@ -335,7 +335,7 @@ We have split a `Cloud Native` Blue/Green deployment into three steps:
 We have already deployed the products version v1.0.1, and we are ready to use a new products version v1.1.1 that has a new `description` attribute.
  
 This is our current status:
-![Shop initial status](../images/blue-green-step-0.png)
+![Shop initial status](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/blue-green-step-0.png)
  
  
 ### Step 1 - Deploy new version
@@ -353,21 +353,21 @@ Those are the main tasks that are executed:
 cd blue-green-pipeline/pipelines/run-products
 oc create -f 1-pipelinerun-products-new-version.yaml -n gitops
 ```
-![Pipeline step 1](../images/pipeline-step-1.png)
+![Pipeline step 1](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/pipeline-step-1.png)
 
 This pipeline may take more time because we are doing three different commits, so ArgoCD has to synchronize one in order to continue with the pipeline. If you want to make it faster you can refresh ArgoCD manually after each  `commit-*` step or configure the Argo CD Git Webhook.[^note2].
  
 [^note2]:
     Here you can see how to configure the Argo CD Git [Webhook]( https://argo-cd.readthedocs.io/en/stable/operator-manual/webhook/)
-    ![Argo CD Git Webhook](../images/ArgoCD-webhook.png)
+    ![Argo CD Git Webhook](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/ArgoCD-webhook.png)
 
 
 
 
-![Refresh Shop](../images/ArgoCD-Shop-Refresh.png)
+![Refresh Shop](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/ArgoCD-Shop-Refresh.png)
  
 After the pipeline finished and ArgoCD has synchronized the changes this will be the `Shop` status:
-![Shop step 1](../images/blue-green-step-1.png)
+![Shop step 1](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/blue-green-step-1.png)
  
  
 See that offline applications have the version v1.1.1 and the new attribute description, but the online has not changed.
@@ -405,9 +405,9 @@ We are going to open the new version to final users. The pipeline will just chan
 oc create -f 2-pipelinerun-products-switch.yaml -n gitops
 ```
 
-![Pipeline step 2](../images/pipeline-step-3.png)
+![Pipeline step 2](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/pipeline-step-3.png)
 After the pipeline finished and ArgoCD has synchronized the changes this will be the `Shop` status:
-![Shop step 2](../images/blue-green-step-3.png)
+![Shop step 2](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/blue-green-step-3.png)
 **We have in the online environment the new version v1.1.1!!!**
 ```json
 {
@@ -434,9 +434,9 @@ Imagine that something goes wrong, we know that this never happens but just in c
 oc create -f 2-pipelinerun-products-switch-rollback.yaml -n gitops
 ```
 
-![Pipeline step 2,5 Rollback](../images/pipeline-step-3-rollback.png)
+![Pipeline step 2,5 Rollback](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/pipeline-step-3-rollback.png)
 After the pipeline finished and ArgoCD has synchronized the changes this will be the `Shop` status:
-![Shop step 2,5 Rollback](../images/blue-green-step-3-5.png)
+![Shop step 2,5 Rollback](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/blue-green-step-3-5.png)
 We have version v1.0.1 online again.
 ```json
 {
@@ -459,7 +459,7 @@ After fixing the issue we can execute the Switch step again.
 ```
 oc create -f 2-pipelinerun-products-switch.yaml -n gitops
 ```
-![Shop step 2](../images/blue-green-step-3.png)
+![Shop step 2](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/blue-green-step-3.png)
 We have in the online environment the new version v1.1.1 again.
 ```json
 {
@@ -485,9 +485,9 @@ Finally, when online is stable we should align offline with the new version and 
 oc create -f 3-pipelinerun-products-scale-down.yaml -n gitops
 ```
 
-![Pipeline step 3](../images/pipeline-step-4.png)
+![Pipeline step 3](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/pipeline-step-4.png)
 After the pipeline finished and ArgoCD has synchronized the changes this will be the `Shop` status:
-![Shop step 3](../images/blue-green-step-4.png)
+![Shop step 3](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/blue-green-step-4.png)
 We can see that the offline `Products` is calling offline `Discounts` and has the new version v1.1.1
 ```json
 {
@@ -526,6 +526,6 @@ To delete all the thing that we have done for the demo you have to_
 - In GitHub delete the branch `blue-green`
 - In ArgoCD delete the application `cluster-configuration` and `shop`
 - In Openshift, go to project `openshift-operators` and delete the installed operators **Openshift GitOps** and **Openshift Pipelines**
-![Installed Operators](../images/installed-operators.png)
-![Delete Pipeline Operator](../images/delete-pipeline.png)
+![Installed Operators](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/installed-operators.png)
+![Delete Pipeline Operator](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/delete-pipeline.png)
 

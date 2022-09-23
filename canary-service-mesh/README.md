@@ -8,7 +8,7 @@
  
 We are going to use very simple applications to test canary deployment. We have create two Quarkus applications `Products` and `Discounts`
  
-![Shop Application](../images/Shop.png)
+![Shop Application](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/Shop.png)
  
 `Products` call `Discounts` to get the product`s discount and expose an API with a list of products with its discounts.
  
@@ -47,7 +47,7 @@ oc apply -f gitops/gitops-operator.yaml
  
 Once OpenShift GitOps is installed, an instance of Argo CD is automatically installed on the cluster in the `openshift-gitops` namespace and a link to this instance is added to the application launcher in OpenShift Web Console.
  
-![Application Launcher](../images/gitops-link.png)
+![Application Launcher](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/gitops-link.png)
  
 ### Log into Argo CD dashboard
  
@@ -59,9 +59,9 @@ oc extract secret/openshift-gitops-cluster -n openshift-gitops --to=-
  
 Click on Argo CD from the OpenShift Web Console application launcher and then log into Argo CD with `admin` username and the password retrieved from the previous step.
  
-![Argo CD](../images/ArgoCD-login.png)
+![Argo CD](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/ArgoCD-login.png)
  
-![Argo CD](../images/ArgoCD-UI.png)
+![Argo CD](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/ArgoCD-UI.png)
  
 ### Configure OpenShift with Argo CD
  
