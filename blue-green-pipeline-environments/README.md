@@ -112,10 +112,12 @@ We have packaged both applications in one chart, but we may have different umbre
  
 ### Prerequisites:
 
-- **Red Hat Openshift 4.10** with admin rights. You can use [Red Hat Openshift Local](https://developers.redhat.com/products/openshift-local/overview).
+- **Red Hat Openshift 4.10** with admin rights.
+  - You can download [Red Hat Openshift Local for OCP 4.10](https://developers.redhat.com/content-gateway/rest/mirror/pub/openshift-v4/clients/crc/2.6.0).
+  - [Getting Started Guide](https://access.redhat.com/documentation/en-us/red_hat_openshift_local/2.5/html/getting_started_guide/using_gsg)
 - [Git](https://git-scm.com/)
 - [GitHub account](https://github.com/)
-- [oc 4.10](https://docs.openshift.com/container-platform/4.10/cli_reference/openshift_cli/getting-started-cli.html)
+- [oc 4.10 CLI] (https://docs.openshift.com/container-platform/4.10/cli_reference/openshift_cli/getting-started-cli.html)
  
 We have a GitHub [repository](https://github.com/davidseve/cloud-native-deployment-strategies) for this demo. As part of the demo, you will have to do some changes and commits. So **it is important that you fork the repository and clone it in your local**.
 
@@ -532,9 +534,7 @@ We can see that the offline `Products` is calling offline `Discounts` and has th
 }
 ```
 
-
-## Test Shop application Production environment 
- 
+https://github.com/windup
 We have deployed the `gitops-pre-shop` with ArgoCD. We can test that it is up and running.
  
 We have to get the Online route
@@ -562,7 +562,7 @@ Because right now we have the same version v1.0.1 in both colors we will have al
            "metadata":{
               "version":"v1.0.1",
               "colour":"blue",
-              "mode":"online" <--
+              "mode":"online" <--https://github.com/windup
            }
         },
         "name":"TV 4K",
