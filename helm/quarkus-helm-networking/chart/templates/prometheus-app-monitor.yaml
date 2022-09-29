@@ -2,7 +2,6 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   labels:
-    k8s-app: "{{ include "quarkus.fullname" . }}-prometheus-monitor"
     {{- include "quarkus.labels" . | nindent 4 }}
   name: "{{ include "quarkus.fullname" . }}-prometheus-monitor"
 spec:
@@ -13,7 +12,4 @@ spec:
     scheme: http
   selector:
     matchLabels:
-      {{- include "quarkus.selectorLabels" . | nindent 6 }}
-      {{- with .Values.version }}
-      version: {{ . }}
-      {{- end }}
+      {{- include "quarkus.labels" . | nindent 6 }}
