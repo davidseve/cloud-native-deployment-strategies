@@ -534,7 +534,6 @@ We can see that the offline `Products` is calling offline `Discounts` and has th
 }
 ```
 
-https://github.com/windup
 We have deployed the `gitops-pre-shop` with ArgoCD. We can test that it is up and running.
  
 We have to get the Online route
@@ -562,7 +561,7 @@ Because right now we have the same version v1.0.1 in both colors we will have al
            "metadata":{
               "version":"v1.0.1",
               "colour":"blue",
-              "mode":"online" <--https://github.com/windup
+              "mode":"online" <--
            }
         },
         "name":"TV 4K",
