@@ -1,0 +1,28 @@
+tags:
+  discounts-green: false
+  products-green: false
+  productsNetworkingOffline: false
+  discountsNetworkingOffline: false
+
+discountsNetworkingOnline:
+  version: blue
+
+productsNetworkingOnline:
+  version: blue
+  router:
+    enabled: true
+
+products-blue:
+  quarkus-base:
+    replicaCount: 1
+    image:
+      tag: latest
+  mode: online
+
+discounts-blue:
+  quarkus-base:
+    replicaCount: 1
+    image:
+      tag: latest
+  mode: online
+
