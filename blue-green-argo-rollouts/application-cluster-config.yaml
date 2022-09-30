@@ -20,6 +20,8 @@ spec:
         value: "false"
       - name: "argorollouts.enabled"
         value: "true"
+      - name: "monitoring.enabled"
+        value: "true"
   project: default
   syncPolicy:
     automated:
