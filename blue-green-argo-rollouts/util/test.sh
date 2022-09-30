@@ -13,7 +13,15 @@ fi
 git checkout -b rollouts
 git push origin rollouts
 
+oc apply -f gitops/gitops-operator.yaml
 
+#First time we install operators take logger
+if [ ${1:-no} = "no" ]
+then
+    sleep 30s
+else
+    sleep 1m
+fi
 
 #To work with a branch that is not main. ./test.sh no helm_base
 if [ ${2:-no} != "no" ]
