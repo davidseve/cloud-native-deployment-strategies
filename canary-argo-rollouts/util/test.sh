@@ -24,6 +24,11 @@ else
 fi
 
 sed -i '/pipeline.enabled/{n;s/.*/        value: "true"/}' canary-argo-rollouts/application-cluster-config.yaml
+#To work with a branch that is not main. ./test.sh ghp_JGFDSFIGJSODIJGF no helm_base
+if [ ${2:-no} != "no" ]
+then
+    sed -i "s/HEAD/$2/g" canary-argo-rollouts/application-cluster-config.yaml
+fi
 oc apply -f canary-argo-rollouts/application-cluster-config.yaml --wait=true
 
 #First time we install operators take logger
