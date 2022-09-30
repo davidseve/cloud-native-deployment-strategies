@@ -14,4 +14,4 @@ github:
   mail: changeme
   repository: changeme
 monitoring:
-  enabled: false
+  enabled: true
