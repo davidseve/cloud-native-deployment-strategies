@@ -13,3 +13,5 @@ github:
   user: changeme
   mail: changeme
   repository: changeme
+monitoring:
+  enabled: true

@@ -48,7 +48,7 @@ spec:
         else
           host=$(oc get routes $(params.APP)-umbrella-$(params.MODE) -n $(params.NAMESPACE) -o=jsonpath='{.spec.host}')
         fi
-        url=http://${host}/$(params.APP)
+        url=https://${host}/$(params.APP)
         echo $url > $(workspaces.manifest-dir.path)/url
         cat $(workspaces.manifest-dir.path)/url
     workspaces:

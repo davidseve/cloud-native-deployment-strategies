@@ -200,7 +200,7 @@ spec:
     - name: SCRIPT
       value: |
         host=$(oc get routes $(params.APP)-umbrella-offline -n $(params.NAMESPACE) -o=jsonpath='{.spec.host}')
-        url=http://${host}/$(params.APP)
+        url=https://${host}/$(params.APP)
         echo $url > $(workspaces.manifest-dir.path)/url
         cat $(workspaces.manifest-dir.path)/url
     workspaces:
