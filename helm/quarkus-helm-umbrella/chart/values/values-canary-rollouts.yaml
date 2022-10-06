@@ -13,6 +13,7 @@ discounts-blue:
     version: none
     rollouts:
       enabled: true
+      analysisService: discounts-umbrella-online
       canary:
         steps:
           - setWeight: 50
@@ -30,6 +31,7 @@ products-blue:
     fullnameOverride: "products"
     rollouts:
       enabled: true
+      analysisService: products-umbrella-online
       canary:
         steps:
           - setWeight: 25

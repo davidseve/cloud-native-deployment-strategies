@@ -104,5 +104,9 @@ spec:
 {{- with .Values.rollouts.canary }}
   strategy:
     canary:
+      analysis:
+        templates:
+        - templateName: {{ include "quarkus.fullname" $ }}-analysis-template
+        startingStep: 1
       {{- toYaml .| nindent 6 }}
 {{- end }}

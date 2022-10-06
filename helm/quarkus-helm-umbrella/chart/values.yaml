@@ -83,6 +83,7 @@ productsNetworkingOffline:
 global:
   istio:
     enabled: false
+  prometheusAddress: prometheus-k8s.openshift-monitoring.svc.cluster.local
 
 nameOverride: "shop-umbrella" 
 

@@ -1,4 +1,5 @@
-{{- if .Values.rollouts.blueGreen.enabled }}
+{{- if .Values.rollouts.enabled }}
+
 apiVersion: argoproj.io/v1alpha1
 kind: AnalysisTemplate
 metadata:
@@ -8,9 +9,18 @@ metadata:
 spec:
   metrics:
   - name: {{ include "quarkus.fullname" . }}-webmetric
-    successCondition: result == 'UP'
+    interval: 20s
+    count: 5
+    successCondition: result[0] >= 0.95
+    failureLimit: 3
     provider:
-      web:
-        url: "http://{{ .Values.rollouts.blueGreen.previewService }}.{{ .Values.global.namespace }}.svc.cluster.local:8080/q/health/ready"
-        jsonPath: "{$.status}" 
+      prometheus:
+        address: {{ .Values.global.prometheusAddress }}
+        query: |
+          sum(irate(
+            http_server_requests_seconds_count{method="GET",status!~"5.*",service="{{ .Values.rollouts.analysisService  }}"}[20s]
+          )) /
+          sum(irate(
+            http_server_requests_seconds_count{method="GET",service="{{ .Values.rollouts.analysisService   }}"}[20s]]
+          ))
 {{- end }}
