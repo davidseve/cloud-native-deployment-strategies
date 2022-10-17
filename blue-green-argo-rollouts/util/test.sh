@@ -30,6 +30,17 @@ then
 fi
 
 sed -i '/pipeline.enabled/{n;s/.*/        value: "true"/}' blue-green-argo-rollouts/application-cluster-config.yaml
+
+#To install applicatins ci pipeline ./test.sh no helm_base eHBZwYVc5djhsdkpfhWphVHBEVTBaWsTUkRGV1EwNHlTVlRraE5OUldUSXlWak
+if [ ${3:-no} != "no" ]
+then
+sed -i '/project: default/i \ \     - name: "pipeline.applications.enabled"' blue-green-argo-rollouts/application-cluster-config.yaml
+sed -i '/project: default/i \ \       value: "true"' blue-green-argo-rollouts/application-cluster-config.yaml
+sed -i '/project: default/i \ \     - name: "pipeline.applications.dockerconfigjson"' blue-green-argo-rollouts/application-cluster-config.yaml
+sed -i "/project: default/i \ \       value: $3" blue-green-argo-rollouts/application-cluster-config.yaml
+fi
+
+
 oc apply -f blue-green-argo-rollouts/application-cluster-config.yaml --wait=true
 
 #First time we install operators take logger
