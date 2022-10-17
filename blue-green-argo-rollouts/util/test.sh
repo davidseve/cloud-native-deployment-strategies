@@ -13,14 +13,16 @@ fi
 git checkout -b rollouts
 git push origin rollouts
 
-oc apply -f gitops/gitops-operator.yaml
-
-#First time we install operators take logger
-if [ ${1:-no} = "no" ]
+if [ ${3:-no} = "no" ]
 then
-    sleep 30s
-else
-    sleep 1m
+    oc apply -f gitops/gitops-operator.yaml
+    #First time we install operators take logger
+    if [ ${1:-no} = "no" ]
+    then
+        sleep 30s
+    else
+        sleep 1m
+    fi
 fi
 
 #To work with a branch that is not main. ./test.sh no helm_base
@@ -30,6 +32,17 @@ then
 fi
 
 sed -i '/pipeline.enabled/{n;s/.*/        value: "true"/}' blue-green-argo-rollouts/application-cluster-config.yaml
+
+#To install applicatins ci pipeline ./test.sh no helm_base no eHBZwYVc5djhsdkpfhWphVHBEVTBaWsTUkRGV1EwNHlTVlRraE5OUldUSXlWak
+if [ ${4:-no} != "no" ]
+then
+sed -i '/project: default/i \ \     - name: "pipeline.applications.enabled"' blue-green-argo-rollouts/application-cluster-config.yaml
+sed -i '/project: default/i \ \       value: "true"' blue-green-argo-rollouts/application-cluster-config.yaml
+sed -i '/project: default/i \ \     - name: "pipeline.applications.dockerconfigjson"' blue-green-argo-rollouts/application-cluster-config.yaml
+sed -i "/project: default/i \ \       value: $4" blue-green-argo-rollouts/application-cluster-config.yaml
+fi
+
+
 oc apply -f blue-green-argo-rollouts/application-cluster-config.yaml --wait=true
 
 #First time we install operators take logger
