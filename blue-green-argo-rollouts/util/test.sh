@@ -16,15 +16,13 @@ git push origin rollouts
 if [ ${3:-no} = "no" ]
 then
     oc apply -f gitops/gitops-operator.yaml
-fi
-
-
-#First time we install operators take logger
-if [ ${1:-no} = "no" ]
-then
-    sleep 30s
-else
-    sleep 1m
+    #First time we install operators take logger
+    if [ ${1:-no} = "no" ]
+    then
+        sleep 30s
+    else
+        sleep 1m
+    fi
 fi
 
 #To work with a branch that is not main. ./test.sh no helm_base
