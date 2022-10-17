@@ -13,7 +13,11 @@ fi
 git checkout -b rollouts
 git push origin rollouts
 
-oc apply -f gitops/gitops-operator.yaml
+if [ ${3:-no} = "no" ]
+then
+    oc apply -f gitops/gitops-operator.yaml
+fi
+
 
 #First time we install operators take logger
 if [ ${1:-no} = "no" ]
@@ -31,13 +35,13 @@ fi
 
 sed -i '/pipeline.enabled/{n;s/.*/        value: "true"/}' blue-green-argo-rollouts/application-cluster-config.yaml
 
-#To install applicatins ci pipeline ./test.sh no helm_base eHBZwYVc5djhsdkpfhWphVHBEVTBaWsTUkRGV1EwNHlTVlRraE5OUldUSXlWak
-if [ ${3:-no} != "no" ]
+#To install applicatins ci pipeline ./test.sh no helm_base no eHBZwYVc5djhsdkpfhWphVHBEVTBaWsTUkRGV1EwNHlTVlRraE5OUldUSXlWak
+if [ ${4:-no} != "no" ]
 then
 sed -i '/project: default/i \ \     - name: "pipeline.applications.enabled"' blue-green-argo-rollouts/application-cluster-config.yaml
 sed -i '/project: default/i \ \       value: "true"' blue-green-argo-rollouts/application-cluster-config.yaml
 sed -i '/project: default/i \ \     - name: "pipeline.applications.dockerconfigjson"' blue-green-argo-rollouts/application-cluster-config.yaml
-sed -i "/project: default/i \ \       value: $3" blue-green-argo-rollouts/application-cluster-config.yaml
+sed -i "/project: default/i \ \       value: $4" blue-green-argo-rollouts/application-cluster-config.yaml
 fi
 
 
