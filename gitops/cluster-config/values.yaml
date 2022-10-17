@@ -3,6 +3,9 @@ istio:
   enabled: false
 pipeline:
   enabled: true
+  applications:
+    enabled: false
+    dockerconfigjson: changeme
 bluegreen:
   enabled: true
   valuesyaml: values/values.yaml
