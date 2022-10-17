@@ -1,0 +1,26 @@
+{{- if .Values.pipeline.applications.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  namespace: {{ .Values.namespace }}
+  generateName: link-docker-config-
+  annotations:
+    argocd.argoproj.io/hook: Sync
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded
+spec:
+  template:
+    spec:
+      containers:
+      - name: link-docker-config
+        image: quay.io/openshift/origin-cli:4.7
+        command:
+          - "oc"
+          - "secrets"
+          - "link"
+          - "pipeline"
+          - "docker-config"
+          - "-n"
+          - "{{ .Values.namespace }}"
+      restartPolicy: Never
+  backoffLimit: 10
+{{ end }}
