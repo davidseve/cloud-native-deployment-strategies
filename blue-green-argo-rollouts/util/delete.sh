@@ -2,7 +2,7 @@
 
 cd /tmp/deployment/cloud-native-deployment-strategies
 
-
+oc delete project gitops
 
 oc delete -f blue-green-argo-rollouts/application-shop-blue-green-rollouts.yaml
 
@@ -17,7 +17,6 @@ oc delete clusterserviceversion openshift-pipelines-operator-rh.v1.6.4 -n opensh
 
 if [ ${1:-no} = "no" ]
 then
-    oc delete project gitops
     oc delete -f gitops/gitops-operator.yaml
     oc delete subscription openshift-gitops-operator -n openshift-operators
     oc delete clusterserviceversion openshift-gitops-operator.v1.5.6-0.1664915551.p  -n openshift-operators
