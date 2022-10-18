@@ -21,6 +21,6 @@ spec:
             http_server_requests_seconds_count{method="GET",status!~"5.*",service="{{ .Values.rollouts.analysisService  }}"}[20s]
           )) /
           sum(irate(
-            http_server_requests_seconds_count{method="GET",service="{{ .Values.rollouts.analysisService   }}"}[20s]]
+            http_server_requests_seconds_count{method="GET",service="{{ .Values.rollouts.analysisService   }}"}[20s]
           ))
 {{- end }}
