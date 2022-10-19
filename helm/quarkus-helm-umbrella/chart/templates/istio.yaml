@@ -32,7 +32,8 @@ spec:
     - uri:
         exact: /products
     route:
-    - destination:
+    - name: primary        # referenced in canary.trafficRouting.istio.virtualService.routes
+      destination:
         host: {{ .Values.productsNetworkingOnline.fullnameOverride }}
         subset: blue
       weight: {{ .Values.global.istio.productsblueWeight}}

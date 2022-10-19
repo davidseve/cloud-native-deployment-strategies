@@ -34,7 +34,7 @@ products-blue:
       analysisService: products-umbrella-online
       canary:
         steps:
-          - setWeight: 25
+          - setWeight: 10
           - pause:
               duration: 30s
           - setWeight: 50

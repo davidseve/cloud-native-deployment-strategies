@@ -9,18 +9,12 @@ metadata:
 spec:
   metrics:
   - name: {{ include "quarkus.fullname" . }}-webmetric
-    interval: 20s
-    count: 5
-    successCondition: result[0] >= 0.95
-    failureLimit: 3
+    interval: 10s
+    successCondition: len(result) == 0 || result[0] >= 0.95
+    failureLimit: 2
     provider:
       prometheus:
         address: {{ .Values.global.prometheusAddress }}
         query: |
-          sum(irate(
-            http_server_requests_seconds_count{method="GET",status!~"5.*",service="{{ .Values.rollouts.analysisService  }}"}[20s]
-          )) /
-          sum(irate(
-            http_server_requests_seconds_count{method="GET",service="{{ .Values.rollouts.analysisService   }}"}[20s]
-          ))
+          {{ .Values.rollouts.analysis.query | indent 10 }}
 {{- end }}

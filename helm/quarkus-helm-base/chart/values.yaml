@@ -2,6 +2,7 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+
 jaeger:
   endpoint: http://jaeger-collector.gitops.svc:14268/api/traces
 log:

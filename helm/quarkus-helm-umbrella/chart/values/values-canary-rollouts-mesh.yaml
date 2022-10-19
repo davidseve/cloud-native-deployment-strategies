@@ -1,0 +1,86 @@
+tags:
+  discounts-green: false
+  products-green: false
+
+discountsNetworkingOnline:
+  router:
+    enabled: false
+
+productsNetworkingOnline:
+  router:
+    enabled: false
+
+global:  
+  namespace: test
+  #needed for rollouts analysis
+  istio:
+    enabled: true
+    productsblueWeight: 100
+    productsgreenWeight: 0
+    discountsblueWeight: 100
+    discountsgreenWeight: 0
+
+discounts-blue:
+  mode: online
+  quarkus-base:
+    fullnameOverride: "discounts"
+    image:
+      tag: v1.0.1
+    version: none
+    rollouts:
+      enabled: true
+      canary:
+        steps:
+          - setWeight: 50
+          - pause:
+              duration: 1m
+  fullnameOverride: "discounts"
+    
+products-blue:
+  mode: online
+  quarkus-base:
+    image:
+      tag: v1.0.1
+    version: none
+    replicaCount: 4
+    fullnameOverride: "products"
+    rollouts:
+      enabled: true
+      analysis:
+        query: sum(irate(istio_requests_total{
+                reporter="source",
+                destination_service=~"{{ .Values.rollouts.analysisService   }}",
+                response_code!~"5.*"}[30s])
+              )
+      canary:
+        canaryService: products-umbrella-offline
+        stableService: products-umbrella-online
+        trafficRouting:
+          istio:
+            virtualService:
+              name: shop-vs-products
+              routes:
+              - primary
+        steps:
+          - setWeight: 10
+          - pause:
+              duration: 30s
+          - setWeight: 50
+          - pause:
+              duration: 30s
+          - setWeight: 75
+          - pause:
+              duration: 30s
+  fullnameOverride: "products"
+
+fullnameOverride: "shop"
+  
+
+
+
+
+
+
+
+
+
