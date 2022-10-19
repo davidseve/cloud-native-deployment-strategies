@@ -38,17 +38,18 @@ then
 else
     sleep 2m
 fi
-
+ 
 sed -i 's/change_me/davidseve/g' canary-rollouts-service-mesh/application-shop-canary-rollouts-mesh.yaml
 
 oc apply -f canary-rollouts-service-mesh/application-shop-canary-rollouts-mesh.yaml --wait=true
-tkn pipeline start pipeline-blue-green-e2e-test --param NEW_IMAGE_TAG=v1.0.1 --param MODE=online --param LABEL=.version --param APP=products --param NAMESPACE=gitops  --param MESH=False --param JQ_PATH=.metadata --workspace name=app-source,claimName=workspace-pvc-shop-cd-e2e-tests -n gitops --showlog
+tkn pipeline start pipeline-blue-green-e2e-test --param NEW_IMAGE_TAG=v1.0.1 --param MODE=online --param LABEL=.version --param APP=products --param NAMESPACE=gitops --param JQ_PATH=.metadata --param MESH=true --workspace name=app-source,claimName=workspace-pvc-shop-cd-e2e-tests -n gitops --showlog
 
-sed -i '/products-blue/{n;n;n;n;s/.*/      tag: v1.1.1/}' helm/quarkus-helm-umbrella/chart/values/values-canary-rollouts.yaml
 
-git add helm/quarkus-helm-umbrella/chart/values/values-canary-rollouts.yaml
+sed -i '/products-blue/{n;n;n;n;s/.*/      tag: v1.1.1/}' helm/quarkus-helm-umbrella/chart/values/values-canary-rollouts-mesh.yaml
+
+git add helm/quarkus-helm-umbrella/chart/values/values-canary-rollouts-mesh.yaml
 git commit -m "Change products version to v1.1.1"
-git push origin canary 
+git push origin canary-mesh  
 
 status=none
 while [[ "$status" != "Paused - CanaryPauseStep" ]]
@@ -72,8 +73,8 @@ tkn pipeline start pipeline-blue-green-e2e-test --param NEW_IMAGE_TAG=v1.1.1 --p
 #Rollback
 #this is not neccesary becase argo rollouts do the rollback because of scaleDownDelaySeconds (default 30 seconds), just to make it work I add the sleep
 git revert HEAD --no-edit
-sed -i '/products-blue/{n;n;n;n;n;n;n;n;n;n;n;n;n;N;N;N;N;N;d;}' helm/quarkus-helm-umbrella/chart/values/values-canary-rollouts.yaml
-sed -i '/products-blue/{n;n;n;n;n;n;n;n;n;n;n;n;s/.*/          - setWeight: 100/}' helm/quarkus-helm-umbrella/chart/values/values-canary-rollouts.yaml
+sed -i '/products-blue/{n;n;n;n;n;n;n;n;n;n;n;n;n;N;N;N;N;N;d;}' helm/quarkus-helm-umbrella/chart/values/values-canary-rollouts-mesh.yaml
+sed -i '/products-blue/{n;n;n;n;n;n;n;n;n;n;n;n;s/.*/          - setWeight: 100/}' helm/quarkus-helm-umbrella/chart/values/values-canary-rollouts-mesh.yaml
 git add .
 git commit -m "delete steps for rollout"
 git push origin canary-mesh

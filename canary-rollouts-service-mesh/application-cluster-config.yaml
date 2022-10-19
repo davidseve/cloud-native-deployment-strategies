@@ -11,7 +11,7 @@ spec:
   source:
     path: gitops/cluster-config
     repoURL: 'https://github.com/davidseve/cloud-native-deployment-strategies.git'
-    targetRevision: rollout-prometheus
+    targetRevision: canary-mesh
     helm:
      parameters:
       - name: "bluegreen.enabled"
