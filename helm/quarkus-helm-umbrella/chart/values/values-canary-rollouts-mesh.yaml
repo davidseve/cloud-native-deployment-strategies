@@ -31,7 +31,7 @@ discounts-blue:
       analysis:
         query: sum(irate(istio_requests_total{
                 reporter="source",
-                destination_service=~"discounts-umbrella-offline",
+                destination_service_name=~"discounts-umbrella-offline",
                 response_code!~"5.*"}[30s])
               )
       canary:
@@ -68,7 +68,7 @@ products-blue:
       analysis:
         query: sum(irate(istio_requests_total{
                 reporter="source",
-                destination_service=~"products-umbrella-offline",
+                destination_service_name=~"products-umbrella-offline",
                 response_code!~"5.*"}[30s])
               )
       canary:
