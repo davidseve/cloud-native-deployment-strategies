@@ -11,14 +11,16 @@ spec:
   source:
     path: gitops/cluster-config
     repoURL: 'https://github.com/davidseve/cloud-native-deployment-strategies.git'
-    targetRevision: HEAD
+    targetRevision: rollout-prometheus
     helm:
      parameters:
       - name: "bluegreen.enabled"
         value: "false"
       - name: "pipeline.enabled"
-        value: "false"
+        value: "true"
       - name: "argorollouts.enabled"
+        value: "true"
+      - name: "istio.enabled"
         value: "true"
   project: default
   syncPolicy:

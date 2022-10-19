@@ -29,11 +29,31 @@ discounts-blue:
     version: none
     rollouts:
       enabled: true
+      analysis:
+        query: sum(irate(istio_requests_total{
+                reporter="source",
+                destination_service=~"discounts-umbrella-offline",
+                response_code!~"5.*"}[30s])
+              )
       canary:
+        canaryService: discounts-umbrella-offline
+        stableService: discounts-umbrella-online
+        trafficRouting:
+          istio:
+            virtualService:
+              name: shop-vs-discounts
+              routes:
+              - primary
         steps:
+          - setWeight: 10
+          - pause:
+              duration: 30s
           - setWeight: 50
           - pause:
-              duration: 1m
+              duration: 30s
+          - setWeight: 75
+          - pause:
+              duration: 30s
   fullnameOverride: "discounts"
     
 products-blue:
@@ -49,7 +69,7 @@ products-blue:
       analysis:
         query: sum(irate(istio_requests_total{
                 reporter="source",
-                destination_service=~"{{ .Values.rollouts.analysisService   }}",
+                destination_service=~"products-umbrella-offline",
                 response_code!~"5.*"}[30s])
               )
       canary:
