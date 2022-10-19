@@ -34,11 +34,11 @@ discounts-blue:
       analysis:
         query: sum(irate(istio_requests_total{
                 reporter="source",
-                destination_service=~"discounts-umbrella-online",
+                destination_service=~"discounts-umbrella-offline",
                 response_code!~"5.*"}[30s])
               )
       canary:
-        canaryService: discounts-umbrella-online
+        canaryService: discounts-umbrella-offline
         stableService: discounts-umbrella-online
         trafficRouting:
           istio:
@@ -71,11 +71,11 @@ products-blue:
       analysis:
         query: sum(irate(istio_requests_total{
                 reporter="source",
-                destination_service=~"products-umbrella-online",
+                destination_service=~"products-umbrella-offline",
                 response_code!~"5.*"}[30s])
               )
       canary:
-        canaryService: products-umbrella-online
+        canaryService: products-umbrella-offline
         stableService: products-umbrella-online
         trafficRouting:
           istio:
