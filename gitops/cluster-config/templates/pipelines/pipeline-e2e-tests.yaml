@@ -44,7 +44,8 @@ spec:
     - name: SCRIPT
       value: |
         MESH=$(params.MESH)
-        if [ $MESH = "true" ]; then
+        if [ $MESH = "true" ] 
+        then
           host=$(oc get routes istio-ingressgateway -n istio-system -o=jsonpath='{.spec.host}')
         else
           host=$(oc get routes $(params.APP)-umbrella-$(params.MODE) -n $(params.NAMESPACE) -o=jsonpath='{.spec.host}')
