@@ -33,19 +33,25 @@ spec:
     - uri:
         exact: /products
     route:
+    {{- if .Values.global.istio.rollouts.enabled }}
+    - destination:
+        host: {{ .Values.productsNetworkingOnline.fullnameOverride }}
+      weight: 100
+    - destination:
+         host: {{ .Values.productsNetworkingOffline.fullnameOverride }}
+      weight: 0
+    {{ else}}
     - destination:
         host: {{ .Values.productsNetworkingOnline.fullnameOverride }}
         subset: blue
       weight: {{ .Values.global.istio.productsblueWeight}}
     - destination:
-    {{- if .Values.global.istio.rollouts.enabled }}
-        host: {{ .Values.productsNetworkingOffline.fullnameOverride }}
-    {{ else}}
         host: {{ .Values.productsNetworkingOnline.fullnameOverride }}
-    {{ end }}
         subset: green
       weight: {{ .Values.global.istio.productsgreenWeight}}
+    {{ end }}
 ---
+{{- if not .Values.global.istio.rollouts.enabled }}
 apiVersion: networking.istio.io/v1beta1
 kind: DestinationRule
 metadata:
@@ -62,6 +68,7 @@ spec:
     labels:
       version: green
 ---
+{{ end }}
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
@@ -77,19 +84,25 @@ spec:
     - uri:
         exact: /discounts
     route:
+    {{- if .Values.global.istio.rollouts.enabled }}
+    - destination:
+        host: {{ .Values.discountsNetworkingOnline.fullnameOverride }}
+      weight: 100
+    - destination:
+         host: {{ .Values.discountsNetworkingOffline.fullnameOverride }}
+      weight: 0
+    {{ else}}
     - destination:
         host: {{ .Values.discountsNetworkingOnline.fullnameOverride }}
         subset: blue
       weight: {{ .Values.global.istio.discountsblueWeight}}
     - destination:
-    {{- if .Values.global.istio.rollouts.enabled }}
-        host: {{ .Values.discountsNetworkingOffline.fullnameOverride }}
-    {{ else}}
         host: {{ .Values.discountsNetworkingOnline.fullnameOverride }}
-    {{ end }}
         subset: green
       weight: {{ .Values.global.istio.discountsgreenWeight}}
+    {{ end }}
 ---
+{{- if not .Values.global.istio.rollouts.enabled }}
 apiVersion: networking.istio.io/v1beta1
 kind: DestinationRule
 metadata:
@@ -105,4 +118,5 @@ spec:
   - name: green
     labels:
       version: green
+{{ end }}
 {{ end }}

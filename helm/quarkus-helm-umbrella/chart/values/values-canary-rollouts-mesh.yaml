@@ -15,10 +15,6 @@ global:
   #needed for rollouts analysis
   istio:
     enabled: true
-    productsblueWeight: 100
-    productsgreenWeight: 0
-    discountsblueWeight: 100
-    discountsgreenWeight: 0
     rollouts:
       enabled: true
 
