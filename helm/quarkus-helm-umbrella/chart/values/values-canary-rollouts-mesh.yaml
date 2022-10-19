@@ -19,6 +19,8 @@ global:
     productsgreenWeight: 0
     discountsblueWeight: 100
     discountsgreenWeight: 0
+    rollouts:
+      enabled: true
 
 discounts-blue:
   mode: online

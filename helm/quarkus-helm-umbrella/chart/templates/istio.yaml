@@ -38,7 +38,11 @@ spec:
         subset: blue
       weight: {{ .Values.global.istio.productsblueWeight}}
     - destination:
+    {{- if .Values.global.istio.rollouts.enabled }}
+        host: {{ .Values.productsNetworkingOffline.fullnameOverride }}
+    {{ else}}
         host: {{ .Values.productsNetworkingOnline.fullnameOverride }}
+    {{ end }}
         subset: green
       weight: {{ .Values.global.istio.productsgreenWeight}}
 ---
@@ -78,7 +82,11 @@ spec:
         subset: blue
       weight: {{ .Values.global.istio.discountsblueWeight}}
     - destination:
+    {{- if .Values.global.istio.rollouts.enabled }}
+        host: {{ .Values.discountsNetworkingOffline.fullnameOverride }}
+    {{ else}}
         host: {{ .Values.discountsNetworkingOnline.fullnameOverride }}
+    {{ end }}
         subset: green
       weight: {{ .Values.global.istio.discountsgreenWeight}}
 ---
