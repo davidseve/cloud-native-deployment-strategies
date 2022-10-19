@@ -28,12 +28,12 @@ spec:
   gateways:
   - {{ include "shop.fullname" $ }}-gateway
   http:
-  - match:
+  - name: primary        # referenced in canary.trafficRouting.istio.virtualService.routes
+    match:
     - uri:
         exact: /products
     route:
-    - name: primary        # referenced in canary.trafficRouting.istio.virtualService.routes
-      destination:
+    - destination:
         host: {{ .Values.productsNetworkingOnline.fullnameOverride }}
         subset: blue
       weight: {{ .Values.global.istio.productsblueWeight}}
@@ -68,7 +68,8 @@ spec:
   hosts:
   - {{ .Values.discountsNetworkingOnline.fullnameOverride }}
   http:
-  - match:
+  - name: primary        # referenced in canary.trafficRouting.istio.virtualService.routes
+    match:
     - uri:
         exact: /discounts
     route:
