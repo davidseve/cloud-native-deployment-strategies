@@ -17,7 +17,7 @@ global:
     enabled: true
     rollouts:
       enabled: true
-  prometheusAddress: https://prometheus.istio-system.svc.cluster.local:9090
+  prometheusAddress: https://redhat:redhatpass@prometheus.istio-system.svc.cluster.local:9090
 
 discounts-blue:
   mode: online
