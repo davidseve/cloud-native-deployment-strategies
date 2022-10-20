@@ -14,8 +14,6 @@ spec:
     targetRevision: HEAD
     helm:
      parameters:
-      - name: "bluegreen.enabled"
-        value: "false"
       - name: "pipeline.enabled"
         value: "false"
       - name: "argorollouts.enabled"

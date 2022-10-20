@@ -7,7 +7,7 @@ pipeline:
     enabled: false
     dockerconfigjson: changeme
 bluegreen:
-  enabled: true
+  enabled: false
   valuesyaml: values/values.yaml
 argorollouts:
   enabled: false
