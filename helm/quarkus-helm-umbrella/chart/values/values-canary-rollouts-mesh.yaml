@@ -60,7 +60,7 @@ products-blue:
   mode: online
   quarkus-base:
     image:
-      tag: v1.0.1
+      tag: v1.1.1
     version: none
     replicaCount: 4
     fullnameOverride: "products"
