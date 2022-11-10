@@ -4,6 +4,12 @@ tags:
   discountsNetworkingOffline: false
   productsNetworkingOffline: false
 
+global:
+  namespace: test
+  #needed for rollouts analysis
+  prometheusAddress: https://prometheus-user-workload.openshift-user-workload-monitoring.svc.cluster.local:9091
+
+
 discounts-blue:
   mode: online
   quarkus-base:
@@ -14,6 +20,8 @@ discounts-blue:
     rollouts:
       enabled: true
       analysisService: discounts-umbrella-online
+      analysis:
+        query: sum(http_server_requests_seconds_count{method="GET",outcome="SUCCESS",status="200", service="products-umbrella-online",response_code!~"5.*", uri="/products",})
       canary:
         steps:
           - setWeight: 50
@@ -32,6 +40,8 @@ products-blue:
     rollouts:
       enabled: true
       analysisService: products-umbrella-online
+      analysis:
+        query: sum(http_server_requests_seconds_count{method="GET",outcome="SUCCESS",status="200", service="products-umbrella-online",response_code!~"5.*", uri="/products",})
       canary:
         steps:
           - setWeight: 10
@@ -41,11 +51,6 @@ products-blue:
           - pause:
               duration: 30s
   fullnameOverride: "products"
-  
-global:
-  namespace: test
-  #needed for rollouts analysis
-
 
 
 
