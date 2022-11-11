@@ -401,7 +401,7 @@ See that offline applications have version v1.1.1 and the new attribute descript
   "metadata":{
      "version":"v1.1.1", <--
      "colour":"green",
-     "mode":"offline" <--
+     "mode":"online" <--
   }
 }
 ```
