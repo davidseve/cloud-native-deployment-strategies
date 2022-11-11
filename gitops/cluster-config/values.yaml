@@ -16,11 +16,3 @@ github:
   repository: changeme
 monitoring:
   enabled: true
-
-namespaces:
-  - stage
-  - prod
-
-users:
- - user1
- - user2
