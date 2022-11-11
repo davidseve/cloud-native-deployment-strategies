@@ -1,0 +1,19 @@
+{{- range $user := $.Values.users }}
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: {{ $user }}
+spec:
+  description: {{ $user }} 
+  sourceRepos:
+  - '*'
+  destinations:
+{{- range $namespace := $.Values.namespaces }}
+    - namespace: {{ $namespace }}
+      server: https://kubernetes.default.svc
+{{- end }}  
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
+---
+{{- end }}

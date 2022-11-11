@@ -1,12 +1,20 @@
 {{- range $user := $.Values.users }}
 {{- $var_user := $user }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ $var_user }}-gitops
+spec:
+  finalizers:
+  - kubernetes
+---
 {{- range $namespace := $.Values.namespaces }}
 apiVersion: v1
 kind: Namespace
 metadata:
   name: {{ $var_user }}-{{ $namespace }}
   labels:
-     argocd.argoproj.io/managed-by: openshift-gitops
+     argocd.argoproj.io/managed-by: {{ $var_user }}-argocd
 spec:
   finalizers:
   - kubernetes
@@ -38,6 +46,7 @@ subjects:
 - kind: ServiceAccount
   name: openshift-gitops-argocd-application-controller
   namespace: openshift-gitops
+
 ---
 {{- end }}
 {{- end }}
