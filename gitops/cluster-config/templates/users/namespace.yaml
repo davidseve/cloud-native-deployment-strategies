@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .Values.namespace }}
+  labels:
+     argocd.argoproj.io/managed-by: openshift-gitops
+spec:
+  finalizers:
+  - kubernetes
