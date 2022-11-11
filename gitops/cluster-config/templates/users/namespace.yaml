@@ -1,13 +1,5 @@
 {{- range $user := $.Values.users }}
 {{- $var_user := $user }}
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: {{ $var_user }}-gitops
-spec:
-  finalizers:
-  - kubernetes
----
 {{- range $namespace := $.Values.namespaces }}
 apiVersion: v1
 kind: Namespace
