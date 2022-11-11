@@ -1,5 +1,0 @@
-{{- with .Values.users }}
----
-
-#To give admin scope to all users
-{{- end }}
