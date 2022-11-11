@@ -1,4 +1,4 @@
-{{- if .Values.pipeline.enabled }}
+{{- if .Values.github.enabled }}
 apiVersion: batch/v1
 kind: Job
 metadata:

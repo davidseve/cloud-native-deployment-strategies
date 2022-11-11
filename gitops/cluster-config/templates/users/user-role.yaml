@@ -1,0 +1,32 @@
+{{- with .Values.users }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: gitops-guide-user-role
+rules:
+- apiGroups:
+  - monitoring.coreos.com
+  resources:
+  - '*'
+  verbs:
+  - '*'
+- apiGroups:
+  - triggers.tekton.dev
+  resources:
+  - '*'
+  verbs:
+  - '*'
+- apiGroups:
+  - tekton.dev
+  resources:
+  - '*'
+  verbs:
+  - '*'
+- apiGroups:
+  - argoproj.io
+  resources:
+  - '*'
+  verbs:
+  - '*'
+
+{{- end }}
