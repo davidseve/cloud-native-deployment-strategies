@@ -1,0 +1,43 @@
+{{- range $user := $.Values.users }}
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: {{ $user }}
+spec:
+  description: {{ $user }} 
+  sourceRepos:
+  - '*'
+  destinations:
+{{- range $namespace := $.Values.namespaces }}
+    - namespace: {{ $user }}-{{ $namespace }}
+      server: https://kubernetes.default.svc
+{{- end }}  
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
+  roles:
+    - description: Group to developers to deploy on DEV environment
+      groups:
+        - {{ $user }}
+      name: developers
+      policies:
+        - >-
+          p, proj:{{ $user }}:developers, applications, get,
+          {{ $user }}/*, allow
+        - >-
+          p, proj:{{ $user }}:developers, applications, create,
+          {{ $user }}/*, allow
+        - >-
+          p, proj:{{ $user }}:developers, applications, update,
+          {{ $user }}/*, allow
+        - >-
+          p, proj:{{ $user }}:developers, applications, delete,
+          {{ $user }}/*, allow
+        - >-
+          p, proj:{{ $user }}:developers, applications, sync,
+          {{ $user }}/*, allow
+        - >-
+          p, proj:{{ $user }}:developers, applications, override,
+          {{ $user }}/*, allow
+---
+{{- end }}
