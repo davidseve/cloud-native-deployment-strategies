@@ -1,9 +1,10 @@
 {{- range $user := $.Values.users }}
+{{- $var_user := $user }}
 {{- range $namespace := $.Values.namespaces }}
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: {{ $user }}-{{ $namespace }}
+  name: {{ $var_user }}-{{ $namespace }}
   labels:
      argocd.argoproj.io/managed-by: openshift-gitops
 spec:
