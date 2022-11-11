@@ -16,3 +16,7 @@ github:
   repository: changeme
 monitoring:
   enabled: true
+
+namespaces:
+  - stage
+  - prod
