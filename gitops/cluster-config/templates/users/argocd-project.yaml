@@ -9,7 +9,7 @@ spec:
   - '*'
   destinations:
 {{- range $namespace := $.Values.namespaces }}
-    - namespace: {{ $namespace }}
+    - namespace: {{ $user }}-{{ $namespace }}
       server: https://kubernetes.default.svc
 {{- end }}  
   clusterResourceWhitelist:
