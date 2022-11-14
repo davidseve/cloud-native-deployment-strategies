@@ -10,7 +10,11 @@ spec:
   params:
   - name: SOURCE_GIT_URL
     type: string
-    default: https://github.com/{{ .Values.github.repository }}/cloud-native-deployment-strategies
+    default: https://github.com/
+    description: The application git repository url
+  - name: REPO_FULL_NAME
+    type: string
+    default: {{ .Values.github.repository }}/cloud-native-deployment-strategies
     description: The application git repository url
   - name: SOURCE_GIT_REVISION
     type: string
@@ -64,7 +68,7 @@ spec:
       name: git-clone
     params:
     - name: url
-      value: $(params.SOURCE_GIT_URL)
+      value: $(params.SOURCE_GIT_URL)$(params.REPO_FULL_NAME)
     - name: revision
       value: $(params.SOURCE_GIT_REVISION)
     - name: deleteExisting
@@ -199,8 +203,8 @@ spec:
       kind: Task
       name: github-open-pr
     params:
-      - name: GITHUB_HOST_URL
-        value: $(params.SOURCE_GIT_URL)
+      - name: REPO_FULL_NAME
+        value: $(params.REPO_FULL_NAME)
       - name: HEAD
         value: new-image-$(params.NEW_IMAGE_TAG)
       - name: BASE
