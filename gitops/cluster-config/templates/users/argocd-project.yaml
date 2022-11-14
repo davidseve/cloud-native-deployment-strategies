@@ -22,14 +22,22 @@ spec:
       name: developers
       policies:
         - >-
-          p, proj:{{ $user }}:developers, applications, *,
+          p, proj:{{ $user }}:developers, applications, get,
           {{ $user }}/*, allow
         - >-
-          p, proj:{{ $user }}:developers, applicationsets, *,
+          p, proj:{{ $user }}:developers, applications, create,
           {{ $user }}/*, allow
         - >-
-          p, proj:{{ $user }}:developers, repositories, *, *, allow
+          p, proj:{{ $user }}:developers, applications, update,
+          {{ $user }}/*, allow
         - >-
-          p, proj:{{ $user }}:developers, logs, get, *, allow
+          p, proj:{{ $user }}:developers, applications, delete,
+          {{ $user }}/*, allow
+        - >-
+          p, proj:{{ $user }}:developers, applications, sync,
+          {{ $user }}/*, allow
+        - >-
+          p, proj:{{ $user }}:developers, applications, override,
+          {{ $user }}/*, allow
 ---
 {{- end }}
