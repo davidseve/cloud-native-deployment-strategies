@@ -191,40 +191,6 @@ spec:
     - name: source
       workspace: app-source
 
-  - name: github-pr-new-image-tag
-    params:
-      - name: PR_TITLE
-        value: "Updating '$(params.APP)' image for $(params.ENV) $(params.COLOUR) with new image $(params.NEW_IMAGE_TAG)"
-      - name: PR_BODY
-        value: |
-          command: UPDATE_IMAGE
-          APP: $(params.APP)
-          ENV: $(params.ENV)
-          COLOUR: $(params.COLOUR)
-      - name: PAT_SECRET_NAME
-        value: {{ .Values.gitPatSecretName }}
-      - name: PAT_SECRET_KEY
-        value: {{ .Values.gitPatSecretKey }}
-    runAfter:
-      - commit-new-image-tag
-    taskRef:
-      kind: Task
-      name: github-open-pr
-    params:
-      - name: GITHUB_HOST_URL
-        value: $(params.SOURCE_GIT_URL)
-      - name: HEAD
-        value: new-image-$(params.NEW_IMAGE_TAG)
-      - name: BASE
-        value: $(params.SOURCE_GIT_REVISION)
-      - name: TITLE
-        value: "Updating '$(params.APP)' image for $(params.ENV) $(params.COLOUR) with new image $(params.NEW_IMAGE_TAG)"
-      - name: BODY
-        value: |
-          command: UPDATE_IMAGE
-          APP: $(params.APP)
-          ENV: $(params.ENV)
-          COLOUR: $(params.COLOUR)
 
 
 
