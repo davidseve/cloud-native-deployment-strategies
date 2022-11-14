@@ -183,8 +183,8 @@ spec:
         value: |
           cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
           git checkout -b new-image-$(params.NEW_IMAGE_TAG)
-          git add values/$(params.APP)/envs/$(params.ENV)/$(params.COLOUR)/image-tag-values.yaml
-          git add values/$(params.APP)/envs/$(params.ENV)/$(params.COLOUR)/non-static-values.yaml
+          git add values/$(params.APP)/envs/$(params.ENV)/$(tasks.create-result-colour.results.version)/image-tag-values.yaml
+          git add values/$(params.APP)/envs/$(params.ENV)/$(tasks.create-result-colour.results.version)/non-static-values.yaml
           git commit -m "$(params.APP)-$(tasks.create-result-colour.results.version)  new image tag $(params.NEW_IMAGE_TAG)"
           git push origin new-image-$(params.NEW_IMAGE_TAG)
     workspaces:
