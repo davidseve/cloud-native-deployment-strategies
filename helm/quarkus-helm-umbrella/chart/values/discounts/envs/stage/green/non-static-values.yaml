@@ -1,0 +1,4 @@
+discounts-green:
+  quarkus-base:
+    replicaCount: 1
+  mode: offline

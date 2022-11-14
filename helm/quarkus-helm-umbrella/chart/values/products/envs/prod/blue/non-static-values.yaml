@@ -1,0 +1,4 @@
+products-blue:
+  quarkus-base:
+    replicaCount: 2
+  mode: online

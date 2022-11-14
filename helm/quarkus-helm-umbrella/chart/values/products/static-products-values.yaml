@@ -1,0 +1,23 @@
+productsNetworkingOnline:
+  router:
+    enabled: true
+
+productsNetworkingOffline:
+  router:
+    enabled: true
+
+products-blue:
+  quarkus-base:
+    version: blue
+    podAnnotations:
+      prometheus.io/scrape: "true"
+      prometheus.io/port: "8080"
+      prometheus.io/path: "/q/metrics"
+
+products-green:
+  quarkus-base:
+    version: green
+    podAnnotations:
+      prometheus.io/scrape: "true"
+      prometheus.io/port: "8080"
+      prometheus.io/path: "/q/metrics"

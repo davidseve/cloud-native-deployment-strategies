@@ -1,0 +1,23 @@
+discountsNetworkingOnline:
+  router:
+    enabled: false
+
+discountsNetworkingOffline:
+  router:
+    enabled: false
+
+discounts-blue:
+  quarkus-base:
+    version: blue
+    podAnnotations:
+      prometheus.io/scrape: "true"
+      prometheus.io/port: "8080"
+      prometheus.io/path: "/q/metrics"
+
+discounts-green:
+  quarkus-base:
+    version: green
+    podAnnotations:
+      prometheus.io/scrape: "true"
+      prometheus.io/port: "8080"
+      prometheus.io/path: "/q/metrics" 
