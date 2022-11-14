@@ -27,5 +27,9 @@ spec:
         - >-
           p, proj:{{ $user }}:developers, applicationsets, *,
           {{ $user }}/*, allow
+        - >-
+          p, proj:{{ $user }}:developers, repositories, *, *, allow
+        - >-
+          p, proj:{{ $user }}:developers, logs, get, *, allow
 ---
 {{- end }}
