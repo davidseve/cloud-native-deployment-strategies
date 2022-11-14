@@ -163,9 +163,10 @@ spec:
           #!/usr/bin/env bash
           cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
           sed -i '/$(params.APP)-$(params.COLOUR)/{n;n;n;n;s/.*/      tag: $(params.NEW_IMAGE_TAG)/}' values/$(params.APP)/envs/$(params.ENV)/$(params.COLOUR)/image-tag-values.yaml
+          cat values/$(params.APP)/envs/$(params.ENV)/$(params.COLOUR)/image-tag-values.yaml
           sed -i '/$(params.APP)-$(params.COLOUR)/{n;n;s/.*/    replicaCount: $(params.REPLICA_COUNT)/}' values/$(params.APP)/envs/$(params.ENV)/$(params.COLOUR)/non-static-values.yaml
           sed -i '/$(params.APP)-$(params.COLOUR)/{n;n;n;n;n;s/.*/  mode: online/}' values/$(params.APP)/envs/$(params.ENV)/$(params.COLOUR)/non-static-values.yaml
-          cat $(params.VALUES_FILE)
+          cat values/$(params.APP)/envs/$(params.ENV)/$(params.COLOUR)/non-static-values.yaml
       workspaces:
       - name: source
     workspaces:
