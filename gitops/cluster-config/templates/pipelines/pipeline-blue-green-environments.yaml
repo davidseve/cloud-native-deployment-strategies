@@ -192,6 +192,28 @@ spec:
       workspace: app-source
 
 
+  - name: github-pr-new-image-tag
+    runAfter:
+      - commit-new-image-tag
+    taskRef:
+      kind: Task
+      name: github-open-pr
+    params:
+      - name: GITHUB_HOST_URL
+        value: $(params.SOURCE_GIT_URL)
+      - name: HEAD
+        value: new-image-$(params.NEW_IMAGE_TAG)
+      - name: BASE
+        value: $(params.SOURCE_GIT_REVISION)
+      - name: TITLE
+        value: "Updating '$(params.APP)' image for $(params.ENV) $(tasks.create-result-colour.results.version) with new image $(params.NEW_IMAGE_TAG)"
+      - name: BODY
+        value: |
+          command: UPDATE_IMAGE
+          APP: $(params.APP)
+          ENV: $(params.ENV)
+          COLOUR: $(tasks.create-result-colour.results.version)
+
 
 
 
