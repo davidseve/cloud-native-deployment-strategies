@@ -421,7 +421,7 @@ spec:
         value: $(params.GIT_USER_EMAIL)
       - name: GIT_SCRIPT
         value: |          
-          COLOUR=$(params.COLOUR)
+          COLOUR=$(tasks.create-result-colour.results.version) 
           if [ $COLOUR = "blue" ]
           then
             NEW_COLOUR="green"
@@ -430,7 +430,6 @@ spec:
           fi
           echo $NEW_COLOUR
           cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
-          echo aa
           git checkout -b align-offline-$(params.NEW_IMAGE_TAG)
           git add values/$(params.APP)/envs/$(params.ENV)/non-static-networking-values.yaml
           git add values/$(params.APP)/envs/$(params.ENV)/$NEW_COLOUR/image-tag-values.yaml
