@@ -28,9 +28,6 @@ spec:
     type: string
     default: {{ .Values.namespace }}
     description: namespace
-  - name: VALUES_FILE
-    type: string
-    default: {{ .Values.bluegreen.valuesyaml }} 
   - name: APP
     type: string
     description: discounts or products
@@ -132,8 +129,6 @@ spec:
         value: $(params.NEW_IMAGE_TAG) 
       - name: COLOUR
         value: $(tasks.create-result-colour.results.version)
-      - name: VALUES_FILE
-        value: $(params.VALUES_FILE)
       - name: REPLICA_COUNT
         value: $(params.REPLICA_COUNT)
       - name: ENV
@@ -148,8 +143,6 @@ spec:
       - name: NEW_IMAGE_TAG
         type: string
       - name: COLOUR
-        type: string
-      - name: VALUES_FILE
         type: string
       - name: REPLICA_COUNT
         type: string
@@ -221,6 +214,7 @@ spec:
           APP: $(params.APP)
           ENV: $(params.ENV)
           COLOUR: $(tasks.create-result-colour.results.version)
+          TAG: $(params.NEW_IMAGE_TAG)
 
 
   - name: get-application-url-before-switch
@@ -292,6 +286,8 @@ spec:
           #!/usr/bin/env bash
           cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
           sed -i '/$(params.APP)NetworkingOnline/{n;s/.*/  version: $(params.COLOUR)/}' values/$(params.APP)/envs/$(params.ENV)/non-static-networking-values.yaml
+          echo
+          echo values/$(params.APP)/envs/$(params.ENV)/non-static-networking-values.yaml 
           cat values/$(params.APP)/envs/$(params.ENV)/non-static-networking-values.yaml
       workspaces:
       - name: source
@@ -343,11 +339,11 @@ spec:
           ENV: $(params.ENV)
           COLOUR: $(tasks.create-result-colour.results.version)
 
-  - name: change-scale-down-offline
+  - name: change-align-offline
     when:
       - input: "$(params.STEP)"
         operator: in
-        values: ["scale-down-offline"]
+        values: ["align-offline"]
     runAfter:
     - create-result-colour
     params:
@@ -391,25 +387,29 @@ spec:
           echo $NEW_COLOUR
 
           sed -i "/$(params.APP)NetworkingOffline/{n;s/.*/  version: $NEW_COLOUR/}" values/$(params.APP)/envs/$(params.ENV)/non-static-networking-values.yaml
-          
+          echo
+          echo values/$(params.APP)/envs/$(params.ENV)/non-static-networking-values.yaml
+          cat values/$(params.APP)/envs/$(params.ENV)/non-static-networking-values.yaml
+
           sed -i "/$(params.APP)-$NEW_COLOUR/{n;n;n;n;s/.*/      tag: $(params.NEW_IMAGE_TAG)/}" values/$(params.APP)/envs/$(params.ENV)/$NEW_COLOUR/image-tag-values.yaml
+          echo
+          echo values/$(params.APP)/envs/$(params.ENV)/$NEW_COLOUR/image-tag-values.yaml
           cat values/$(params.APP)/envs/$(params.ENV)/$NEW_COLOUR/image-tag-values.yaml
 
-
           sed -i "/$(params.APP)-$NEW_COLOUR/{n;n;s/.*/    replicaCount: 1/}" values/$(params.APP)/envs/$(params.ENV)/$NEW_COLOUR/non-static-values.yaml
-
           sed -i "/$(params.APP)-$NEW_COLOUR/{n;n;n;n;n;s/.*/  mode: offline/}" values/$(params.APP)/envs/$(params.ENV)/$NEW_COLOUR/non-static-values.yaml
-          
-        
+          echo
+          echo values/$(params.APP)/envs/$(params.ENV)/$NEW_COLOUR/non-static-values.yaml
+          cat values/$(params.APP)/envs/$(params.ENV)/$NEW_COLOUR/non-static-values.yaml
       workspaces:
       - name: source
     workspaces:
     - name: source
       workspace: app-source
 
-  - name: commit-scale-down-offline
+  - name: commit-align-offline
     runAfter:
-    - change-scale-down-offline
+    - change-align-offline
     taskRef:
       kind: Task
       name: git-cli
@@ -421,12 +421,37 @@ spec:
       - name: GIT_SCRIPT
         value: |
           cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
-          git add $(params.VALUES_FILE)
-          git commit -m "$(params.APP) scale down offline"
-          git push origin HEAD:$(params.SOURCE_GIT_REVISION)
+          git checkout -b align-offline-$(params.NEW_IMAGE_TAG)
+          git add values/$(params.APP)/envs/$(params.ENV)/non-static-networking-values.yaml
+          git add values/$(params.APP)/envs/$(params.ENV)/$NEW_COLOUR/image-tag-values.yaml
+          git add values/$(params.APP)/envs/$(params.ENV)/$NEW_COLOUR/non-static-values.yaml
+          git commit -m "$(params.APP)-$NEW_COLOUR env $(params.ENV) aligne image tag $(params.NEW_IMAGE_TAG)"
+          git push origin aligne-offline-$(params.NEW_IMAGE_TAG)
     workspaces:
     - name: source
       workspace: app-source
+
+  - name: github-pr-align-offline
+    runAfter:
+      - commit-align-offline
+    taskRef:
+      kind: Task
+      name: github-open-pr
+    params:
+      - name: REPO_FULL_NAME
+        value: $(params.REPO_FULL_NAME)
+      - name: HEAD
+        value: switch-to-colout-$(tasks.create-result-colour.results.version)
+      - name: BASE
+        value: $(params.SOURCE_GIT_REVISION)
+      - name: TITLE
+        value: "Aling Offline '$(params.APP)' for environment '$(params.ENV)' with new image '$(params.NEW_IMAGE_TAG)'"
+      - name: BODY
+        value: |
+          command: SWITCH_ONLINE
+          APP: $(params.APP)
+          ENV: $(params.ENV)
+          TAG: $(params.NEW_IMAGE_TAG)
 
   - name: switch-rollback
     when:
@@ -442,8 +467,8 @@ spec:
         value: $(params.APP)
       - name: COLOUR
         value: $(tasks.create-result-colour.results.version) 
-      - name: VALUES_FILE
-        value: $(params.VALUES_FILE)         
+      - name: ENV
+        value: $(params.ENV)         
     taskSpec:
       metadata: {}
       params:
@@ -453,7 +478,7 @@ spec:
         type: string
       - name: COLOUR
         type: string 
-      - name: VALUES_FILE
+      - name: ENV
         type: string
       steps:
       - name: change-switch
@@ -472,9 +497,11 @@ spec:
           fi
           echo $NEW_COLOUR
 
-          sed -i "/$(params.APP)NetworkingOnline/{n;s/.*/  version: $NEW_COLOUR/}" $(params.VALUES_FILE)
+          sed -i "/$(params.APP)NetworkingOnline/{n;s/.*/  version: $NEW_COLOUR/}" values/$(params.APP)/envs/$(params.ENV)/non-static-networking-values.yaml
           
-          cat $(params.VALUES_FILE)
+          echo
+          echo values/$(params.APP)/envs/$(params.ENV)/non-static-networking-values.yaml 
+          cat values/$(params.APP)/envs/$(params.ENV)/non-static-networking-values.yaml
       workspaces:
       - name: source
     workspaces:
@@ -495,10 +522,33 @@ spec:
       - name: GIT_SCRIPT
         value: |
           cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
-          git add $(params.VALUES_FILE)
-          git commit -m "$(params.APP) switch-rollback online to $(tasks.create-result-colour.results.version)"
-          git push origin HEAD:$(params.SOURCE_GIT_REVISION)
+          git checkout -b rollback-online
+          git add values/$(params.APP)/envs/$(params.ENV)/non-static-networking-values.yaml 
+          git commit -m "Rollback Online $(params.APP) for environment $(params.ENV)"
+          git push origin rollback-online
     workspaces:
     - name: source
       workspace: app-source
+
+- name: github-pr-rollback
+    runAfter:
+      - commit-rollback
+    taskRef:
+      kind: Task
+      name: github-open-pr
+    params:
+      - name: REPO_FULL_NAME
+        value: $(params.REPO_FULL_NAME)
+      - name: HEAD
+        value: switch-to-colout-$(tasks.create-result-colour.results.version)
+      - name: BASE
+        value: $(params.SOURCE_GIT_REVISION)
+      - name: TITLE
+        value: "Rollback Online '$(params.APP)' for environment '$(params.ENV)'"
+      - name: BODY
+        value: |
+          command: ROLLBACK_ONLINE
+          APP: $(params.APP)
+          ENV: $(params.ENV)
+          
 {{ end }}
