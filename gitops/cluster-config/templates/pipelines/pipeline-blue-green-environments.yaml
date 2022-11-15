@@ -320,7 +320,7 @@ spec:
     - name: source
       workspace: app-source
 
-  - name: github-pr-new-image-tag
+  - name: github-pr-switch
     runAfter:
       - commit-switch
     taskRef:
