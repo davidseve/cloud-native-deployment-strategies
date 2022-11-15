@@ -334,7 +334,7 @@ spec:
         value: "Switch Online '$(params.APP)' for environment '$(params.ENV)' to colour '$(tasks.create-result-colour.results.version)' with new image '$(params.NEW_IMAGE_TAG)'"
       - name: BODY
         value: |
-          command: SWITCH_ONLINE_TO_COLOUR
+          command: SWITCH_ONLINE
           APP: $(params.APP)
           ENV: $(params.ENV)
           COLOUR: $(tasks.create-result-colour.results.version)
@@ -541,7 +541,7 @@ spec:
       - name: REPO_FULL_NAME
         value: $(params.REPO_FULL_NAME)
       - name: HEAD
-        value: switch-to-colout-$(tasks.create-result-colour.results.version)
+        value: rollback-online
       - name: BASE
         value: $(params.SOURCE_GIT_REVISION)
       - name: TITLE
