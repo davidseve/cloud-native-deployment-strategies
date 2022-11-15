@@ -309,10 +309,10 @@ spec:
       - name: GIT_SCRIPT
         value: |
           cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
-          git checkout -b switch-to-colout-$(tasks.create-result-colour.results.version)
+          git checkout -b switch-to-colout-$(tasks.create-result-colour.results.version)-image-$(params.NEW_IMAGE_TAG)
           git add values/$(params.APP)/envs/$(params.ENV)/non-static-networking-values.yaml
           git commit -m "$(params.APP) switch online to $(tasks.create-result-colour.results.version)"
-          git push origin switch-to-colout-$(tasks.create-result-colour.results.version)
+          git push origin switch-to-colout-$(tasks.create-result-colour.results.version)-image-$(params.NEW_IMAGE_TAG)
     workspaces:
     - name: source
       workspace: app-source
@@ -331,13 +331,14 @@ spec:
       - name: BASE
         value: $(params.SOURCE_GIT_REVISION)
       - name: TITLE
-        value: "Switch Online '$(params.APP)' for environment '$(params.ENV)' to colour '$(tasks.create-result-colour.results.version)'"
+        value: "Switch Online '$(params.APP)' for environment '$(params.ENV)' to colour '$(tasks.create-result-colour.results.version)' with new image '$(params.NEW_IMAGE_TAG)'"
       - name: BODY
         value: |
           command: SWITCH_ONLINE_TO_COLOUR
           APP: $(params.APP)
           ENV: $(params.ENV)
           COLOUR: $(tasks.create-result-colour.results.version)
+          TAG: $(params.NEW_IMAGE_TAG)
 
   - name: change-align-offline
     when:
