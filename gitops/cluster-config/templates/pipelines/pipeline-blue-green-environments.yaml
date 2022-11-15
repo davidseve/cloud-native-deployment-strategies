@@ -163,9 +163,11 @@ spec:
           #!/usr/bin/env bash
           cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
           sed -i '/$(params.APP)-$(params.COLOUR)/{n;n;n;s/.*/      tag: $(params.NEW_IMAGE_TAG)/}' values/$(params.APP)/envs/$(params.ENV)/$(params.COLOUR)/image-tag-values.yaml
+          echo values/$(params.APP)/envs/$(params.ENV)/$(params.COLOUR)/image-tag-values.yaml
           cat values/$(params.APP)/envs/$(params.ENV)/$(params.COLOUR)/image-tag-values.yaml
           sed -i '/$(params.APP)-$(params.COLOUR)/{n;n;s/.*/    replicaCount: $(params.REPLICA_COUNT)/}' values/$(params.APP)/envs/$(params.ENV)/$(params.COLOUR)/non-static-values.yaml
           sed -i '/$(params.APP)-$(params.COLOUR)/{n;n;n;s/.*/  mode: online/}' values/$(params.APP)/envs/$(params.ENV)/$(params.COLOUR)/non-static-values.yaml
+          echo values/$(params.APP)/envs/$(params.ENV)/$(params.COLOUR)/non-static-values.yaml
           cat values/$(params.APP)/envs/$(params.ENV)/$(params.COLOUR)/non-static-values.yaml
       workspaces:
       - name: source
@@ -220,15 +222,47 @@ spec:
           COLOUR: $(tasks.create-result-colour.results.version)
 
 
-
-
-  - name: change-switch
+  - name: get-application-url-before-switch
+    runAfter:
+    - create-result-colour
     when:
       - input: "$(params.STEP)"
         operator: in
         values: ["switch"]
+    taskRef:
+      kind: Task
+      name: openshift-client
+    params:
+    - name: SCRIPT
+      value: |
+        host=$(oc get routes $(params.APP)-umbrella-offline -n $(params.NAMESPACE) -o=jsonpath='{.spec.host}')
+        url=https://${host}/$(params.APP)
+        echo $url > $(workspaces.manifest-dir.path)/url
+        cat $(workspaces.manifest-dir.path)/url
+    workspaces:
+    - name: manifest-dir
+      workspace: app-source
+  - name: e2e-test-before-switch
     runAfter:
-    - create-result-colour
+    - get-application-url-before-switch
+    params:
+      - name: TARGET_VERSION
+        value: $(params.NEW_IMAGE_TAG)
+      - name: JQ_PATH
+        value: $(params.JQ_PATH)
+      - name: LABEL
+        value: $(params.LABEL)
+    taskRef:
+      kind: Task
+      name: shop-e2e-test
+    timeout: "8m30s"
+    workspaces:
+    - name: source
+      workspace: app-source
+
+  - name: change-switch
+    runAfter:
+    - e2e-test-before-switch
     params:
       - name: CONTEXT_DIR
         value: $(params.CONTEXT_DIR)
@@ -236,8 +270,8 @@ spec:
         value: $(params.APP)
       - name: COLOUR
         value: $(tasks.create-result-colour.results.version) 
-      - name: VALUES_FILE
-        value: $(params.VALUES_FILE)         
+      - name: ENV
+        value: $(params.ENV)         
     taskSpec:
       metadata: {}
       params:
@@ -247,7 +281,7 @@ spec:
         type: string
       - name: COLOUR
         type: string
-      - name: VALUES_FILE
+      - name: ENV
         type: string
       steps:
       - name: change-switch
@@ -256,8 +290,8 @@ spec:
         script: |
           #!/usr/bin/env bash
           cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
-          sed -i '/$(params.APP)NetworkingOnline/{n;s/.*/  version: $(params.COLOUR)/}' $(params.VALUES_FILE)
-          cat $(params.VALUES_FILE)
+          sed -i '/$(params.APP)NetworkingOnline/{n;s/.*/  version: $(params.COLOUR)/}' values/$(params.APP)/envs/$(params.ENV)/non-static-networking-values.yaml
+          cat values/$(params.APP)/envs/$(params.ENV)/non-static-networking-values.yaml
       workspaces:
       - name: source
     workspaces:
@@ -278,12 +312,36 @@ spec:
       - name: GIT_SCRIPT
         value: |
           cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
-          git add $(params.VALUES_FILE)
+          git checkout -b switch-to-colout-$(tasks.create-result-colour.results.version)
+          git add values/$(params.APP)/envs/$(params.ENV)/non-static-networking-values.yaml
           git commit -m "$(params.APP) switch online to $(tasks.create-result-colour.results.version)"
-          git push origin HEAD:$(params.SOURCE_GIT_REVISION)
+          git push origin switch-to-colout-$(tasks.create-result-colour.results.version)
     workspaces:
     - name: source
       workspace: app-source
+
+  - name: github-pr-new-image-tag
+    runAfter:
+      - commit-switch
+    taskRef:
+      kind: Task
+      name: github-open-pr
+    params:
+      - name: REPO_FULL_NAME
+        value: $(params.REPO_FULL_NAME)
+      - name: HEAD
+        value: switch-to-colout-$(tasks.create-result-colour.results.version)
+      - name: BASE
+        value: $(params.SOURCE_GIT_REVISION)
+      - name: TITLE
+        value: "Switch Online '$(params.APP)' for environment '$(params.ENV)' to colour '$(tasks.create-result-colour.results.version)'"
+      - name: BODY
+        value: |
+          command: SWITCH_ONLINE_TO_COLOUR
+          APP: $(params.APP)
+          ENV: $(params.ENV)
+          COLOUR: $(tasks.create-result-colour.results.version)
+
   - name: change-scale-down-offline
     when:
       - input: "$(params.STEP)"
@@ -300,8 +358,8 @@ spec:
         value: $(params.NEW_IMAGE_TAG) 
       - name: COLOUR
         value: $(tasks.create-result-colour.results.version) 
-      - name: VALUES_FILE
-        value: $(params.VALUES_FILE)            
+      - name: ENV
+        value: $(params.ENV)            
     taskSpec:
       metadata: {}
       params:
@@ -313,7 +371,7 @@ spec:
         type: string
       - name: COLOUR
         type: string 
-      - name: VALUES_FILE
+      - name: ENV
         type: string
       steps:
       - name: scale-down-offline
@@ -331,10 +389,14 @@ spec:
           fi
           echo $NEW_COLOUR
 
-          sed -i "/$(params.APP)NetworkingOffline/{n;s/.*/  version: $NEW_COLOUR/}" $(params.VALUES_FILE)
+          sed -i "/$(params.APP)NetworkingOffline/{n;s/.*/  version: $NEW_COLOUR/}" values/$(params.APP)/envs/$(params.ENV)/non-static-networking-values.yaml
           
-          sed -i "/$(params.APP)-$NEW_COLOUR/{n;n;s/.*/    replicaCount: 1/}" $(params.VALUES_FILE)
           sed -i "/$(params.APP)-$NEW_COLOUR/{n;n;n;n;s/.*/      tag: $(params.NEW_IMAGE_TAG)/}" $(params.VALUES_FILE)
+          cat values/$(params.APP)/envs/$(params.ENV)/$NEW_COLOUR/image-tag-values.yaml
+
+
+          sed -i "/$(params.APP)-$NEW_COLOUR/{n;n;s/.*/    replicaCount: 1/}" $(params.VALUES_FILE)
+
           sed -i "/$(params.APP)-$NEW_COLOUR/{n;n;n;n;n;s/.*/  mode: offline/}" $(params.VALUES_FILE)
           
           cat $(params.VALUES_FILE)
