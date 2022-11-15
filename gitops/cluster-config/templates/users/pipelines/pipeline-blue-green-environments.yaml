@@ -15,7 +15,7 @@ spec:
     description: The application git repository url
   - name: REPO_FULL_NAME
     type: string
-    default: {{ .Values.github.repository }}/cloud-native-deployment-strategies
+    default: {{ $.Values.github.repository }}/cloud-native-deployment-strategies
     description: The application git repository url
   - name: SOURCE_GIT_REVISION
     type: string
@@ -41,10 +41,10 @@ spec:
     type: string
   - name: GIT_USER_NAME
     type: string
-    default: {{ .Values.github.user }}
+    default: {{ $.Values.github.user }}
   - name: GIT_USER_EMAIL
     type: string
-    default: {{ .Values.github.mail }}
+    default: {{ $.Values.github.mail }}
   - name: JQ_PATH
     type: string
     default: .metadata  
