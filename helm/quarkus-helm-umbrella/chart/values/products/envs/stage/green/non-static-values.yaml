@@ -1,4 +1,4 @@
 products-green:
   quarkus-base:
-    replicaCount: 1
-  mode: offline
+    replicaCount: 2
+  mode: online
