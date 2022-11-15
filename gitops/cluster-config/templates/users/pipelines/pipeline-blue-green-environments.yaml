@@ -559,6 +559,17 @@ spec:
           command: ROLLBACK_ONLINE
           APP: $(params.APP)
           ENV: $(params.ENV)
----        
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  namespace: {{ $user }}-continuous-delivery
+  name: workspace-pvc-shop-cd-new-version
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi     
 {{ end }}
 {{ end }}
