@@ -1,9 +1,8 @@
 {{- if .Values.pipeline.enabled }}
 apiVersion: tekton.dev/v1beta1
-kind: Task
+kind: ClusterTask
 metadata:
   name: shop-e2e-test
-  namespace: {{ .Values.namespace }}
   annotations:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:

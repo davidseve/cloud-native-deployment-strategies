@@ -1,0 +1,30 @@
+{{- range $user := $.Values.users }}
+{{- $var_user := $user }}
+{{- range $namespace := $.Values.namespaces }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  namespace: {{ $var_user }}-{{ $namespace }}
+  generateName: link-github-token-
+  annotations:
+    argocd.argoproj.io/hook: Sync
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded
+spec:
+  template:
+    spec:
+      containers:
+      - name: link-github-token
+        image: quay.io/openshift/origin-cli:4.7
+        command:
+          - "oc"
+          - "secrets"
+          - "link"
+          - "pipeline"
+          - "github-token"
+          - "-n"
+          - "{{ $var_user }}-{{ $namespace }}"
+      restartPolicy: Never
+  backoffLimit: 10
+{{- end }}
+{{- end }}

@@ -1,9 +1,8 @@
 {{- if .Values.pipeline.enabled }}
 apiVersion: tekton.dev/v1beta1
-kind: Task
+kind: ClusterTask
 metadata:
   name: openshift-client
-  namespace: {{ .Values.namespace }}
   labels:
     app.kubernetes.io/version: "0.2"
   annotations:

@@ -3,7 +3,6 @@ apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
   name: pipeline-blue-green-environments
-  namespace: {{ .Values.namespace }}
   annotations:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
