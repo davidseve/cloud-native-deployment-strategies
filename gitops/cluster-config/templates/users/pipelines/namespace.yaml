@@ -1,5 +1,6 @@
 {{- if .Values.pipeline.enabled }}
 {{- range $user := $.Values.users }}
+---
 apiVersion: v1
 kind: Namespace
 metadata:
