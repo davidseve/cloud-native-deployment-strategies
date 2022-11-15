@@ -28,4 +28,3 @@ subjects:
   name: default
   namespace: {{ $user }}-continuous-delivery
 {{- end }}
-{{- end }}
