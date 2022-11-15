@@ -454,7 +454,7 @@ spec:
       - name: BASE
         value: $(params.SOURCE_GIT_REVISION)
       - name: TITLE
-        value: "Aling Offline '$(params.APP)' for environment '$(params.ENV)' with new image '$(params.NEW_IMAGE_TAG)'"
+        value: "Align Offline '$(params.APP)' for environment '$(params.ENV)' with new image '$(params.NEW_IMAGE_TAG)'"
       - name: BODY
         value: |
           command: SWITCH_ONLINE
