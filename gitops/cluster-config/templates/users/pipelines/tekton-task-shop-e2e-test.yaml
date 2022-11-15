@@ -1,9 +1,11 @@
 {{- if .Values.pipeline.enabled }}
+{{- range $user := $.Values.users }}
+---
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
   name: shop-e2e-test
-  namespace: {{ .Values.namespace }}
+  namespace: {{ $user }}-continuous-delivery
   annotations:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
@@ -27,4 +29,5 @@ spec:
       done
   workspaces:
   - name: source
-{{ end }}
+{{- end }}
+{{- end }}

@@ -1,10 +1,11 @@
 {{- if .Values.pipeline.enabled }}
+{{- range $user := $.Values.users }}
 ---
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
   name: github-open-pr
-  namespace: {{ .Values.namespace }}
+  namespace: {{ $user }}-continuous-delivery
   labels:
     app.kubernetes.io/version: "0.2"
   annotations:
@@ -154,4 +155,5 @@ spec:
 
             print("GitHub pull request created for $(params.REPO_FULL_NAME): "
                   f'number={body["number"]} url={body["html_url"]}')
-{{ end }}
+{{- end }}
+{{- end }}

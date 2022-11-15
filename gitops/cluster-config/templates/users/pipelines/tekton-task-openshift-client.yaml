@@ -1,9 +1,11 @@
 {{- if .Values.pipeline.enabled }}
+{{- range $user := $.Values.users }}
+---
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
   name: openshift-client
-  namespace: {{ .Values.namespace }}
+  namespace: {{ $user }}-continuous-delivery
   labels:
     app.kubernetes.io/version: "0.2"
   annotations:
@@ -54,4 +56,5 @@ spec:
         export KUBECONFIG=$(workspaces.kubeconfig-dir.path)/kubeconfig
 
         $(params.SCRIPT)
-{{ end }}
+{{- end }}
+{{- end }}
