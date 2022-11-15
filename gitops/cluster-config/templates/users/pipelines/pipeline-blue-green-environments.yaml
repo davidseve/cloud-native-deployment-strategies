@@ -559,6 +559,6 @@ spec:
           command: ROLLBACK_ONLINE
           APP: $(params.APP)
           ENV: $(params.ENV)
-          
+---        
 {{ end }}
 {{ end }}
