@@ -193,7 +193,7 @@ spec:
       workspace: app-source
 
 
-  - name: github-pr-new-image-tag
+  - name: pr-new-image-tag
     runAfter:
       - commit-new-image-tag
     taskRef:
@@ -317,7 +317,7 @@ spec:
     - name: source
       workspace: app-source
 
-  - name: github-pr-switch
+  - name: pr-switch
     runAfter:
       - commit-switch
     taskRef:
@@ -431,7 +431,7 @@ spec:
     - name: source
       workspace: app-source
 
-  - name: github-pr-align-offline
+  - name: pr-align-offline
     runAfter:
       - commit-align-offline
     taskRef:
@@ -453,7 +453,7 @@ spec:
           ENV: $(params.ENV)
           TAG: $(params.NEW_IMAGE_TAG)
 
-  - name: switch-rollback
+  - name: change-rollback
     when:
       - input: "$(params.STEP)"
         operator: in
@@ -510,7 +510,7 @@ spec:
 
   - name: commit-rollback
     runAfter:
-    - switch-rollback
+    - change-rollback
     taskRef:
       kind: Task
       name: git-cli
@@ -530,7 +530,7 @@ spec:
     - name: source
       workspace: app-source
 
-  - name: github-pr-rollback
+  - name: pr-rollback
     runAfter:
       - commit-rollback
     taskRef:
