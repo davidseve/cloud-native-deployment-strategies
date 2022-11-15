@@ -211,7 +211,7 @@ spec:
       - name: BASE
         value: $(params.SOURCE_GIT_REVISION)
       - name: TITLE
-        value: "Updating '$(params.APP)' image for environment '$(params.ENV)' colour '$(tasks.create-result-colour.results.version)' with new image '$(params.NEW_IMAGE_TAG)'
+        value: "Updating '$(params.APP)' image for environment '$(params.ENV)' colour '$(tasks.create-result-colour.results.version)' with new image '$(params.NEW_IMAGE_TAG)'"
       - name: BODY
         value: |
           command: UPDATE_IMAGE
