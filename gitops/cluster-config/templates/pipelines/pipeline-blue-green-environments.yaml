@@ -530,7 +530,7 @@ spec:
     - name: source
       workspace: app-source
 
-- name: github-pr-rollback
+  - name: github-pr-rollback
     runAfter:
       - commit-rollback
     taskRef:
