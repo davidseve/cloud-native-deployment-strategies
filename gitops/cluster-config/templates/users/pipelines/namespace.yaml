@@ -1,10 +1,10 @@
+{{- if .Values.pipeline.enabled }}
 {{- range $user := $.Values.users }}
-{{- $var_user := $user }}
-{{- range $namespace := $.Values.namespaces }}
+---
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: {{ $var_user }}-{{ $namespace }}
+  name: {{ $user }}-continuous-delivery
   labels:
      argocd.argoproj.io/managed-by: openshift-gitops
 spec:
@@ -15,22 +15,22 @@ spec:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: {{ $var_user }}-namespace
-  namespace: {{ $var_user }}-{{ $namespace }}
+  name: {{ $user }}-namespace-continuous-delivery
+  namespace: {{ $user }}-continuous-delivery
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: admin
 subjects:
 - kind: Group
-  name: {{ $var_user }}
+  name: {{ $user }}
   apiGroup: rbac.authorization.k8s.io
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: {{ $var_user }}-gitops-role-binding
-  namespace: {{ $var_user }}-{{ $namespace }}
+  name: {{ $user }}-gitops-role-binding-continuous-delivery
+  namespace: {{ $user }}-continuous-delivery
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -39,21 +39,5 @@ subjects:
 - kind: ServiceAccount
   name: openshift-gitops-argocd-application-controller
   namespace: openshift-gitops
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: {{ $var_user }}-gitops-role-binding-monitoring-edit
-  namespace: {{ $var_user }}-{{ $namespace }}
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: monitoring-edit
-subjects:
-- kind: ServiceAccount
-  name: openshift-gitops-argocd-application-controller
-  namespace: openshift-gitops
-
----
 {{- end }}
 {{- end }}

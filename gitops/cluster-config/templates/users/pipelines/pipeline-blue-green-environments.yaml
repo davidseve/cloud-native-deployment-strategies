@@ -1,16 +1,21 @@
 {{- if .Values.bluegreen.enabled }}
+{{- range $user := $.Values.users }}
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
-  name: pipeline-blue-green
-  namespace: {{ .Values.namespace }}
+  name: pipeline-blue-green-environments
+  namespace: {{ $user }}-continuous-delivery
   annotations:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
   params:
   - name: SOURCE_GIT_URL
     type: string
-    default: https://github.com/{{ .Values.github.repository }}/cloud-native-deployment-strategies
+    default: https://github.com/
+    description: The application git repository url
+  - name: REPO_FULL_NAME
+    type: string
+    default: {{ $.Values.github.repository }}/cloud-native-deployment-strategies
     description: The application git repository url
   - name: SOURCE_GIT_REVISION
     type: string
@@ -22,11 +27,7 @@ spec:
     description: The subdirectory in the git repository
   - name: NAMESPACE
     type: string
-    default: {{ .Values.namespace }}
     description: namespace
-  - name: VALUES_FILE
-    type: string
-    default: {{ .Values.bluegreen.valuesyaml }} 
   - name: APP
     type: string
     description: discounts or products
@@ -40,16 +41,19 @@ spec:
     type: string
   - name: GIT_USER_NAME
     type: string
-    default: {{ .Values.github.user }}
+    default: {{ $.Values.github.user }}
   - name: GIT_USER_EMAIL
     type: string
-    default: {{ .Values.github.mail }}
+    default: {{ $.Values.github.mail }}
   - name: JQ_PATH
     type: string
     default: .metadata  
   - name: LABEL
     type: string
-    default: .version  
+    default: .version
+  - name: ENV
+    type: string
+    default: stage 
 
   workspaces:
   - name: app-source
@@ -61,7 +65,7 @@ spec:
       name: git-clone
     params:
     - name: url
-      value: $(params.SOURCE_GIT_URL)
+      value: $(params.SOURCE_GIT_URL)$(params.REPO_FULL_NAME)
     - name: revision
       value: $(params.SOURCE_GIT_REVISION)
     - name: deleteExisting
@@ -125,10 +129,10 @@ spec:
         value: $(params.NEW_IMAGE_TAG) 
       - name: COLOUR
         value: $(tasks.create-result-colour.results.version)
-      - name: VALUES_FILE
-        value: $(params.VALUES_FILE)
       - name: REPLICA_COUNT
         value: $(params.REPLICA_COUNT)
+      - name: ENV
+        value: $(params.ENV)
     taskSpec:
       metadata: {}
       params:
@@ -140,9 +144,9 @@ spec:
         type: string
       - name: COLOUR
         type: string
-      - name: VALUES_FILE
-        type: string
       - name: REPLICA_COUNT
+        type: string
+      - name: ENV
         type: string
       steps:
       - name: change-new-image-tag
@@ -151,8 +155,14 @@ spec:
         script: |
           #!/usr/bin/env bash
           cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
-          sed -i '/$(params.APP)-$(params.COLOUR)/{n;n;n;n;s/.*/      tag: $(params.NEW_IMAGE_TAG)/}' $(params.VALUES_FILE)
-          cat $(params.VALUES_FILE)
+          sed -i '/$(params.APP)-$(params.COLOUR)/{n;n;n;s/.*/      tag: $(params.NEW_IMAGE_TAG)/}' values/$(params.APP)/envs/$(params.ENV)/$(params.COLOUR)/image-tag-values.yaml
+          echo values/$(params.APP)/envs/$(params.ENV)/$(params.COLOUR)/image-tag-values.yaml
+          cat values/$(params.APP)/envs/$(params.ENV)/$(params.COLOUR)/image-tag-values.yaml
+          sed -i '/$(params.APP)-$(params.COLOUR)/{n;n;s/.*/    replicaCount: $(params.REPLICA_COUNT)/}' values/$(params.APP)/envs/$(params.ENV)/$(params.COLOUR)/non-static-values.yaml
+          sed -i '/$(params.APP)-$(params.COLOUR)/{n;n;n;s/.*/  mode: online/}' values/$(params.APP)/envs/$(params.ENV)/$(params.COLOUR)/non-static-values.yaml
+          echo
+          echo values/$(params.APP)/envs/$(params.ENV)/$(params.COLOUR)/non-static-values.yaml
+          cat values/$(params.APP)/envs/$(params.ENV)/$(params.COLOUR)/non-static-values.yaml
       workspaces:
       - name: source
     workspaces:
@@ -173,15 +183,47 @@ spec:
       - name: GIT_SCRIPT
         value: |
           cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
-          git add $(params.VALUES_FILE)
+          git checkout -b new-image-$(params.NEW_IMAGE_TAG)
+          git add values/$(params.APP)/envs/$(params.ENV)/$(tasks.create-result-colour.results.version)/image-tag-values.yaml
+          git add values/$(params.APP)/envs/$(params.ENV)/$(tasks.create-result-colour.results.version)/non-static-values.yaml
           git commit -m "$(params.APP)-$(tasks.create-result-colour.results.version)  new image tag $(params.NEW_IMAGE_TAG)"
-          git push origin HEAD:$(params.SOURCE_GIT_REVISION)
+          git push origin new-image-$(params.NEW_IMAGE_TAG)
     workspaces:
     - name: source
       workspace: app-source
-  - name: get-application-url-new-image-tag
+
+
+  - name: pr-new-image-tag
     runAfter:
-    - commit-new-image-tag
+      - commit-new-image-tag
+    taskRef:
+      kind: Task
+      name: github-open-pr
+    params:
+      - name: REPO_FULL_NAME
+        value: $(params.REPO_FULL_NAME)
+      - name: HEAD
+        value: new-image-$(params.NEW_IMAGE_TAG)
+      - name: BASE
+        value: $(params.SOURCE_GIT_REVISION)
+      - name: TITLE
+        value: "Updating '$(params.APP)' image for environment '$(params.ENV)' colour '$(tasks.create-result-colour.results.version)' with new image '$(params.NEW_IMAGE_TAG)'"
+      - name: BODY
+        value: |
+          command: UPDATE_IMAGE
+          APP: $(params.APP)
+          ENV: $(params.ENV)
+          COLOUR: $(tasks.create-result-colour.results.version)
+          TAG: $(params.NEW_IMAGE_TAG)
+
+
+  - name: get-application-url-before-switch
+    runAfter:
+    - create-result-colour
+    when:
+      - input: "$(params.STEP)"
+        operator: in
+        values: ["switch"]
     taskRef:
       kind: Task
       name: openshift-client
@@ -195,9 +237,9 @@ spec:
     workspaces:
     - name: manifest-dir
       workspace: app-source
-  - name: e2e-test-new-image-tag
+  - name: e2e-test-before-switch
     runAfter:
-    - get-application-url-new-image-tag
+    - get-application-url-before-switch
     params:
       - name: TARGET_VERSION
         value: $(params.NEW_IMAGE_TAG)
@@ -212,158 +254,10 @@ spec:
     workspaces:
     - name: source
       workspace: app-source
-  - name: change-configuration
-    runAfter:
-    - e2e-test-new-image-tag
-    params:
-      - name: CONTEXT_DIR
-        value: $(params.CONTEXT_DIR)
-      - name: APP
-        value: $(params.APP)
-      - name: COLOUR
-        value: $(tasks.create-result-colour.results.version)
-      - name: VALUES_FILE
-        value: $(params.VALUES_FILE)        
-    taskSpec:
-      metadata: {}
-      params:
-      - name: CONTEXT_DIR
-        type: string
-      - name: APP
-        type: string
-      - name: COLOUR
-        type: string
-      - name: VALUES_FILE
-        type: string   
-      steps:
-      - name: change-configuration
-        resources: {}
-        image: registry.access.redhat.com/ubi8/ubi-minimal:8.3
-        script: |
-          #!/usr/bin/env bash
-          cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
-          sed -i '/$(params.APP)-$(params.COLOUR)/{n;n;s/.*/    replicaCount: 0/}' $(params.VALUES_FILE)
-          sed -i '/$(params.APP)-$(params.COLOUR)/{n;n;n;n;n;s/.*/  mode: online/}' $(params.VALUES_FILE)
-          cat $(params.VALUES_FILE)
-      workspaces:
-      - name: source
-    workspaces:
-    - name: source
-      workspace: app-source
-
-  - name: commit-configuration
-    runAfter:
-    - change-configuration
-    taskRef:
-      kind: Task
-      name: git-cli
-    params:
-      - name: GIT_USER_NAME
-        value: $(params.GIT_USER_NAME)
-      - name: GIT_USER_EMAIL
-        value: $(params.GIT_USER_EMAIL)
-      - name: GIT_SCRIPT
-        value: |
-          cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
-          git add $(params.VALUES_FILE)
-          git commit -m "$(params.APP)-$(tasks.create-result-colour.results.version) change configuration"
-          git push origin HEAD:$(params.SOURCE_GIT_REVISION)
-    workspaces:
-    - name: source
-      workspace: app-source
-
-  - name: get-deployment-replicas
-    runAfter:
-    - commit-configuration
-    taskRef:
-      kind: Task
-      name: openshift-client
-    params: 
-    - name: SCRIPT
-      value: |
-        replicas=-1
-        while [ $replicas != 0 ]
-        do
-          replicas=$(oc get deployments $(params.APP)-$(tasks.create-result-colour.results.version) -n $(params.NAMESPACE) --output="jsonpath={.spec.replicas}" 2>&1)
-          echo $replicas
-          sleep 5
-        done
-        oc get deployments $(params.APP)-$(tasks.create-result-colour.results.version) -n $(params.NAMESPACE) --output="jsonpath={.spec.replicas}" > $(workspaces.manifest-dir.path)/replicas
-        cat $(workspaces.manifest-dir.path)/replicas
-    workspaces:
-    - name: manifest-dir
-      workspace: app-source
-
-  - name: change-scale-up
-    runAfter:
-    - get-deployment-replicas
-    params:
-      - name: CONTEXT_DIR
-        value: $(params.CONTEXT_DIR)
-      - name: APP
-        value: $(params.APP)
-      - name: REPLICA_COUNT
-        value: $(params.REPLICA_COUNT) 
-      - name: COLOUR
-        value: $(tasks.create-result-colour.results.version)
-      - name: VALUES_FILE
-        value: $(params.VALUES_FILE)        
-    taskSpec:
-      metadata: {}
-      params:
-      - name: CONTEXT_DIR
-        type: string
-      - name: APP
-        type: string
-      - name: REPLICA_COUNT
-        type: string
-      - name: COLOUR
-        type: string
-      - name: VALUES_FILE
-        type: string
-      steps:
-      - name: change-scale-up
-        image: registry.access.redhat.com/ubi8/ubi-minimal:8.3
-        resources: {}
-        script: |
-          #!/usr/bin/env bash
-          cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
-          sed -i '/$(params.APP)-$(params.COLOUR)/{n;n;s/.*/    replicaCount: $(params.REPLICA_COUNT)/}' $(params.VALUES_FILE)
-          cat $(params.VALUES_FILE)
-      workspaces:
-      - name: source
-    workspaces:
-    - name: source
-      workspace: app-source
-
-  - name: commit-scale-up
-    runAfter:
-    - change-scale-up
-    taskRef:
-      kind: Task
-      name: git-cli
-    params:
-      - name: GIT_USER_NAME
-        value: $(params.GIT_USER_NAME)
-      - name: GIT_USER_EMAIL
-        value: $(params.GIT_USER_EMAIL)
-      - name: GIT_SCRIPT
-        value: |
-          cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
-          git add $(params.VALUES_FILE)
-          git commit -m "$(params.APP)-$(tasks.create-result-colour.results.version) replicaCount: $(params.REPLICA_COUNT)"
-          git push origin HEAD:$(params.SOURCE_GIT_REVISION)
-    workspaces:
-    - name: source
-      workspace: app-source
 
   - name: change-switch
-    when:
-      - input: "$(params.STEP)"
-        operator: in
-        values: ["switch"]
     runAfter:
-    - create-result-colour
+    - e2e-test-before-switch
     params:
       - name: CONTEXT_DIR
         value: $(params.CONTEXT_DIR)
@@ -371,8 +265,8 @@ spec:
         value: $(params.APP)
       - name: COLOUR
         value: $(tasks.create-result-colour.results.version) 
-      - name: VALUES_FILE
-        value: $(params.VALUES_FILE)         
+      - name: ENV
+        value: $(params.ENV)         
     taskSpec:
       metadata: {}
       params:
@@ -382,7 +276,7 @@ spec:
         type: string
       - name: COLOUR
         type: string
-      - name: VALUES_FILE
+      - name: ENV
         type: string
       steps:
       - name: change-switch
@@ -391,8 +285,10 @@ spec:
         script: |
           #!/usr/bin/env bash
           cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
-          sed -i '/$(params.APP)NetworkingOnline/{n;s/.*/  version: $(params.COLOUR)/}' $(params.VALUES_FILE)
-          cat $(params.VALUES_FILE)
+          sed -i '/$(params.APP)NetworkingOnline/{n;s/.*/  version: $(params.COLOUR)/}' values/$(params.APP)/envs/$(params.ENV)/non-static-networking-values.yaml
+          echo
+          echo values/$(params.APP)/envs/$(params.ENV)/non-static-networking-values.yaml 
+          cat values/$(params.APP)/envs/$(params.ENV)/non-static-networking-values.yaml
       workspaces:
       - name: source
     workspaces:
@@ -413,17 +309,42 @@ spec:
       - name: GIT_SCRIPT
         value: |
           cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
-          git add $(params.VALUES_FILE)
+          git checkout -b switch-to-colout-$(tasks.create-result-colour.results.version)-image-$(params.NEW_IMAGE_TAG)
+          git add values/$(params.APP)/envs/$(params.ENV)/non-static-networking-values.yaml
           git commit -m "$(params.APP) switch online to $(tasks.create-result-colour.results.version)"
-          git push origin HEAD:$(params.SOURCE_GIT_REVISION)
+          git push origin switch-to-colout-$(tasks.create-result-colour.results.version)-image-$(params.NEW_IMAGE_TAG)
     workspaces:
     - name: source
       workspace: app-source
-  - name: change-scale-down-offline
+
+  - name: pr-switch
+    runAfter:
+      - commit-switch
+    taskRef:
+      kind: Task
+      name: github-open-pr
+    params:
+      - name: REPO_FULL_NAME
+        value: $(params.REPO_FULL_NAME)
+      - name: HEAD
+        value: switch-to-colout-$(tasks.create-result-colour.results.version)-image-$(params.NEW_IMAGE_TAG)
+      - name: BASE
+        value: $(params.SOURCE_GIT_REVISION)
+      - name: TITLE
+        value: "Switch Online '$(params.APP)' for environment '$(params.ENV)' to colour '$(tasks.create-result-colour.results.version)' with new image '$(params.NEW_IMAGE_TAG)'"
+      - name: BODY
+        value: |
+          command: SWITCH_ONLINE
+          APP: $(params.APP)
+          ENV: $(params.ENV)
+          COLOUR: $(tasks.create-result-colour.results.version)
+          TAG: $(params.NEW_IMAGE_TAG)
+
+  - name: change-align-offline
     when:
       - input: "$(params.STEP)"
         operator: in
-        values: ["scale-down-offline"]
+        values: ["align-offline"]
     runAfter:
     - create-result-colour
     params:
@@ -435,8 +356,8 @@ spec:
         value: $(params.NEW_IMAGE_TAG) 
       - name: COLOUR
         value: $(tasks.create-result-colour.results.version) 
-      - name: VALUES_FILE
-        value: $(params.VALUES_FILE)            
+      - name: ENV
+        value: $(params.ENV)            
     taskSpec:
       metadata: {}
       params:
@@ -448,7 +369,7 @@ spec:
         type: string
       - name: COLOUR
         type: string 
-      - name: VALUES_FILE
+      - name: ENV
         type: string
       steps:
       - name: scale-down-offline
@@ -466,22 +387,30 @@ spec:
           fi
           echo $NEW_COLOUR
 
-          sed -i "/$(params.APP)NetworkingOffline/{n;s/.*/  version: $NEW_COLOUR/}" $(params.VALUES_FILE)
-          
-          sed -i "/$(params.APP)-$NEW_COLOUR/{n;n;s/.*/    replicaCount: 1/}" $(params.VALUES_FILE)
-          sed -i "/$(params.APP)-$NEW_COLOUR/{n;n;n;n;s/.*/      tag: $(params.NEW_IMAGE_TAG)/}" $(params.VALUES_FILE)
-          sed -i "/$(params.APP)-$NEW_COLOUR/{n;n;n;n;n;s/.*/  mode: offline/}" $(params.VALUES_FILE)
-          
-          cat $(params.VALUES_FILE)
+          sed -i "/$(params.APP)NetworkingOffline/{n;s/.*/  version: $NEW_COLOUR/}" values/$(params.APP)/envs/$(params.ENV)/non-static-networking-values.yaml
+          echo
+          echo values/$(params.APP)/envs/$(params.ENV)/non-static-networking-values.yaml
+          cat values/$(params.APP)/envs/$(params.ENV)/non-static-networking-values.yaml
+
+          sed -i "/$(params.APP)-$NEW_COLOUR/{n;n;n;s/.*/      tag: $(params.NEW_IMAGE_TAG)/}" values/$(params.APP)/envs/$(params.ENV)/$NEW_COLOUR/image-tag-values.yaml
+          echo
+          echo values/$(params.APP)/envs/$(params.ENV)/$NEW_COLOUR/image-tag-values.yaml
+          cat values/$(params.APP)/envs/$(params.ENV)/$NEW_COLOUR/image-tag-values.yaml
+
+          sed -i "/$(params.APP)-$NEW_COLOUR/{n;n;s/.*/    replicaCount: 1/}" values/$(params.APP)/envs/$(params.ENV)/$NEW_COLOUR/non-static-values.yaml
+          sed -i "/$(params.APP)-$NEW_COLOUR/{n;n;n;s/.*/  mode: offline/}" values/$(params.APP)/envs/$(params.ENV)/$NEW_COLOUR/non-static-values.yaml
+          echo
+          echo values/$(params.APP)/envs/$(params.ENV)/$NEW_COLOUR/non-static-values.yaml
+          cat values/$(params.APP)/envs/$(params.ENV)/$NEW_COLOUR/non-static-values.yaml
       workspaces:
       - name: source
     workspaces:
     - name: source
       workspace: app-source
 
-  - name: commit-scale-down-offline
+  - name: commit-align-offline
     runAfter:
-    - change-scale-down-offline
+    - change-align-offline
     taskRef:
       kind: Task
       name: git-cli
@@ -491,16 +420,49 @@ spec:
       - name: GIT_USER_EMAIL
         value: $(params.GIT_USER_EMAIL)
       - name: GIT_SCRIPT
-        value: |
+        value: |          
+          COLOUR=$(tasks.create-result-colour.results.version) 
+          if [ $COLOUR = "blue" ]
+          then
+            NEW_COLOUR="green"
+          else
+            NEW_COLOUR="blue"
+          fi
+          echo $NEW_COLOUR
           cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
-          git add $(params.VALUES_FILE)
-          git commit -m "$(params.APP) scale down offline"
-          git push origin HEAD:$(params.SOURCE_GIT_REVISION)
+          git checkout -b align-offline-$(params.NEW_IMAGE_TAG)
+          git add values/$(params.APP)/envs/$(params.ENV)/non-static-networking-values.yaml
+          git add values/$(params.APP)/envs/$(params.ENV)/$NEW_COLOUR/image-tag-values.yaml
+          git add values/$(params.APP)/envs/$(params.ENV)/$NEW_COLOUR/non-static-values.yaml
+          git commit -m "$(params.APP)-$NEW_COLOUR env $(params.ENV) aligne image tag $(params.NEW_IMAGE_TAG)"
+          git push origin align-offline-$(params.NEW_IMAGE_TAG)
     workspaces:
     - name: source
       workspace: app-source
 
-  - name: switch-rollback
+  - name: pr-align-offline
+    runAfter:
+      - commit-align-offline
+    taskRef:
+      kind: Task
+      name: github-open-pr
+    params:
+      - name: REPO_FULL_NAME
+        value: $(params.REPO_FULL_NAME)
+      - name: HEAD
+        value: align-offline-$(params.NEW_IMAGE_TAG)
+      - name: BASE
+        value: $(params.SOURCE_GIT_REVISION)
+      - name: TITLE
+        value: "Align Offline '$(params.APP)' for environment '$(params.ENV)' with new image '$(params.NEW_IMAGE_TAG)'"
+      - name: BODY
+        value: |
+          command: SWITCH_ONLINE
+          APP: $(params.APP)
+          ENV: $(params.ENV)
+          TAG: $(params.NEW_IMAGE_TAG)
+
+  - name: change-rollback
     when:
       - input: "$(params.STEP)"
         operator: in
@@ -514,8 +476,8 @@ spec:
         value: $(params.APP)
       - name: COLOUR
         value: $(tasks.create-result-colour.results.version) 
-      - name: VALUES_FILE
-        value: $(params.VALUES_FILE)         
+      - name: ENV
+        value: $(params.ENV)         
     taskSpec:
       metadata: {}
       params:
@@ -525,7 +487,7 @@ spec:
         type: string
       - name: COLOUR
         type: string 
-      - name: VALUES_FILE
+      - name: ENV
         type: string
       steps:
       - name: change-switch
@@ -544,18 +506,20 @@ spec:
           fi
           echo $NEW_COLOUR
 
-          sed -i "/$(params.APP)NetworkingOnline/{n;s/.*/  version: $NEW_COLOUR/}" $(params.VALUES_FILE)
+          sed -i "/$(params.APP)NetworkingOnline/{n;s/.*/  version: $NEW_COLOUR/}" values/$(params.APP)/envs/$(params.ENV)/non-static-networking-values.yaml
           
-          cat $(params.VALUES_FILE)
+          echo
+          echo values/$(params.APP)/envs/$(params.ENV)/non-static-networking-values.yaml 
+          cat values/$(params.APP)/envs/$(params.ENV)/non-static-networking-values.yaml
       workspaces:
       - name: source
     workspaces:
     - name: source
       workspace: app-source
 
-  - name: commit-switch-rollback
+  - name: commit-rollback
     runAfter:
-    - switch-rollback
+    - change-rollback
     taskRef:
       kind: Task
       name: git-cli
@@ -567,17 +531,39 @@ spec:
       - name: GIT_SCRIPT
         value: |
           cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
-          git add $(params.VALUES_FILE)
-          git commit -m "$(params.APP) switch-rollback online to $(tasks.create-result-colour.results.version)"
-          git push origin HEAD:$(params.SOURCE_GIT_REVISION)
+          git checkout -b rollback-online
+          git add values/$(params.APP)/envs/$(params.ENV)/non-static-networking-values.yaml 
+          git commit -m "Rollback Online $(params.APP) for environment $(params.ENV)"
+          git push origin rollback-online
     workspaces:
     - name: source
       workspace: app-source
+
+  - name: pr-rollback
+    runAfter:
+      - commit-rollback
+    taskRef:
+      kind: Task
+      name: github-open-pr
+    params:
+      - name: REPO_FULL_NAME
+        value: $(params.REPO_FULL_NAME)
+      - name: HEAD
+        value: rollback-online
+      - name: BASE
+        value: $(params.SOURCE_GIT_REVISION)
+      - name: TITLE
+        value: "Rollback Online '$(params.APP)' for environment '$(params.ENV)'"
+      - name: BODY
+        value: |
+          command: ROLLBACK_ONLINE
+          APP: $(params.APP)
+          ENV: $(params.ENV)
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  namespace: {{ .Values.namespace }}
+  namespace: {{ $user }}-continuous-delivery
   name: workspace-pvc-shop-cd-new-version
 spec:
   accessModes:
@@ -585,4 +571,6 @@ spec:
   resources:
     requests:
       storage: 2Gi
+---     
+{{ end }}
 {{ end }}
