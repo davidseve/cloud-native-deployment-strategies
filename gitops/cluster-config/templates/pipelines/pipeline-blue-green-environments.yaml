@@ -508,7 +508,7 @@ spec:
     - name: source
       workspace: app-source
 
-  - name: commit-switch-rollback
+  - name: commit-rollback
     runAfter:
     - switch-rollback
     taskRef:
