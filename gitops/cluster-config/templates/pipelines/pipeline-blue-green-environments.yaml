@@ -392,13 +392,13 @@ spec:
           echo values/$(params.APP)/envs/$(params.ENV)/non-static-networking-values.yaml
           cat values/$(params.APP)/envs/$(params.ENV)/non-static-networking-values.yaml
 
-          sed -i "/$(params.APP)-$NEW_COLOUR/{n;n;n;n;s/.*/      tag: $(params.NEW_IMAGE_TAG)/}" values/$(params.APP)/envs/$(params.ENV)/$NEW_COLOUR/image-tag-values.yaml
+          sed -i "/$(params.APP)-$NEW_COLOUR/{n;n;n;s/.*/      tag: $(params.NEW_IMAGE_TAG)/}" values/$(params.APP)/envs/$(params.ENV)/$NEW_COLOUR/image-tag-values.yaml
           echo
           echo values/$(params.APP)/envs/$(params.ENV)/$NEW_COLOUR/image-tag-values.yaml
           cat values/$(params.APP)/envs/$(params.ENV)/$NEW_COLOUR/image-tag-values.yaml
 
           sed -i "/$(params.APP)-$NEW_COLOUR/{n;n;s/.*/    replicaCount: 1/}" values/$(params.APP)/envs/$(params.ENV)/$NEW_COLOUR/non-static-values.yaml
-          sed -i "/$(params.APP)-$NEW_COLOUR/{n;n;n;n;n;s/.*/  mode: offline/}" values/$(params.APP)/envs/$(params.ENV)/$NEW_COLOUR/non-static-values.yaml
+          sed -i "/$(params.APP)-$NEW_COLOUR/{n;n;n;s/.*/  mode: offline/}" values/$(params.APP)/envs/$(params.ENV)/$NEW_COLOUR/non-static-values.yaml
           echo
           echo values/$(params.APP)/envs/$(params.ENV)/$NEW_COLOUR/non-static-values.yaml
           cat values/$(params.APP)/envs/$(params.ENV)/$NEW_COLOUR/non-static-values.yaml
@@ -450,7 +450,7 @@ spec:
       - name: REPO_FULL_NAME
         value: $(params.REPO_FULL_NAME)
       - name: HEAD
-        value: switch-to-colout-$(tasks.create-result-colour.results.version)
+        value: align-offline-$(params.NEW_IMAGE_TAG)
       - name: BASE
         value: $(params.SOURCE_GIT_REVISION)
       - name: TITLE
