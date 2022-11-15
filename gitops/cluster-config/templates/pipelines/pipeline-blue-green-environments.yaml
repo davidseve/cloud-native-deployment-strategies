@@ -430,6 +430,7 @@ spec:
           fi
           echo $NEW_COLOUR
           cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
+          echo aa
           git checkout -b align-offline-$(params.NEW_IMAGE_TAG)
           git add values/$(params.APP)/envs/$(params.ENV)/non-static-networking-values.yaml
           git add values/$(params.APP)/envs/$(params.ENV)/$NEW_COLOUR/image-tag-values.yaml
