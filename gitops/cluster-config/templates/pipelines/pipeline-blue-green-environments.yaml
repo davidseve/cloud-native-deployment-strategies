@@ -391,15 +391,15 @@ spec:
 
           sed -i "/$(params.APP)NetworkingOffline/{n;s/.*/  version: $NEW_COLOUR/}" values/$(params.APP)/envs/$(params.ENV)/non-static-networking-values.yaml
           
-          sed -i "/$(params.APP)-$NEW_COLOUR/{n;n;n;n;s/.*/      tag: $(params.NEW_IMAGE_TAG)/}" $(params.VALUES_FILE)
+          sed -i "/$(params.APP)-$NEW_COLOUR/{n;n;n;n;s/.*/      tag: $(params.NEW_IMAGE_TAG)/}" values/$(params.APP)/envs/$(params.ENV)/$NEW_COLOUR/image-tag-values.yaml
           cat values/$(params.APP)/envs/$(params.ENV)/$NEW_COLOUR/image-tag-values.yaml
 
 
-          sed -i "/$(params.APP)-$NEW_COLOUR/{n;n;s/.*/    replicaCount: 1/}" $(params.VALUES_FILE)
+          sed -i "/$(params.APP)-$NEW_COLOUR/{n;n;s/.*/    replicaCount: 1/}" values/$(params.APP)/envs/$(params.ENV)/$NEW_COLOUR/non-static-values.yaml
 
-          sed -i "/$(params.APP)-$NEW_COLOUR/{n;n;n;n;n;s/.*/  mode: offline/}" $(params.VALUES_FILE)
+          sed -i "/$(params.APP)-$NEW_COLOUR/{n;n;n;n;n;s/.*/  mode: offline/}" values/$(params.APP)/envs/$(params.ENV)/$NEW_COLOUR/non-static-values.yaml
           
-          cat $(params.VALUES_FILE)
+        
       workspaces:
       - name: source
     workspaces:
