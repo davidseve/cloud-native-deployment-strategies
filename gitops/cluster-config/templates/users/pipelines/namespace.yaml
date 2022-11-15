@@ -1,17 +1,15 @@
+{{- if .Values.pipeline.enabled }}
 {{- range $user := $.Values.users }}
-{{- $var_user := $user }}
-{{- range $namespace := $.Values.namespaces }}
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: {{ $var_user }}-{{ $namespace }}
+  name: {{ $user }}-continuous-delivery
   labels:
      argocd.argoproj.io/managed-by: openshift-gitops
 spec:
   finalizers:
   - kubernetes
 ---
-#Add user to namespace
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
@@ -23,8 +21,9 @@ roleRef:
   name: admin
 subjects:
 - kind: Group
-  name: {{ $var_user }}
+  name: {{ $user }}
   apiGroup: rbac.authorization.k8s.io
+#TAdd user to namespace
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
