@@ -420,7 +420,15 @@ spec:
       - name: GIT_USER_EMAIL
         value: $(params.GIT_USER_EMAIL)
       - name: GIT_SCRIPT
-        value: |
+        value: |          
+          COLOUR=$(params.COLOUR)
+          if [ $COLOUR = "blue" ]
+          then
+            NEW_COLOUR="green"
+          else
+            NEW_COLOUR="blue"
+          fi
+          echo $NEW_COLOUR
           cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
           git checkout -b align-offline-$(params.NEW_IMAGE_TAG)
           git add values/$(params.APP)/envs/$(params.ENV)/non-static-networking-values.yaml
