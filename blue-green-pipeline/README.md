@@ -416,7 +416,7 @@ oc create -f 2-pipelinerun-products-switch.yaml -n gitops
 
 ![Pipeline step 2](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/pipeline-step-3.png)
 After the pipeline is finished and ArgoCD has synchronized the changes this will be the `Shop` status:
-![Shop step 2](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/blue-green-step-3.png)
+![Shop step 2](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/blue-green-step-2.png)
 **We have in the online environment the new version v1.1.1!!!**
 ```json
 {
@@ -445,7 +445,7 @@ oc create -f 2-pipelinerun-products-switch-rollback.yaml -n gitops
 
 ![Pipeline step 2,5 Rollback](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/pipeline-step-3-rollback.png)
 After the pipeline is finished and ArgoCD has synchronized the changes this will be the `Shop` status:
-![Shop step 2,5 Rollback](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/blue-green-step-3-5.png)
+![Shop step 2,5 Rollback](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/blue-green-step-2-5.png)
 We have version v1.0.1 online again.
 ```json
 {
