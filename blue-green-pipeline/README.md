@@ -353,7 +353,7 @@ We will use the already created pipelinerun.
 
 Those are the main tasks that are executed:
 
-- Change new tag image values in the right color and commit the changes.
+- Set new tag image values in the right color and commit the changes.
 - Execute E2E test to validate the new version.
 - Change the application configuration values to use the online services and commit the changes.
 - Scale Up the offline color and commit the changes.

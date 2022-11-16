@@ -1,15 +1,17 @@
 apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
-  generateName: shop-products-switch-
+  generateName: shop-products-rollback-
 spec:
   pipelineRef:
-    name: pipeline-blue-green    
+    name: pipeline-blue-green-environments      
   params:
   - name: APP
     value: products
   - name: STEP
-    value: "switch"
+    value: "switch-rollback"
+  - name: NAMESPACE
+    value: "{user}-prod"
   workspaces:
   - name: app-source
     persistentVolumeClaim:

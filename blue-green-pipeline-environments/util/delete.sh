@@ -19,8 +19,8 @@ oc delete clusterserviceversion openshift-gitops-operator.v1.5.6 -n openshift-op
 
 
 git checkout main
-git branch -d blue-green
-git push origin --delete blue-green
+git branch -d release
+git push origin --delete release
 
 #manual
 #gitops operator

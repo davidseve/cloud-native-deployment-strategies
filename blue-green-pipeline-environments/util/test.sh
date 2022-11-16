@@ -14,8 +14,8 @@ if [ ${3:-no} != "no" ]
 then
     git checkout $3
 fi
-git checkout -b blue-green
-git push origin blue-green
+git checkout -b release
+git push origin release
 
 oc apply -f gitops/gitops-operator.yaml
 
