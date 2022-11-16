@@ -468,7 +468,7 @@ After fixing the issue we can execute the Switch step again.
 ```
 oc create -f 2-pipelinerun-products-switch.yaml -n gitops
 ```
-![Shop step 2](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/blue-green-step-3.png)
+![Shop step 2](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/blue-green-step-2.png)
 We have in the online environment the new version v1.1.1 again.
 ```json
 {
