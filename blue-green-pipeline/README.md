@@ -496,7 +496,7 @@ oc create -f 3-pipelinerun-products-scale-down.yaml -n gitops
 
 ![Pipeline step 3](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/pipeline-step-4.png)
 After the pipeline is finished and ArgoCD has synchronized the changes this will be the `Shop` status:
-![Shop step 3](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/blue-green-step-4.png)
+![Shop step 3](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/blue-green-step-3.png)
 We can see that the offline `Products` is calling offline `Discounts` and has the new version v1.1.1
 ```json
 {
