@@ -16,6 +16,8 @@ spec:
     value: "2"   
   - name: NAMESPACE
     value: "user1-stage"
+  - name: REPO_FULL_NAME
+    value: davidseve/cloud-native-deployment-strategies
   workspaces:
   - name: app-source
     persistentVolumeClaim:

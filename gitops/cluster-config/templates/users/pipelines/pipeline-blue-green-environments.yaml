@@ -15,7 +15,6 @@ spec:
     description: The application git repository url
   - name: REPO_FULL_NAME
     type: string
-    default: {{ $.Values.github.repository }}/cloud-native-deployment-strategies
     description: The application git repository url
   - name: SOURCE_GIT_REVISION
     type: string
@@ -564,7 +563,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   namespace: {{ $user }}-continuous-delivery
-  name: workspace-pvc-shop-cd-new-version
+  name: {{ $user }}-workspace-pvc-shop-cd-new-version
 spec:
   accessModes:
   - ReadWriteOnce

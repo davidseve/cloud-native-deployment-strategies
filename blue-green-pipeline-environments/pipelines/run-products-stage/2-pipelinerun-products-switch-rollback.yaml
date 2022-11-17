@@ -11,7 +11,9 @@ spec:
   - name: STEP
     value: "switch-rollback"
   - name: NAMESPACE
-    value: "{user}-stage"
+    value: "user1-stage"
+  - name: REPO_FULL_NAME
+    value: davidseve/cloud-native-deployment-strategies
   workspaces:
   - name: app-source
     persistentVolumeClaim:
