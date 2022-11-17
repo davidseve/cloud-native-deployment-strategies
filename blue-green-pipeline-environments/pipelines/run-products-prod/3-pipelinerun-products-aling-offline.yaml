@@ -13,7 +13,9 @@ spec:
   - name: STEP
     value: "align-offline"
   - name: NAMESPACE
-    value: "{user}-prod"
+    value: "user1-prod"
+  - name: REPO_FULL_NAME
+    value: davidseve/cloud-native-deployment-strategies
   workspaces:
   - name: app-source
     persistentVolumeClaim:

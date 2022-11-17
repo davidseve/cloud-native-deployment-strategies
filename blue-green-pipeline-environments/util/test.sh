@@ -1,5 +1,18 @@
 #!/usr/bin/env bash
 
+
+token=$1
+funcPull()
+{
+    pull_number=$(curl -H "Accept: application/vnd.github+json"   -H "Authorization: Bearer $token"   https://api.github.com/repos/davidseve/cloud-native-deployment-strategies/pulls | jq -r '.[0].number')
+    curl \
+    -X PUT \
+    -H "Accept: application/vnd.github+json" \
+    -H "Authorization: Bearer $token" \
+    https://api.github.com/repos/davidseve/cloud-native-deployment-strategies/pulls/$pull_number/merge \
+    -d '{"commit_title":"Expand enum","commit_message":"Add a new value to the merge_method enum"}'
+}
+
 # oc extract secret/openshift-gitops-cluster -n openshift-gitops --to=-
 # Add Argo CD Git Webhook to make it faster
 
@@ -18,15 +31,15 @@ git checkout -b release
 git push origin release
 
 oc login  -u opentlc-mgr -p r3dh4t1! $4
-oc apply -f gitops/gitops-operator.yaml
+#oc apply -f gitops/gitops-operator.yaml
 
 #First time we install operators take logger
-if [ ${2:-no} = "no" ]
-then
-    sleep 30s
-else
-    sleep 1m
-fi
+# if [ ${2:-no} = "no" ]
+# then
+#     sleep 30s
+# else
+#     sleep 1m
+# fi
 
 #To work with a branch that is not main. ./test.sh ghp_JGFDSFIGJSODIJGF no helm_base
 if [ ${3:-no} != "no" ]
@@ -66,6 +79,8 @@ do
 
     
     oc create -f 1-pipelinerun-products-new-version.yaml -n user1-continuous-delivery
+    sleep 90s
+    funcPull
 
     oc get service products-umbrella-offline -n $namespace --output="jsonpath={.spec.selector.version}" > color
     replicas=-1
@@ -78,25 +93,30 @@ do
     done
 
     tkn pipeline start pipeline-blue-green-e2e-test --param NEW_IMAGE_TAG=online --param MODE=offline --param LABEL=.mode --param APP=products --param NAMESPACE=$namespace  --param MESH=False --param JQ_PATH=.products[0].discountInfo.metadata --workspace name=app-source,claimName=workspace-pvc-shop-cd-e2e-tests -n user1-continuous-delivery --showlog
-    tkn pipeline start pipeline-blue-green-e2e-test --param NEW_IMAGE_TAG=v1.1.1 --param MODE=offline --param LABEL=.version --param APP=products --param NAMESPACE=$namespace  --param MESH=False --param JQ_PATH=.metadata --workspace name=app-source,claimName=workspace-pvc-shop-cd-e2e-tests -n user1-continuous-delivery--showlog
+    tkn pipeline start pipeline-blue-green-e2e-test --param NEW_IMAGE_TAG=v1.1.1 --param MODE=offline --param LABEL=.version --param APP=products --param NAMESPACE=$namespace  --param MESH=False --param JQ_PATH=.metadata --workspace name=app-source,claimName=workspace-pvc-shop-cd-e2e-tests -n user1-continuous-delivery --showlog
 
-    oc create -f 2-pipelinerun-products-switch.yaml -n $namespace
-    sleep 20s
+
+    oc create -f 2-pipelinerun-products-switch.yaml -n user1-continuous-delivery
+    sleep 2m
+    funcPull
     tkn pipeline start pipeline-blue-green-e2e-test --param NEW_IMAGE_TAG=v1.1.1 --param MODE=online --param LABEL=.version --param APP=products --param NAMESPACE=$namespace  --param MESH=False --param JQ_PATH=.metadata --workspace name=app-source,claimName=workspace-pvc-shop-cd-e2e-tests -n user1-continuous-delivery --showlog
 
     #Rollback
-    oc create -f 2-pipelinerun-products-switch-rollback.yaml -n $namespace
-    sleep 20s
+    oc create -f 2-pipelinerun-products-switch-rollback.yaml -n user1-continuous-delivery
+    sleep 90s
+    funcPull
     tkn pipeline start pipeline-blue-green-e2e-test --param NEW_IMAGE_TAG=v1.0.1 --param MODE=online --param LABEL=.version --param APP=products --param NAMESPACE=$namespace  --param MESH=False --param JQ_PATH=.metadata --workspace name=app-source,claimName=workspace-pvc-shop-cd-e2e-tests -n user1-continuous-delivery --showlog
 
 
-    oc create -f 2-pipelinerun-products-switch.yaml -n $namespace
-    sleep 20s
+    oc create -f 2-pipelinerun-products-switch.yaml -n user1-continuous-delivery
+    sleep 2m
+    funcPull
     tkn pipeline start pipeline-blue-green-e2e-test --param NEW_IMAGE_TAG=v1.1.1 --param MODE=online --param LABEL=.version --param APP=products --param NAMESPACE=$namespace  --param MESH=False --param JQ_PATH=.metadata --workspace name=app-source,claimName=workspace-pvc-shop-cd-e2e-tests -n user1-continuous-delivery --showlog
 
 
-    oc create -f 3-pipelinerun-products-scale-down.yaml -n $namespace
-    sleep 40s
+    oc create -f 3-pipelinerun-products-aling-offline.yaml -n user1-continuous-delivery
+    sleep 90s
+    funcPull
 
     tkn pipeline start pipeline-blue-green-e2e-test --param NEW_IMAGE_TAG=online --param MODE=online --param LABEL=.mode --param APP=products --param NAMESPACE=$namespace  --param MESH=False --param JQ_PATH=.products[0].discountInfo.metadata --workspace name=app-source,claimName=workspace-pvc-shop-cd-e2e-tests -n user1-continuous-delivery --showlog
     tkn pipeline start pipeline-blue-green-e2e-test --param NEW_IMAGE_TAG=v1.1.1 --param MODE=offline --param LABEL=.version --param APP=products --param NAMESPACE=$namespace  --param MESH=False --param JQ_PATH=.metadata --workspace name=app-source,claimName=workspace-pvc-shop-cd-e2e-tests -n user1-continuous-delivery --showlog
@@ -105,7 +125,8 @@ do
 
     if [ $namespace = "user1-stage" ]
     then
-        cd blue-green-pipeline-environments/pipelines/run-products-prod
+        cd ..
+        cd run-products-prod
         namespace=user1-prod
     else
         namespace=exit
@@ -113,3 +134,4 @@ do
     
     echo $namespace
 done
+
