@@ -17,8 +17,8 @@ fi
 git checkout -b release
 git push origin release
 
-# oc login  -u opentlc-mgr -p r3dh4t1! $4
-# oc apply -f gitops/gitops-operator.yaml
+oc login  -u opentlc-mgr -p r3dh4t1! $4
+oc apply -f gitops/gitops-operator.yaml
 
 #First time we install operators take logger
 if [ ${2:-no} = "no" ]

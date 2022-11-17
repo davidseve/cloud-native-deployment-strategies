@@ -12,7 +12,6 @@ spec:
 
   - name: NAMESPACE
     type: string
-    default: {{ .Values.namespace }}
     description: namespace
   - name: APP
     type: string
