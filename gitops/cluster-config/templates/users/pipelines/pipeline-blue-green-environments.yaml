@@ -214,6 +214,10 @@ spec:
           ENV: $(params.ENV)
           COLOUR: $(tasks.create-result-colour.results.version)
           TAG: $(params.NEW_IMAGE_TAG)
+      - name: GITHUB_TOKEN_SECRET_NAME
+        value: github-token
+      - name: GITHUB_TOKEN_SECRET_KEY
+        value: password
 
 
   - name: get-application-url-before-switch
@@ -338,6 +342,10 @@ spec:
           ENV: $(params.ENV)
           COLOUR: $(tasks.create-result-colour.results.version)
           TAG: $(params.NEW_IMAGE_TAG)
+      - name: GITHUB_TOKEN_SECRET_NAME
+        value: github-token
+      - name: GITHUB_TOKEN_SECRET_KEY
+        value: password
 
   - name: change-align-offline
     when:
@@ -460,6 +468,10 @@ spec:
           APP: $(params.APP)
           ENV: $(params.ENV)
           TAG: $(params.NEW_IMAGE_TAG)
+      - name: GITHUB_TOKEN_SECRET_NAME
+        value: github-token
+      - name: GITHUB_TOKEN_SECRET_KEY
+        value: password
 
   - name: change-rollback
     when:
@@ -558,6 +570,10 @@ spec:
           command: ROLLBACK_ONLINE
           APP: $(params.APP)
           ENV: $(params.ENV)
+      - name: GITHUB_TOKEN_SECRET_NAME
+        value: github-token
+      - name: GITHUB_TOKEN_SECRET_KEY
+        value: password
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
