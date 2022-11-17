@@ -14,6 +14,8 @@ spec:
     value: "user1-prod"
   - name: REPO_FULL_NAME
     value: davidseve/cloud-native-deployment-strategies
+  - name: ENV
+    value: prod
   workspaces:
   - name: app-source
     persistentVolumeClaim:
