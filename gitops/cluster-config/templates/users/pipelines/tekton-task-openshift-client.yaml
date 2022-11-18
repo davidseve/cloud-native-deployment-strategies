@@ -5,7 +5,7 @@ apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
   name: openshift-client
-  namespace: {{ $user }}-continuous-delivery
+  namespace: {{ $user }}-continuous-deployment
   labels:
     app.kubernetes.io/version: "0.2"
   annotations:

@@ -4,7 +4,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: {{ $user }}-gitops-edit-pipeline
-  namespace: {{ $user }}-continuous-delivery
+  namespace: {{ $user }}-continuous-deployment
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -12,13 +12,13 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: pipeline
-  namespace: {{ $user }}-continuous-delivery
+  namespace: {{ $user }}-continuous-deployment
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: {{ $user }}-gitops-admin
-  namespace: {{ $user }}-continuous-delivery
+  namespace: {{ $user }}-continuous-deployment
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -26,7 +26,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: default
-  namespace: {{ $user }}-continuous-delivery
+  namespace: {{ $user }}-continuous-deployment
 {{- $var_user := $user }}
 {{- range $namespace := $.Values.namespaces }}
 ---
@@ -42,6 +42,6 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: pipeline
-  namespace: {{ $var_user }}-continuous-delivery
+  namespace: {{ $var_user }}-continuous-deployment
 {{- end }}
 {{- end }}

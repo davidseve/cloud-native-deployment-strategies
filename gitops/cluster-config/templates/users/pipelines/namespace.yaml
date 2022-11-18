@@ -4,7 +4,7 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: {{ $user }}-continuous-delivery
+  name: {{ $user }}-continuous-deployment
   labels:
      argocd.argoproj.io/managed-by: openshift-gitops
 spec:
@@ -15,8 +15,8 @@ spec:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: {{ $user }}-namespace-continuous-delivery
-  namespace: {{ $user }}-continuous-delivery
+  name: {{ $user }}-namespace-continuous-deployment
+  namespace: {{ $user }}-continuous-deployment
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -29,8 +29,8 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: {{ $user }}-gitops-role-binding-continuous-delivery
-  namespace: {{ $user }}-continuous-delivery
+  name: {{ $user }}-gitops-role-binding-continuous-deployment
+  namespace: {{ $user }}-continuous-deployment
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
