@@ -114,7 +114,7 @@ do
     tkn pipeline start pipeline-blue-green-e2e-test --param NEW_IMAGE_TAG=v1.1.1 --param MODE=online --param LABEL=.version --param APP=products --param NAMESPACE=$namespace  --param MESH=False --param JQ_PATH=.metadata --workspace name=app-source,claimName=workspace-pvc-shop-cd-e2e-tests -n user1-continuous-deployment --showlog
 
 
-    oc create -f 3-pipelinerun-products-aling-offline.yaml -n user1-continuous-deployment
+    oc create -f 3-pipelinerun-products-align-offline.yaml -n user1-continuous-deployment
     sleep 90s
     funcPull
 

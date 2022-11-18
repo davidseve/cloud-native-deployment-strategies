@@ -441,7 +441,7 @@ spec:
           git add values/$(params.APP)/envs/$(params.ENV)/non-static-networking-values.yaml
           git add values/$(params.APP)/envs/$(params.ENV)/$NEW_COLOUR/image-tag-values.yaml
           git add values/$(params.APP)/envs/$(params.ENV)/$NEW_COLOUR/non-static-values.yaml
-          git commit -m "$(params.APP)-$NEW_COLOUR env $(params.ENV) aligne image tag $(params.NEW_IMAGE_TAG)"
+          git commit -m "$(params.APP)-$NEW_COLOUR env $(params.ENV) align image tag $(params.NEW_IMAGE_TAG)"
           git push origin align-offline-$(params.NEW_IMAGE_TAG)
     workspaces:
     - name: source

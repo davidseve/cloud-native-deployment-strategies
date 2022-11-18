@@ -1,5 +1,5 @@
 
-
+{{- with .Values.users }}
 apiVersion: argoproj.io/v1alpha1
 kind: ArgoCD
 metadata:
@@ -24,4 +24,5 @@ spec:
 {{- range $user := $.Values.users }}
       p, role:{{ $user }}, clusters, get, https://kubernetes.default.svc, allow
       g, {{ $user }}, role:{{ $user }}
+{{- end }}
 {{- end }}

@@ -21,6 +21,9 @@ oc delete project gitops
 oc delete project user1-stage
 oc delete project user1-prod
 oc delete project user1-continuous-deployment
+oc delete project user2-stage
+oc delete project user2-prod
+oc delete project user2-continuous-deployment
 
 git checkout main
 git branch -d release
