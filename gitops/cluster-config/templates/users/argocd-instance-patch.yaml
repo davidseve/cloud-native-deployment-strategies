@@ -19,11 +19,10 @@ spec:
       p, role:none, projects, get, *, deny
       p, role:none, accounts, get, *, deny
       p, role:none, gpgkeys, get, *, deny
-      g, system:cluster-admin, role:admin
-      # Adding Roles for specific group to see clusters
 {{- range $user := $.Values.users }}
       p, role:{{ $user }}, clusters, get, https://kubernetes.default.svc, allow
       g, {{ $user }}, role:{{ $user }}
 {{- end }}
+      g, system:cluster-admin, role:admin
     scopes: '[groups]'
 {{- end }}
