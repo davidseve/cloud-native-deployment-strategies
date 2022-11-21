@@ -104,8 +104,8 @@ spec:
           cat $(workspaces.source.path)/version
           cat $(workspaces.source.path)/version > tekton/results/version
       results:
-      - description: ''	
-        name: version	
+        - name: version	
+          type: string
       spec: null
       workspaces:
       - name: source
