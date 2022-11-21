@@ -3,6 +3,8 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: tekton-admin-view
+  annotations:
+    argocd.argoproj.io/sync-wave: "-10"
 rules:
 - apiGroups: ["triggers.tekton.dev"]
   resources: ["clusterinterceptors"]
