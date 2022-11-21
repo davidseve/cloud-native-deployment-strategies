@@ -10,7 +10,7 @@ oc delete -f blue-green-pipeline-environments/applicationset-shop-blue-green.yam
 oc delete -f blue-green-pipeline-environments/application-cluster-config.yaml
 
 
-oc delete subscription tekton -n openshift-operators
+oc delete subscription openshift-pipelines-operator -n openshift-operators
 oc delete clusterserviceversion openshift-pipelines-operator-rh.v1.6.4 -n openshift-operators
 
 # oc delete -f gitops/gitops-operator.yaml
