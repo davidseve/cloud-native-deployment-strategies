@@ -24,5 +24,6 @@ spec:
 {{- range $user := $.Values.users }}
       p, role:{{ $user }}, clusters, get, https://kubernetes.default.svc, allow
       g, {{ $user }}, role:{{ $user }}
+      scopes: '[groups]'
 {{- end }}
 {{- end }}

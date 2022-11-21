@@ -31,15 +31,15 @@ git checkout -b release
 git push origin release
 
 oc login  -u opentlc-mgr -p r3dh4t1! $4
-# oc apply -f gitops/gitops-operator.yaml
+oc apply -f gitops/gitops-operator.yaml
 
-# #First time we install operators take logger
-# if [ ${2:-no} = "no" ]
-# then
-#     sleep 30s
-# else
-#     sleep 1m
-# fi
+#First time we install operators take logger
+if [ ${2:-no} = "no" ]
+then
+    sleep 30s
+else
+    sleep 1m
+fi
 
 #To work with a branch that is not main. ./test.sh ghp_JGFDSFIGJSODIJGF no helm_base
 if [ ${3:-no} != "no" ]
