@@ -9,20 +9,7 @@ metadata:
         argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource
 spec:
   rbac:
-    defaultPolicy: 'role:none'
-    policy: |-
-      # Access Control
-      p, role:none, applications, get, */*, deny
-      p, role:none, certificates, get, *, deny
-      p, role:none, clusters, get, *, deny
-      p, role:none, repositories, get, *, deny
-      p, role:none, projects, get, *, deny
-      p, role:none, accounts, get, *, deny
-      p, role:none, gpgkeys, get, *, deny
-{{- range $user := $.Values.users }}
-      p, role:{{ $user }}, clusters, get, https://kubernetes.default.svc, allow
-      g, {{ $user }}, role:{{ $user }}
-{{- end }}
-      g, system:cluster-admin, role:admin
+    defaultPolicy: ''
+    policy: 'g, system:cluster-admins, role:admin'
     scopes: '[groups]'
 {{- end }}
