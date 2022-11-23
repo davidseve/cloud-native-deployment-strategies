@@ -19,6 +19,9 @@ spec:
   strategy:
     type: Recreate
   template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: argo-rollouts
     spec:
       containers:
       - image: quay.io/argoproj/argo-rollouts:v1.3.1
