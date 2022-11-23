@@ -11,8 +11,6 @@ metadata:
   name: argo-rollouts
   name: argo-rollouts
   namespace: argo-rollouts
-  annotations:
-    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
   replicas: 1
   selector:
