@@ -4,22 +4,58 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  labels:
+    app.kubernetes.io/component: rollouts-controller
+    app.kubernetes.io/name: argo-rollouts
+    app.kubernetes.io/part-of: argo-rollouts
+  name: argo-rollouts
   name: argo-rollouts
   namespace: argo-rollouts
   annotations:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
+  replicas: 1
   selector:
     matchLabels:
       app.kubernetes.io/name: argo-rollouts
+  strategy:
+    type: Recreate
   template:
     spec:
       containers:
-      - name: argo-rollouts
+      - image: quay.io/argoproj/argo-rollouts:v1.3.1
+        imagePullPolicy: Always
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /healthz
+            port: healthz
+          initialDelaySeconds: 30
+          periodSeconds: 20
+          successThreshold: 1
+          timeoutSeconds: 10
+        name: argo-rollouts
+        ports:
+        - containerPort: 8090
+          name: metrics
+        - containerPort: 8080
+          name: healthz
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /metrics
+            port: metrics
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          successThreshold: 1
+          timeoutSeconds: 4
         volumeMounts:
         - mountPath: /etc/ssl/certs/
           name: ca-certs
           readOnly: true
+      securityContext:
+        runAsNonRoot: true
+      serviceAccountName: argo-rollouts
       initContainers:
       - name: init-ca-certs
         image: registry.redhat.io/rhel8/support-tools
