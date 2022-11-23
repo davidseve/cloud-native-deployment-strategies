@@ -7,7 +7,7 @@ tags:
 global:
   namespace: test
   #needed for rollouts analysis
-  prometheusAddress: https://prometheus-user-workload.openshift-user-workload-monitoring.svc.cluster.local:9091
+  prometheusAddress: https://internal:demo@prometheus-user-workload.openshift-user-workload-monitoring.svc.cluster.local:9091
 
 
 discounts-blue:
