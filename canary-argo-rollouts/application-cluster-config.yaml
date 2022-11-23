@@ -11,10 +11,12 @@ spec:
   source:
     path: gitops/cluster-config
     repoURL: 'https://github.com/davidseve/cloud-native-deployment-strategies.git'
-    targetRevision: canary-mesh #TODO change HEAD
+    targetRevision: rollouts #TODO change HEAD
     helm:
      parameters:
       - name: "pipeline.enabled"
+        value: "false"
+      - name: "github.enabled"
         value: "false"
       - name: "argorollouts.enabled"
         value: "true"

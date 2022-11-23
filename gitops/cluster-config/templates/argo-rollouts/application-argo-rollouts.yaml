@@ -11,9 +11,7 @@ spec:
     server: 'https://kubernetes.default.svc'
   source:
     path: ''
-    repoURL: 'https://argoproj.github.io/argo-helm'
-    targetRevision: 2.18.0
-    chart: argo-rollouts
+    repoURL: 'https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml'
   project: default
   syncPolicy:
     automated:
