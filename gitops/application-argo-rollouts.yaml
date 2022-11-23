@@ -1,25 +1,17 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: cluster-configuration
+  name: argo-rollouts
   namespace: openshift-gitops
 spec:
   destination:
     name: ''
-    namespace: openshift-gitops
+    namespace: argo-rollouts
     server: 'https://kubernetes.default.svc'
   source:
-    path: gitops/cluster-config
+    path: gitops/argo-rollouts
     repoURL: 'https://github.com/davidseve/cloud-native-deployment-strategies.git'
-    targetRevision: HEAD
-    helm:
-     parameters:
-      - name: "pipeline.enabled"
-        value: "false"
-      - name: "github.enabled"
-        value: "false"
-      # - name: "argorollouts.enabled"
-      #   value: "true"
+    targetRevision: canary-mesh
   project: default
   syncPolicy:
     automated:
