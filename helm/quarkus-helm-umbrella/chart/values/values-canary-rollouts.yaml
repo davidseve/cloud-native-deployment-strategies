@@ -1,14 +1,11 @@
 tags:
   discounts-green: false
   products-green: false
-  discountsNetworkingOffline: false
-  productsNetworkingOffline: false
 
 global:
   namespace: test
   #needed for rollouts analysis
-  prometheusAddress: https://internal:demo@prometheus-user-workload.openshift-user-workload-monitoring.svc.cluster.local:9091
-
+  prometheusAddress: https://prometheus-user-workload.openshift-user-workload-monitoring.svc.cluster.local:9091
 
 discounts-blue:
   mode: online
@@ -19,40 +16,30 @@ discounts-blue:
     version: none
     rollouts:
       enabled: true
-      analysis:
-        query: sum(http_server_requests_seconds_count{method="GET",outcome="SUCCESS",status="200", service="products-umbrella-online",response_code!~"5.*", uri="/products",})
-      canary:
-        steps:
-          - setWeight: 50
-          - pause:
-              duration: 1m
+      blueGreen:
+        enabled: true
+        activeService: "discounts-umbrella-online"
+        previewService: "discounts-umbrella-offline"
   fullnameOverride: "discounts"
-    
+  
 products-blue:
   mode: online
   quarkus-base:
     image:
       tag: v1.0.1
-    version: none
-    replicaCount: 4
+    replicaCount: 2
     fullnameOverride: "products"
+    version: none
     rollouts:
       enabled: true
-      analysis:
-        query: sum(http_server_requests_seconds_count{method="GET",outcome="SUCCESS",status="200", service="products-umbrella-online",response_code!~"5.*", uri="/products",})
-      canary:
-        steps:
-          - setWeight: 10
-          - pause:
-              duration: 30s
-          - setWeight: 50
-          - pause:
-              duration: 30s
+      blueGreen:
+        enabled: true
+        activeService: "products-umbrella-online"
+        previewService: "products-umbrella-offline"
   fullnameOverride: "products"
 
-discountsNetworkingOnline:
-  nameOverride: discounts-umbrella
-  fullnameOverride: "discounts-umbrella-online"
+
+
 
 
 
