@@ -6,6 +6,8 @@ kind: Deployment
 metadata:
   name: argo-rollouts
   namespace: argo-rollouts
+  annotation:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
   template:
     spec:
