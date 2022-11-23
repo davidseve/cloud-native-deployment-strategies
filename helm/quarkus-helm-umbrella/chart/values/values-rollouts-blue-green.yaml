@@ -26,7 +26,7 @@ products-blue:
   mode: online
   quarkus-base:
     image:
-      tag: v1.1.1
+      tag: v1.0.1
     replicaCount: 2
     fullnameOverride: "products"
     version: none
