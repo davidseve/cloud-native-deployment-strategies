@@ -11,7 +11,7 @@ spec:
   source:
     path: gitops/argo-rollouts
     repoURL: 'https://github.com/davidseve/cloud-native-deployment-strategies.git'
-    targetRevision: canary-mesh
+    targetRevision: rollouts
   project: default
   syncPolicy:
     automated:
