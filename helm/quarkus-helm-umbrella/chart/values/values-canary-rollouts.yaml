@@ -16,10 +16,13 @@ discounts-blue:
     version: none
     rollouts:
       enabled: true
-      blueGreen:
-        enabled: true
-        activeService: "discounts-umbrella-online"
-        previewService: "discounts-umbrella-offline"
+      analysis:
+        query: sum(http_server_requests_seconds_count{method="GET",outcome="SUCCESS",status="200", service="products-umbrella-online",response_code!~"5.*", uri="/products",})
+      canary:
+        steps:
+          - setWeight: 50
+          - pause:
+              duration: 1m
   fullnameOverride: "discounts"
   
 products-blue:
@@ -32,10 +35,16 @@ products-blue:
     version: none
     rollouts:
       enabled: true
-      blueGreen:
-        enabled: true
-        activeService: "products-umbrella-online"
-        previewService: "products-umbrella-offline"
+      analysis:
+        query: sum(http_server_requests_seconds_count{method="GET",outcome="SUCCESS",status="200", service="products-umbrella-online",response_code!~"5.*", uri="/products",})
+      canary:
+        steps:
+          - setWeight: 10
+          - pause:
+              duration: 30s
+          - setWeight: 50
+          - pause:
+              duration: 30s
   fullnameOverride: "products"
 
 
