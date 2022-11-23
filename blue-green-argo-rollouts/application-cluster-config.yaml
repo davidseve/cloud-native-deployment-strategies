@@ -16,6 +16,8 @@ spec:
      parameters:
       - name: "pipeline.enabled"
         value: "false"
+      - name: "github.enabled"
+        value: "false"
       - name: "argorollouts.enabled"
         value: "true"
   project: default

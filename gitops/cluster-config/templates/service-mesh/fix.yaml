@@ -1,4 +1,5 @@
 # create role that can be used to grant users permission to create smcp and smmr resources
+{{- if .Values.istio.enabled }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -422,3 +423,4 @@ spec:
         configMap:
           name: smcp-templates
           optional: true
+{{ end }}
