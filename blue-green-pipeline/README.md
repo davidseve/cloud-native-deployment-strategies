@@ -2,20 +2,21 @@
  
 ## Introduction
  
-One important topic in the `Cloud Native` is the `Microservice Architecture`. We are not any more dealing with one monolithic application. We have several applications that have dependencies on each other and also have other dependencies like brokers or databases.
+One important topic in `Cloud Native` is `Microservice Architecture`. We are not any more dealing with one monolithic application. We have several applications that have dependencies on each other and also have other dependencies like brokers or databases.
  
 Applications have their own life cycle, so we should be able to execute independent Blue/Green deployment. All the applications and dependencies will not change their version at the same time.
  
-Another important topic in the `Cloud Native` is `Continuous Delivery`. If we are going to have several applications doing Blue/Green deployment independently we have to automate it. We will use **Helm**, **Openshift Pipelines**, **Openshift GitOps**, and of course **Red Hat Openshift** to help us.
+Another important topic in `Cloud Native` is `Continuous Delivery`. If we are going to have several applications doing Blue/Green deployment independently we have to automate it. We will use **Helm**, **Openshift Pipelines**, **Openshift GitOps**, and of course **Red Hat Openshift** to help us.
  
-**In the next steps we will see a real example of how to install, deploy and manage the life cycle of Cloud Native applications doing Blue/Green deployment.**
+**In the next steps, we will see a real example of how to install, deploy and manage the life cycle of Cloud Native applications doing Blue/Green deployment.**
  
-Let's start with some theory...after it, we will have the **hands-on example**.
+Let's start with some theory...after it, we will have a **hands-on example**.
  
 ## Blue/Green Deployment
  
 Blue green deployment is an application release model that transfers user traffic from a previous version of an app or microservice to a nearly identical new release, both of which are running in production.
-The old version can be called the blue environment while the new version can be known as the green environment. Once production traffic is transferred from blue to green, blue can standby in case of rollback or pulled from production and updated to become the template upon which the next update is made.
+
+For instance, the old version can be called the blue environment while the new version can be known as the green environment. Once production traffic is transferred from blue to green, blue can standby in case of rollback or pulled from production and updated to become the template upon which the next update is made.
  
 Advantages:
 
@@ -32,14 +33,14 @@ Disadvantages:
 ![Blue/Green](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/blue-green.png)
  
 We have two versions up and running in production, online and offline. The routers and services never change, they are always online or offline.
-Because we have an offline version, we can do **smoke test** before switching it to online.
-When a new version is ready to be used by the users we only change the deployment that the online service is using.
+Because we have an offline version, we can do **smoke test** before switching to online.
+When a new version is ready to be used by the final users, we only change the deployment that the online service is using.
  
 ![Blue/Green Switch](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/blue-green-switch.png)
  
-There is **minimum downtime** and we can do a **rapid rollback** just undoing the changes in the services.
+There is **minimal downtime** and we can do a **rapid rollback** just by undoing the changes in the services.
  
-However, meanwhile we are going to do the switch, we have to be ready to do a rapid rollback. We need the **doubling or total resources** (we will see how to minimize this).
+Meanwhile, we are validating the new version with real users, we have to be ready to do a rapid rollback. We need the **doubling or total resources** (we will see how to minimize this).
 It is also very important to keep **backward compatibility**. Without it, we can not do independent Blue/Green deployments.
 ## Shop application
  
@@ -353,7 +354,7 @@ We will use the already created pipelinerun.
 
 Those are the main tasks that are executed:
 
-- Change new tag image values in the right color and commit the changes.
+- Set new tag image values in the right color and commit the changes.
 - Execute E2E test to validate the new version.
 - Change the application configuration values to use the online services and commit the changes.
 - Scale Up the offline color and commit the changes.
@@ -401,7 +402,7 @@ See that offline applications have version v1.1.1 and the new attribute descript
   "metadata":{
      "version":"v1.1.1", <--
      "colour":"green",
-     "mode":"offline" <--
+     "mode":"online" <--
   }
 }
 ```
@@ -416,7 +417,7 @@ oc create -f 2-pipelinerun-products-switch.yaml -n gitops
 
 ![Pipeline step 2](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/pipeline-step-3.png)
 After the pipeline is finished and ArgoCD has synchronized the changes this will be the `Shop` status:
-![Shop step 2](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/blue-green-step-3.png)
+![Shop step 2](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/blue-green-step-2.png)
 **We have in the online environment the new version v1.1.1!!!**
 ```json
 {
@@ -445,7 +446,7 @@ oc create -f 2-pipelinerun-products-switch-rollback.yaml -n gitops
 
 ![Pipeline step 2,5 Rollback](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/pipeline-step-3-rollback.png)
 After the pipeline is finished and ArgoCD has synchronized the changes this will be the `Shop` status:
-![Shop step 2,5 Rollback](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/blue-green-step-3-5.png)
+![Shop step 2,5 Rollback](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/blue-green-step-2-5.png)
 We have version v1.0.1 online again.
 ```json
 {
@@ -468,7 +469,7 @@ After fixing the issue we can execute the Switch step again.
 ```
 oc create -f 2-pipelinerun-products-switch.yaml -n gitops
 ```
-![Shop step 2](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/blue-green-step-3.png)
+![Shop step 2](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/blue-green-step-2.png)
 We have in the online environment the new version v1.1.1 again.
 ```json
 {
@@ -496,7 +497,7 @@ oc create -f 3-pipelinerun-products-scale-down.yaml -n gitops
 
 ![Pipeline step 3](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/pipeline-step-4.png)
 After the pipeline is finished and ArgoCD has synchronized the changes this will be the `Shop` status:
-![Shop step 3](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/blue-green-step-4.png)
+![Shop step 3](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/blue-green-step-3.png)
 We can see that the offline `Products` is calling offline `Discounts` and has the new version v1.1.1
 ```json
 {

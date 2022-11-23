@@ -8,10 +8,6 @@ metadata:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
   params:
-  - name: HELM_RELEASE_NAME
-    type: string
-    default: shop-blue-green
-    description: The application deployment name
   - name: SOURCE_GIT_URL
     type: string
     default: https://github.com/{{ .Values.github.repository }}/cloud-native-deployment-strategies
@@ -24,17 +20,10 @@ spec:
     type: string
     default: "helm/quarkus-helm-umbrella/chart"
     description: The subdirectory in the git repository
-  - name: HELM_RELEASE_VERSION
-    type: string
-    default: v1.0.0
-    description: Helm release version
   - name: NAMESPACE
     type: string
     default: {{ .Values.namespace }}
     description: namespace
-  - name: OVERWRITE_VALUES
-    type: string
-    default: ""
   - name: VALUES_FILE
     type: string
     default: {{ .Values.bluegreen.valuesyaml }} 

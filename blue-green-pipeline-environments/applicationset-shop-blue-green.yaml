@@ -1,31 +1,44 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: shop
+  name: user1-shop
+  namespace: openshift-gitops
 spec:
   generators:
-  - list:
-      elements:
-      - namespace: gitops-pre
-      - namespace: gitops-prod
+  - git:
+      repoURL: https://github.com/davidseve/cloud-native-deployment-strategies.git
+      revision: release
+      directories:
+      - path: helm/quarkus-helm-umbrella/chart/values/products/envs/*
   template:
     metadata:
-      name:  '{{namespace}}-shop'
+      name:  '{{path.basenameNormalized}}-shop-user1'
       namespace: openshift-gitops
     spec:
       destination:
         name: ''
-        namespace: '{{namespace}}'
+        namespace: 'user1-{{path.basenameNormalized}}'
         server: 'https://kubernetes.default.svc'
       source:
         path: helm/quarkus-helm-umbrella/chart
-        repoURL:  https://github.com/change_me/cloud-native-deployment-strategies.git
-        targetRevision: blue-green
+        repoURL:  https://github.com/davidseve/cloud-native-deployment-strategies.git
+        targetRevision: release
         helm:
           valueFiles:
-            - values/envs/values-{{namespace}}.yaml
-      project: default
+            - values/products/static-products-values.yaml
+            - values/products/envs/{{path.basename}}/non-static-networking-values.yaml
+            - values/products/envs/{{path.basename}}/blue/image-tag-values.yaml
+            - values/products/envs/{{path.basename}}/blue/non-static-values.yaml
+            - values/products/envs/{{path.basename}}/green/image-tag-values.yaml
+            - values/products/envs/{{path.basename}}/green/non-static-values.yaml
+            - values/discounts/static-discounts-values.yaml
+            - values/discounts/envs/{{path.basename}}/non-static-networking-values.yaml
+            - values/discounts/envs/{{path.basename}}/blue/image-tag-values.yaml
+            - values/discounts/envs/{{path.basename}}/blue/non-static-values.yaml
+            - values/discounts/envs/{{path.basename}}/green/image-tag-values.yaml
+            - values/discounts/envs/{{path.basename}}/green/non-static-values.yaml
+      project: 'user1'
       syncPolicy:
         automated:
           prune: false
-          selfHeal: false
+          selfHeal: true

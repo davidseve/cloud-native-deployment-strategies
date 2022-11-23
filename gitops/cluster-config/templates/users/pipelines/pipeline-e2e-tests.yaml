@@ -1,0 +1,88 @@
+{{- if .Values.pipeline.enabled }}
+{{- range $user := $.Values.users }}
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: pipeline-blue-green-e2e-test
+  namespace: {{ $user }}-continuous-deployment
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  params:
+
+  - name: NAMESPACE
+    type: string
+    description: namespace
+  - name: APP
+    type: string
+    description: discounts or products
+  - name: NEW_IMAGE_TAG
+    type: string
+    default: None
+  - name: JQ_PATH
+    type: string
+    default: .metadata
+  - name: LABEL
+    type: string
+    default: .version   
+  - name: MODE
+    type: string
+    default: offline
+  - name: MESH
+    type: string
+    default: "false" 
+  workspaces:
+  - name: app-source
+
+  tasks:
+
+  - name: get-application-url-new-image-tag
+    taskRef:
+      kind: Task
+      name: openshift-client
+    params:
+    - name: SCRIPT
+      value: |
+        if [ $MESH = "true" ]; then
+          host=$(oc get routes istio-ingressgateway -n istio-system -o=jsonpath='{.spec.host}')
+        else
+          host=$(oc get routes $(params.APP)-umbrella-$(params.MODE) -n $(params.NAMESPACE) -o=jsonpath='{.spec.host}')
+        fi
+        url=https://${host}/$(params.APP)
+        echo $url > $(workspaces.manifest-dir.path)/url
+        cat $(workspaces.manifest-dir.path)/url
+    workspaces:
+    - name: manifest-dir
+      workspace: app-source
+  - name: e2e-test-new-image-tag
+    runAfter:
+    - get-application-url-new-image-tag
+    params:
+      - name: TARGET_VERSION
+        value: $(params.NEW_IMAGE_TAG)
+      - name: JQ_PATH
+        value: $(params.JQ_PATH)
+      - name: LABEL
+        value: $(params.LABEL)
+    taskRef:
+      kind: Task
+      name: shop-e2e-test
+    timeout: "8m30s"
+    workspaces:
+    - name: source
+      workspace: app-source
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  namespace: {{ $user }}-continuous-deployment
+  name: workspace-pvc-shop-cd-e2e-tests
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+---
+{{ end }}
+{{ end }}

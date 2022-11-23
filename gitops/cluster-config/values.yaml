@@ -12,6 +12,7 @@ bluegreen:
 argorollouts:
   enabled: false
 github:
+  enabled: true
   token: changeme
   user: changeme
   mail: changeme

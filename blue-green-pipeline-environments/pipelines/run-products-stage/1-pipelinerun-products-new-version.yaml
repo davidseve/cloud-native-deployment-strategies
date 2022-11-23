@@ -1,0 +1,24 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  generateName: shop-products-new-version-
+spec:
+  pipelineRef:
+    name: pipeline-blue-green-environments    
+  params:
+  - name: APP
+    value: products
+  - name: NEW_IMAGE_TAG
+    value: "v1.1.1"
+  - name: STEP
+    value: "new-version"
+  - name: REPLICA_COUNT
+    value: "2"   
+  - name: NAMESPACE
+    value: "user1-stage"
+  - name: REPO_FULL_NAME
+    value: davidseve/cloud-native-deployment-strategies
+  workspaces:
+  - name: app-source
+    persistentVolumeClaim:
+      claimName: workspace-pvc-shop-cd-new-version

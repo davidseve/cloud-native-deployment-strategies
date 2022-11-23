@@ -4,12 +4,18 @@ metadata:
   generateName: shop-products-rollback-
 spec:
   pipelineRef:
-    name: pipeline-blue-green    
+    name: pipeline-blue-green-environments      
   params:
   - name: APP
     value: products
   - name: STEP
     value: "switch-rollback"
+  - name: NAMESPACE
+    value: "user1-prod"
+  - name: REPO_FULL_NAME
+    value: davidseve/cloud-native-deployment-strategies
+  - name: ENV
+    value: prod
   workspaces:
   - name: app-source
     persistentVolumeClaim:
