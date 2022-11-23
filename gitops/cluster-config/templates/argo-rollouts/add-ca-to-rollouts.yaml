@@ -9,6 +9,9 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: argo-rollouts
   template:
     spec:
       containers:
