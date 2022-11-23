@@ -13,7 +13,7 @@ global:
 discounts-blue:
   mode: online
   quarkus-base:
-
+    fullnameOverride: "discounts"
     image:
       tag: v1.0.1
     version: none
@@ -26,7 +26,7 @@ discounts-blue:
           - setWeight: 50
           - pause:
               duration: 1m
-
+  fullnameOverride: "discounts"
     
 products-blue:
   mode: online
@@ -35,7 +35,7 @@ products-blue:
       tag: v1.0.1
     version: none
     replicaCount: 4
-
+    fullnameOverride: "products"
     rollouts:
       enabled: true
       analysis:
@@ -48,9 +48,11 @@ products-blue:
           - setWeight: 50
           - pause:
               duration: 30s
+  fullnameOverride: "products"
 
-
-
+discountsNetworkingOnline:
+  nameOverride: discounts-umbrella
+  fullnameOverride: "discounts-umbrella-online"
 
 
 
