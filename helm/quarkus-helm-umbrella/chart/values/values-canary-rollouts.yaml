@@ -19,7 +19,6 @@ discounts-blue:
     version: none
     rollouts:
       enabled: true
-      analysisService: discounts-umbrella-online
       analysis:
         query: sum(http_server_requests_seconds_count{method="GET",outcome="SUCCESS",status="200", service="products-umbrella-online",response_code!~"5.*", uri="/products",})
       canary:
@@ -39,7 +38,6 @@ products-blue:
     fullnameOverride: "products"
     rollouts:
       enabled: true
-      analysisService: products-umbrella-online
       analysis:
         query: sum(http_server_requests_seconds_count{method="GET",outcome="SUCCESS",status="200", service="products-umbrella-online",response_code!~"5.*", uri="/products",})
       canary:

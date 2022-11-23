@@ -8,7 +8,16 @@ metadata:
     {{- include "quarkus.labels" . | nindent 4 }}
 spec:
   metrics:
+{{- if .Values.rollouts.blueGreen.enabled }}
   - name: {{ include "quarkus.fullname" . }}-webmetric
+    successCondition: result == 'UP'
+    provider:
+      web:
+        url: "http://{{ .Values.rollouts.blueGreen.previewService }}.{{ .Values.global.namespace }}.svc.cluster.local:8080/q/health/ready"
+        jsonPath: "{$.status}"
+{{- end }}
+{{- with .Values.rollouts.canary }}
+  - name: {{ include "quarkus.fullname" . }}-prometheus-metric
     interval: 10s
     successCondition: len(result) == 0 || result[0] >= 0.95
     failureLimit: 2
@@ -17,4 +26,5 @@ spec:
         address: {{ .Values.global.prometheusAddress }}
         query: |
           {{ .Values.rollouts.analysis.query | indent 10 }}
+{{- end }}
 {{- end }}

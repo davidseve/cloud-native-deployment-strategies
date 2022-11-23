@@ -16,9 +16,6 @@ discounts-blue:
     version: none
     rollouts:
       enabled: true
-      analysisService: discounts-umbrella-offline
-      analysis:
-        query: sum(http_server_requests_seconds_count{method="GET",outcome="SUCCESS",status="200", service="discounts-umbrella-online",response_code!~"5.*", uri="/discounts",})
       blueGreen:
         enabled: true
         activeService: "discounts-umbrella-online"
@@ -35,9 +32,6 @@ products-blue:
     version: none
     rollouts:
       enabled: true
-      analysisService: products-umbrella-offline
-      analysis:
-        query: sum(http_server_requests_seconds_count{method="GET",outcome="SUCCESS",status="200", service="products-umbrella-online",response_code!~"5.*", uri="/products",})
       blueGreen:
         enabled: true
         activeService: "products-umbrella-online"

@@ -17,7 +17,7 @@ spec:
       - name: "global.namespace"
         value: gitops
       valueFiles:
-        - values/values-rollouts.yaml
+        - values/values-rollouts-blue-green.yaml
   project: default
   syncPolicy:
     automated:
