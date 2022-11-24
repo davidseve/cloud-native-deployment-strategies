@@ -7,7 +7,6 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
-  version: v2.2
   profiles:
     - default
   tracing:
