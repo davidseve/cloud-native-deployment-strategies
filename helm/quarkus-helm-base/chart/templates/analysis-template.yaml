@@ -17,13 +17,13 @@ spec:
         jsonPath: "{$.status}"
 {{- end }}
 {{- with .Values.rollouts.canary }}
-  - name: {{ include "quarkus.fullname" . }}-prometheus-metric
+  - name: {{ include "quarkus.fullname" $ }}-prometheus-metric
     interval: 10s
     successCondition: len(result) == 0 || result[0] >= 0.95
     failureLimit: 2
     provider:
       prometheus:
-        address: {{ .Values.global.prometheusAddress }}
+        address: {{ $.Values.global.prometheusAddress }}
         query: |
           {{ .Values.rollouts.analysis.query | indent 10 }}
 {{- end }}
