@@ -40,4 +40,6 @@ spec:
           type: Memory
     kiali:
       enabled: true
+    prometheus:
+      enabled: true
 {{ end }}
