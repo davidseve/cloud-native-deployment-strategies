@@ -7,30 +7,13 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
-  gateways:
-    egress:
-      enabled: true
-      runtime:
-        deployment:
-          autoScaling:
-            enabled: false
-    ingress:
-      enabled: true
-      runtime:
-        deployment:
-          autoScaling:
-            enabled: false
-
   tracing:
     sampling: 10000
     type: Jaeger
-
   telemetry:
     type: Istiod
-
   policy:
     type: Istiod
-
   addons:
     grafana:
       enabled: true
@@ -42,4 +25,5 @@ spec:
       enabled: true
     prometheus:
       enabled: true
+  version: v2.3
 {{ end }}
