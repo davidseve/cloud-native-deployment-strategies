@@ -37,7 +37,5 @@ spec:
           type: Memory
     kiali:
       enabled: true
-    prometheus:
-      enabled: true
-  version: v2.1
+
 {{ end }}
