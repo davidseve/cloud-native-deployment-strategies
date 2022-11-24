@@ -15,7 +15,7 @@ discounts-blue:
   quarkus-base:
     fullnameOverride: "discounts"
     image:
-      tag: v1.1.1
+      tag: v1.0.1
     version: none
     rollouts:
       enabled: true
