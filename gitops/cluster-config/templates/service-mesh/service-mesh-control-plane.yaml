@@ -39,5 +39,5 @@ spec:
       enabled: true
     prometheus:
       enabled: true
-  version: v2.3
+  version: v2.1
 {{ end }}
