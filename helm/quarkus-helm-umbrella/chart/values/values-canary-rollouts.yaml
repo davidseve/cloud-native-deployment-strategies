@@ -7,7 +7,7 @@ tags:
 global:
   namespace: test
   #needed for rollouts analysis
-  prometheusAddress: https://thanos-ruler.openshift-user-workload-monitoring.svc.cluster.local:9091
+  prometheusAddress: https://thanos-ruler.openshift-user-workload-monitoring.svc.cluster.local:9091 #Does not work
 
 
 discounts-blue:
