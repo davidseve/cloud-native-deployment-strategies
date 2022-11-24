@@ -7,7 +7,7 @@ tags:
 global:
   namespace: test
   #needed for rollouts analysis
-  prometheusAddress: https://internal:demo@prometheus-user-workload.openshift-user-workload-monitoring.svc.cluster.local:9091
+  prometheusAddress: https://thanos-ruler.openshift-user-workload-monitoring.svc.cluster.local:9091
 
 
 discounts-blue:
@@ -15,7 +15,7 @@ discounts-blue:
   quarkus-base:
     fullnameOverride: "discounts"
     image:
-      tag: v1.0.1
+      tag: v1.1.1
     version: none
     rollouts:
       enabled: true
