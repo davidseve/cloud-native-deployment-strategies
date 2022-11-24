@@ -25,6 +25,6 @@ spec:
       prometheus:
         address: {{ $.Values.global.prometheusAddress }}
         query: |
-          {{ .Values.rollouts.analysis.query | indent 10 }}
+          {{ $.Values.rollouts.analysis.query | indent 10 }}
 {{- end }}
 {{- end }}
