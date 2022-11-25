@@ -20,8 +20,8 @@ spec:
         value: "false"
       # - name: "argorollouts.enabled"
       #   value: "true"
-      - name: "istio.enabled"
-        value: "true"
+      # - name: "istio.enabled"
+      #   value: "true"
   project: default
   syncPolicy:
     automated:

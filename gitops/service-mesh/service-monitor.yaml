@@ -1,4 +1,3 @@
-{{- if .Values.istio.enabled }}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
@@ -30,4 +29,3 @@ spec:
       regex: 'workload:(.*)'
       targetLabel: "__name__"
       action: replace
-{{ end }}
