@@ -10,7 +10,7 @@ productsNetworkingOnline:
   router:
     enabled: false
 
-global:  
+global:
   istio:
     enabled: true
     rollouts:
