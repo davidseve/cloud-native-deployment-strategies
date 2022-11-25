@@ -11,8 +11,6 @@ productsNetworkingOnline:
     enabled: false
 
 global:  
-  namespace: test
-  #needed for rollouts analysis
   istio:
     enabled: true
     rollouts:
