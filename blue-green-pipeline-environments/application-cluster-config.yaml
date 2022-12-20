@@ -17,7 +17,7 @@ spec:
         - name: "users[0]"
           value: user1
         - name: "users[1]"
-          value: user2
+          value: user2                                                                                                                                        
         - name: "namespaces[0]"
           value: stage
         - name: "namespaces[1]"

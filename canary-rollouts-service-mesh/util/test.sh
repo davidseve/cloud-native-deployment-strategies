@@ -23,6 +23,8 @@ else
     sleep 1m
 fi
 
+oc apply -k gitops/argo-rollouts/
+
 sed -i '/pipeline.enabled/{n;s/.*/        value: "true"/}' canary-rollouts-service-mesh/application-cluster-config.yaml
 #To work with a branch that is not main. ./test.sh ghp_JGFDSFIGJSODIJGF no helm_base
 if [ ${2:-no} != "no" ]

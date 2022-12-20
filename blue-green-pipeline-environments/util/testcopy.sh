@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-user=user1
+user=user11
 token=$1
 funcPull()
 {
@@ -30,33 +30,13 @@ fi
 git checkout -b release
 git push origin release
 
-oc login  -u opentlc-mgr -p r3dh4t1! $4
-oc apply -f gitops/gitops-operator.yaml
-
-#First time we install operators take logger
-if [ ${2:-no} = "no" ]
-then
-    sleep 30s
-else
-    sleep 1m
-fi
-
-#To work with a branch that is not main. ./test.sh ghp_JGFDSFIGJSODIJGF no helm_base
-if [ ${3:-no} != "no" ]
-then
-    sed -i "s/HEAD/$3/g" blue-green-pipeline-environments/application-cluster-config.yaml
-fi
 
 
-oc apply -f blue-green-pipeline-environments/application-cluster-config.yaml --wait=true
 
-#First time we install operators take logger
-if [ ${2:-no} = "no" ]
-then
-    sleep 1m
-else
-    sleep 2m
-fi
+
+
+
+
 
 sed -i 's/change_me/davidseve/g' blue-green-pipeline-environments/applicationset-shop-blue-green.yaml
 sed -i "s/user1/$user/g" blue-green-pipeline-environments/applicationset-shop-blue-green.yaml
