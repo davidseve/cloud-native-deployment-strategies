@@ -1,0 +1,44 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: user10-shop
+  namespace: openshift-gitops
+spec:
+  generators:
+  - git:
+      repoURL: https://github.com/preiddy/cloud-native-deployment-strategies.git
+      revision: release
+      directories:
+      - path: helm/quarkus-helm-umbrella/chart/values/products/envs/*
+  template:
+    metadata:
+      name:  '{{path.basenameNormalized}}-shop-user10'
+      namespace: openshift-gitops
+    spec:
+      destination:
+        name: ''
+        namespace: 'user10-{{path.basenameNormalized}}'
+        server: 'https://kubernetes.default.svc'
+      source:
+        path: helm/quarkus-helm-umbrella/chart
+        repoURL:  https://github.com/preiddy/cloud-native-deployment-strategies.git
+        targetRevision: release
+        helm:
+          valueFiles:
+            - values/products/static-products-values.yaml
+            - values/products/envs/{{path.basename}}/non-static-networking-values.yaml
+            - values/products/envs/{{path.basename}}/blue/image-tag-values.yaml
+            - values/products/envs/{{path.basename}}/blue/non-static-values.yaml
+            - values/products/envs/{{path.basename}}/green/image-tag-values.yaml
+            - values/products/envs/{{path.basename}}/green/non-static-values.yaml
+            - values/discounts/static-discounts-values.yaml
+            - values/discounts/envs/{{path.basename}}/non-static-networking-values.yaml
+            - values/discounts/envs/{{path.basename}}/blue/image-tag-values.yaml
+            - values/discounts/envs/{{path.basename}}/blue/non-static-values.yaml
+            - values/discounts/envs/{{path.basename}}/green/image-tag-values.yaml
+            - values/discounts/envs/{{path.basename}}/green/non-static-values.yaml
+      project: 'user10'
+      syncPolicy:
+        automated:
+          prune: false
+          selfHeal: true
