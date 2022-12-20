@@ -34,6 +34,9 @@ spec:
   - name: NEW_IMAGE_TAG
     type: string
     default: None
+  - name: COLOUR
+    type: string
+    default: None
   - name: REPLICA_COUNT
     type: string
     default: None
@@ -47,13 +50,13 @@ spec:
     default: {{ .Values.github.mail }}
   - name: JQ_PATH
     type: string
-    default: .metadata  
+    default: .metadata
   - name: LABEL
     type: string
     default: .version
   - name: ENV
     type: string
-    default: stage 
+    default: stage
 
   workspaces:
   - name: app-source
@@ -104,8 +107,8 @@ spec:
           cat $(workspaces.source.path)/version
           cat $(workspaces.source.path)/version > tekton/results/version
       results:
-      - description: ''	
-        name: version	
+      - description: ''
+        name: version
       spec: null
       workspaces:
       - name: source
@@ -126,7 +129,7 @@ spec:
       - name: APP
         value: $(params.APP)
       - name: NEW_IMAGE_TAG
-        value: $(params.NEW_IMAGE_TAG) 
+        value: $(params.NEW_IMAGE_TAG)
       - name: COLOUR
         value: $(tasks.create-result-colour.results.version)
       - name: REPLICA_COUNT
@@ -264,9 +267,9 @@ spec:
       - name: APP
         value: $(params.APP)
       - name: COLOUR
-        value: $(tasks.create-result-colour.results.version) 
+        value: $(tasks.create-result-colour.results.version)
       - name: ENV
-        value: $(params.ENV)         
+        value: $(params.ENV)
     taskSpec:
       metadata: {}
       params:
@@ -287,7 +290,7 @@ spec:
           cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
           sed -i '/$(params.APP)NetworkingOnline/{n;s/.*/  version: $(params.COLOUR)/}' values/$(params.APP)/envs/$(params.ENV)/non-static-networking-values.yaml
           echo
-          echo values/$(params.APP)/envs/$(params.ENV)/non-static-networking-values.yaml 
+          echo values/$(params.APP)/envs/$(params.ENV)/non-static-networking-values.yaml
           cat values/$(params.APP)/envs/$(params.ENV)/non-static-networking-values.yaml
       workspaces:
       - name: source
@@ -353,11 +356,11 @@ spec:
       - name: APP
         value: $(params.APP)
       - name: NEW_IMAGE_TAG
-        value: $(params.NEW_IMAGE_TAG) 
+        value: $(params.NEW_IMAGE_TAG)
       - name: COLOUR
-        value: $(tasks.create-result-colour.results.version) 
+        value: $(tasks.create-result-colour.results.version)
       - name: ENV
-        value: $(params.ENV)            
+        value: $(params.ENV)
     taskSpec:
       metadata: {}
       params:
@@ -368,7 +371,7 @@ spec:
       - name: NEW_IMAGE_TAG
         type: string
       - name: COLOUR
-        type: string 
+        type: string
       - name: ENV
         type: string
       steps:
@@ -420,8 +423,8 @@ spec:
       - name: GIT_USER_EMAIL
         value: $(params.GIT_USER_EMAIL)
       - name: GIT_SCRIPT
-        value: |          
-          COLOUR=$(tasks.create-result-colour.results.version) 
+        value: |
+          COLOUR=$(tasks.create-result-colour.results.version)
           if [ $COLOUR = "blue" ]
           then
             NEW_COLOUR="green"
@@ -475,9 +478,9 @@ spec:
       - name: APP
         value: $(params.APP)
       - name: COLOUR
-        value: $(tasks.create-result-colour.results.version) 
+        value: $(tasks.create-result-colour.results.version)
       - name: ENV
-        value: $(params.ENV)         
+        value: $(params.ENV)
     taskSpec:
       metadata: {}
       params:
@@ -486,7 +489,7 @@ spec:
       - name: APP
         type: string
       - name: COLOUR
-        type: string 
+        type: string
       - name: ENV
         type: string
       steps:
@@ -507,9 +510,9 @@ spec:
           echo $NEW_COLOUR
 
           sed -i "/$(params.APP)NetworkingOnline/{n;s/.*/  version: $NEW_COLOUR/}" values/$(params.APP)/envs/$(params.ENV)/non-static-networking-values.yaml
-          
+
           echo
-          echo values/$(params.APP)/envs/$(params.ENV)/non-static-networking-values.yaml 
+          echo values/$(params.APP)/envs/$(params.ENV)/non-static-networking-values.yaml
           cat values/$(params.APP)/envs/$(params.ENV)/non-static-networking-values.yaml
       workspaces:
       - name: source
@@ -532,7 +535,7 @@ spec:
         value: |
           cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
           git checkout -b rollback-online
-          git add values/$(params.APP)/envs/$(params.ENV)/non-static-networking-values.yaml 
+          git add values/$(params.APP)/envs/$(params.ENV)/non-static-networking-values.yaml
           git commit -m "Rollback Online $(params.APP) for environment $(params.ENV)"
           git push origin rollback-online
     workspaces:
@@ -559,5 +562,98 @@ spec:
           command: ROLLBACK_ONLINE
           APP: $(params.APP)
           ENV: $(params.ENV)
-          
+
+
+  - name: change-replicas
+    when:
+      - input: "$(params.STEP)"
+        operator: in
+        values: ["change-replicas"]
+    runAfter:
+    - git-clone
+    params:
+      - name: CONTEXT_DIR
+        value: $(params.CONTEXT_DIR)
+      - name: APP
+        value: $(params.APP)
+      - name: COLOUR
+        value: $(params.COLOUR)
+      - name: ENV
+        value: $(params.ENV)
+      - name: REPLICA_COUNT
+        value: $(params.REPLICA_COUNT)
+    taskSpec:
+      metadata: {}
+      params:
+      - name: CONTEXT_DIR
+        type: string
+      - name: APP
+        type: string
+      - name: COLOUR
+        type: string
+      - name: ENV
+        type: string
+      - name: REPLICA_COUNT
+        type: string
+      steps:
+      - name: change-replicas
+        image: registry.access.redhat.com/ubi8/ubi-minimal:8.3
+        resources: {}
+        script: |
+          #!/usr/bin/env bash
+          cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
+          sed -i '/$(params.APP)-$(params.COLOUR)/{n;n;s/.*/    replicaCount: $(params.REPLICA_COUNT)/}' values/$(params.APP)/envs/$(params.ENV)/$(params.COLOUR)/non-static-values.yaml
+          echo
+          echo values/$(params.APP)/envs/$(params.ENV)/$(params.COLOUR)/non-static-values.yaml
+          cat values/$(params.APP)/envs/$(params.ENV)/$(params.COLOUR)/non-static-values.yaml
+      workspaces:
+      - name: source
+    workspaces:
+    - name: source
+      workspace: app-source
+
+  - name: commit-change-replicas
+    runAfter:
+    - change-replicas
+    taskRef:
+      kind: Task
+      name: git-cli
+    params:
+      - name: GIT_USER_NAME
+        value: $(params.GIT_USER_NAME)
+      - name: GIT_USER_EMAIL
+        value: $(params.GIT_USER_EMAIL)
+      - name: GIT_SCRIPT
+        value: |
+          cd $(workspaces.source.path)/$(params.CONTEXT_DIR)
+          git checkout -b update-replicas-$(params.REPLICA_COUNT)
+          git add values/$(params.APP)/envs/$(params.ENV)/$(params.COLOUR)/non-static-values.yaml
+          git commit -m "$(params.APP) replicas number updated to $(params.REPLICA_COUNT)"
+          git push origin update-replicas-$(params.REPLICA_COUNT)
+    workspaces:
+    - name: source
+      workspace: app-source
+
+  - name: pr-change-replicas
+    runAfter:
+      - commit-change-replicas
+    taskRef:
+      kind: Task
+      name: github-open-pr
+    params:
+      - name: REPO_FULL_NAME
+        value: $(params.REPO_FULL_NAME)
+      - name: HEAD
+        value: update-replicas-$(params.REPLICA_COUNT)
+      - name: BASE
+        value: $(params.SOURCE_GIT_REVISION)
+      - name: TITLE
+        value: "Updating '$(params.APP)' replicas for environment '$(params.ENV)' colour '$(params.COLOUR)' to '$(params.REPLICA_COUNT)'"
+      - name: BODY
+        value: |
+          command: CHANGE_REPLICAS
+          APP: $(params.APP)
+          ENV: $(params.ENV)
+          COLOUR: $(params.COLOUR)
+
 {{ end }}
