@@ -5,7 +5,7 @@ metadata:
   name: tekton
   namespace: openshift-operators
 spec:
-  channel: pipelines-1.7
+  channel: pipelines-1.8
   installPlanApproval: Automatic
   name: openshift-pipelines-operator-rh
   source: redhat-operators
