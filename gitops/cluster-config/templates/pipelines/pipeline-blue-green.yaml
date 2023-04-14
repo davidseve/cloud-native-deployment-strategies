@@ -100,8 +100,8 @@ spec:
           cat $(workspaces.source.path)/version
           cat $(workspaces.source.path)/version > tekton/results/version
       results:
-      - description: ''	
-        name: version	
+        - name: version	
+          type: string	
       spec: null
       workspaces:
       - name: source
@@ -144,6 +144,7 @@ spec:
         type: string
       - name: REPLICA_COUNT
         type: string
+      spec: null
       steps:
       - name: change-new-image-tag
         image: registry.access.redhat.com/ubi8/ubi-minimal:8.3
@@ -235,6 +236,7 @@ spec:
         type: string
       - name: VALUES_FILE
         type: string   
+      spec: null
       steps:
       - name: change-configuration
         resources: {}
@@ -321,6 +323,7 @@ spec:
         type: string
       - name: VALUES_FILE
         type: string
+      spec: null
       steps:
       - name: change-scale-up
         image: registry.access.redhat.com/ubi8/ubi-minimal:8.3
@@ -384,6 +387,7 @@ spec:
         type: string
       - name: VALUES_FILE
         type: string
+      spec: null
       steps:
       - name: change-switch
         image: registry.access.redhat.com/ubi8/ubi-minimal:8.3
@@ -450,6 +454,7 @@ spec:
         type: string 
       - name: VALUES_FILE
         type: string
+      spec: null
       steps:
       - name: scale-down-offline
         image: registry.access.redhat.com/ubi8/ubi-minimal:8.3
@@ -527,6 +532,7 @@ spec:
         type: string 
       - name: VALUES_FILE
         type: string
+      spec: null
       steps:
       - name: change-switch
         image: registry.access.redhat.com/ubi8/ubi-minimal:8.3
