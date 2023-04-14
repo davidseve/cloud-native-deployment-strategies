@@ -2,11 +2,23 @@
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
 metadata:
-  name: openshift-pipelines-operator
+  name: tekton
   namespace: openshift-operators
 spec:
-  channel: pipelines-1.8
-  name: openshift-pipelines-operator-rh 
-  source: redhat-operators 
+  channel: stable
+  installPlanApproval: Automatic
+  name: openshift-pipelines-operator-rh
+  source: redhat-operators
   sourceNamespace: openshift-marketplace
+#OCP 4.12
+# apiVersion: operators.coreos.com/v1alpha1
+# kind: Subscription
+# metadata:
+#   name: openshift-pipelines-operator
+#   namespace: openshift-operators
+# spec:
+#   channel: pipelines-1.8
+#   name: openshift-pipelines-operator-rh 
+#   source: redhat-operators 
+#   sourceNamespace: openshift-marketplace
 {{ end }}
