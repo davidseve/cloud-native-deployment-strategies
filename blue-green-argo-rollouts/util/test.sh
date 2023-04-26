@@ -36,15 +36,15 @@ fi
 
 sed -i '/pipeline.enabled/{n;s/.*/        value: "true"/}' blue-green-argo-rollouts/application-cluster-config.yaml
 
-#$4 quay token
-#To install applicatins ci pipeline ./test.sh no helm_base no eHBZwYVc5djhsdkpfhWphVHBEVTBaWsTUkRGV1EwNHlTVlRraE5OUldUSXlWak
-if [ ${4:-no} != "no" ]
-then
-sed -i '/project: default/i \ \     - name: "pipeline.applications.enabled"' blue-green-argo-rollouts/application-cluster-config.yaml
-sed -i '/project: default/i \ \       value: "true"' blue-green-argo-rollouts/application-cluster-config.yaml
-sed -i '/project: default/i \ \     - name: "pipeline.applications.dockerconfigjson"' blue-green-argo-rollouts/application-cluster-config.yaml
-sed -i "/project: default/i \ \       value: $4" blue-green-argo-rollouts/application-cluster-config.yaml
-fi
+# #$4 quay token
+# #To install applicatins ci pipeline ./test.sh no helm_base no eHBZwYVc5djhsdkpfhWphVHBEVTBaWsTUkRGV1EwNHlTVlRraE5OUldUSXlWak
+# if [ ${4:-no} != "no" ]
+# then
+# sed -i '/project: default/i \ \     - name: "pipeline.applications.enabled"' blue-green-argo-rollouts/application-cluster-config.yaml
+# sed -i '/project: default/i \ \       value: "true"' blue-green-argo-rollouts/application-cluster-config.yaml
+# sed -i '/project: default/i \ \     - name: "pipeline.applications.dockerconfigjson"' blue-green-argo-rollouts/application-cluster-config.yaml
+# sed -i "/project: default/i \ \       value: $4" blue-green-argo-rollouts/application-cluster-config.yaml
+# fi
 
 
 oc apply -f blue-green-argo-rollouts/application-cluster-config.yaml --wait=true
