@@ -1,7 +1,5 @@
-{{- if .Values.argorollouts.enabled }}
 apiVersion: v1
 kind: Namespace
 metadata:
   name: argo-rollouts
 spec: {}
-{{ end }}

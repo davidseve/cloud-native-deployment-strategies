@@ -1,8 +1,0 @@
-{{- if .Values.argorollouts.enabled }}
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  annotations:
-    service.beta.openshift.io/inject-cabundle: 'true'
-  name: cabundle
-{{ end }}
