@@ -6,7 +6,7 @@ metadata:
     operators.coreos.com/openshift-pipelines-operator-rh.openshift-operators: ''
   name: openshift-pipelines-operator-rh
   namespace: openshift-operators
-  annotation: 
+  annotations: 
     argocd.argoproj.io/sync-wave: -10
 spec:
   channel: pipelines-1.8
