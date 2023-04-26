@@ -6,7 +6,7 @@ namespace: argo-rollouts
 resources:
 - argo-rollouts-ns.yaml
 - cert-cm.yaml
-- https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml
+- argo-rollouts.yaml
 
 ## This is needed becuase Argo Rollouts doesn't support adding CA info on the Prometheus provider
 ## see: https://github.com/argoproj/argo-rollouts/issues/2298
