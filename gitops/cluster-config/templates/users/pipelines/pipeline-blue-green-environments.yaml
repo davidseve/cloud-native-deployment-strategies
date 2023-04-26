@@ -171,6 +171,10 @@ spec:
   - name: commit-new-image-tag
     runAfter:
     - change-new-image-tag
+    when:
+      - input: "$(params.STEP)"
+        operator: in
+        values: ["new-version"]
     taskRef:
       kind: Task
       name: git-cli
@@ -195,6 +199,10 @@ spec:
   - name: pr-new-image-tag
     runAfter:
       - commit-new-image-tag
+    when:
+      - input: "$(params.STEP)"
+        operator: in
+        values: ["new-version"]
     taskRef:
       kind: Task
       name: github-open-pr
@@ -243,6 +251,10 @@ spec:
   - name: e2e-test-before-switch
     runAfter:
     - get-application-url-before-switch
+    when:
+      - input: "$(params.STEP)"
+        operator: in
+        values: ["switch"]
     params:
       - name: TARGET_VERSION
         value: $(params.NEW_IMAGE_TAG)
@@ -261,6 +273,10 @@ spec:
   - name: change-switch
     runAfter:
     - e2e-test-before-switch
+    when:
+      - input: "$(params.STEP)"
+        operator: in
+        values: ["switch"]
     params:
       - name: CONTEXT_DIR
         value: $(params.CONTEXT_DIR)
@@ -301,6 +317,10 @@ spec:
   - name: commit-switch
     runAfter:
     - change-switch
+    when:
+      - input: "$(params.STEP)"
+        operator: in
+        values: ["switch"]
     taskRef:
       kind: Task
       name: git-cli
@@ -323,6 +343,10 @@ spec:
   - name: pr-switch
     runAfter:
       - commit-switch
+    when:
+      - input: "$(params.STEP)"
+        operator: in
+        values: ["switch"]
     taskRef:
       kind: Task
       name: github-open-pr
@@ -418,6 +442,10 @@ spec:
   - name: commit-align-offline
     runAfter:
     - change-align-offline
+    when:
+      - input: "$(params.STEP)"
+        operator: in
+        values: ["align-offline"]
     taskRef:
       kind: Task
       name: git-cli
@@ -450,6 +478,10 @@ spec:
   - name: pr-align-offline
     runAfter:
       - commit-align-offline
+    when:
+      - input: "$(params.STEP)"
+        operator: in
+        values: ["align-offline"]
     taskRef:
       kind: Task
       name: github-open-pr
@@ -531,6 +563,10 @@ spec:
   - name: commit-rollback
     runAfter:
     - change-rollback
+    when:
+      - input: "$(params.STEP)"
+        operator: in
+        values: ["switch-rollback"]
     taskRef:
       kind: Task
       name: git-cli
@@ -553,6 +589,10 @@ spec:
   - name: pr-rollback
     runAfter:
       - commit-rollback
+    when:
+      - input: "$(params.STEP)"
+        operator: in
+        values: ["switch-rollback"]
     taskRef:
       kind: Task
       name: github-open-pr
