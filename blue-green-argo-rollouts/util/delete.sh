@@ -23,8 +23,8 @@ then
 fi
 
 git checkout main
-git branch -d rollouts
-git push origin --delete rollouts
+git branch -d rollouts-blue-green
+git push origin --delete rollouts-blue-green
 
 #manual
 #argo app argo-rollouts
