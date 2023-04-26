@@ -115,6 +115,17 @@ Click on Argo CD from the OpenShift Web Console application launcher and then lo
  
 ![Argo CD](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/ArgoCD-UI.png)
  
+### Install Argo Rollouts
+
+
+Log into OpenShift as a cluster admin and install Argo Rollouts with the following command. This may take some minutes.
+```
+kubectl create namespace argo-rollouts
+kubectl apply -n argo-rollouts -f https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml
+```
+If you want to see more information about how to install Argo Rollouts please click [here](https://argoproj.github.io/argo-rollouts/installation/)
+
+
 ### Configure OpenShift with Argo CD
  
 We are going to follow, as much as we can, a GitOps methodology in this demo. So we will have everything in our Git repository and use **ArgoCD** to deploy it in the cluster.
@@ -123,7 +134,6 @@ In the current Git repository, the [gitops/cluster-config](https://github.com/da
 
 - namespaces `gitops`.
 - role binding for ArgoCD to the namespace `gitops`.
-- Argo Rollouts project.
  
 Let's configure Argo CD to recursively sync the content of the [gitops/cluster-config](https://github.com/davidseve/cloud-native-deployment-strategies/tree/main/gitops/cluster-config) directory into the OpenShift cluster.
  

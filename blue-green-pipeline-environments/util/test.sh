@@ -67,7 +67,7 @@ sed -i "s/user1/$user/g" blue-green-pipeline-environments/pipelines/run-products
 oc login -u $user -p openshift $4
 
 oc apply -f blue-green-pipeline-environments/applicationset-shop-blue-green.yaml --wait=true
-
+sleep 1m
 export TOKEN=$1
 export GIT_USER=davidseve
 oc create secret generic github-token --from-literal=username=${GIT_USER} --from-literal=password=${TOKEN} --type "kubernetes.io/basic-auth" -n $user-continuous-deployment

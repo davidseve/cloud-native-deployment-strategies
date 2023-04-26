@@ -60,6 +60,7 @@ fi
 sed -i 's/change_me/davidseve/g' blue-green-argo-rollouts/application-shop-blue-green-rollouts.yaml
 
 oc apply -f blue-green-argo-rollouts/application-shop-blue-green-rollouts.yaml --wait=true
+sleep 1m
 tkn pipeline start pipeline-blue-green-e2e-test --param NEW_IMAGE_TAG=v1.0.1 --param MODE=online --param LABEL=.version --param APP=products --param NAMESPACE=gitops --param MESH=False --param JQ_PATH=.metadata --workspace name=app-source,claimName=workspace-pvc-shop-cd-e2e-tests -n gitops --showlog
 
 sed -i '/products-blue/{n;n;n;n;s/.*/      tag: v1.1.1/}' helm/quarkus-helm-umbrella/chart/values/values-rollouts-blue-green.yaml
