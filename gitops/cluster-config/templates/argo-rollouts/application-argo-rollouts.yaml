@@ -11,10 +11,24 @@ spec:
     server: 'https://kubernetes.default.svc'
   source:
     path: ''
-    repoURL: 'https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml'
+    repoURL: 'https://argoproj.github.io/argo-helm'
+    targetRevision: 2.19.0
+    chart: argo-rollouts
   project: default
   syncPolicy:
     automated:
       prune: false
       selfHeal: false
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: istio-helm-repo
+  namespace: argo-rollouts
+  labels:
+    argocd.argoproj.io/secret-type: repository
+stringData:
+  url: https://argoproj.github.io/argo-helm
+  name: argo-helm
+  type: helm
 {{ end }}
