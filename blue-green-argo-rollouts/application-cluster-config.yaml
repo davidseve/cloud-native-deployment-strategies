@@ -18,8 +18,8 @@ spec:
         value: "false"
       - name: "github.enabled"
         value: "false"
-      - name: "argorollouts.enabled"
-        value: "true"
+      # - name: "argorollouts.enabled"
+      #   value: "true"
   project: default
   syncPolicy:
     automated:

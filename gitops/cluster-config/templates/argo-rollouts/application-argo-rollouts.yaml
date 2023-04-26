@@ -13,7 +13,7 @@ spec:
     path: ''
     repoURL: 'https://argoproj.github.io/argo-helm'
     targetRevision: 2.26.0
-    chart: argo/argo-rollouts
+    chart: argo-rollouts
   project: default
   syncPolicy:
     automated:
