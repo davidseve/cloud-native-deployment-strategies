@@ -25,6 +25,9 @@ then
     fi
 fi
 
+kubectl create namespace argo-rollouts
+kubectl apply -n argo-rollouts -f https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml
+
 #To work with a branch that is not main. ./test.sh no helm_base
 if [ ${2:-no} != "no" ]
 then
