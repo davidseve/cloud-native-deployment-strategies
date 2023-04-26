@@ -4,6 +4,8 @@ kind: Subscription
 metadata:
   name: openshift-pipelines-operator-rh
   namespace: openshift-operators
+  annotation: 
+    argocd.argoproj.io/sync-wave: -10
 spec:
   channel: pipelines-1.8
   name: openshift-pipelines-operator-rh
