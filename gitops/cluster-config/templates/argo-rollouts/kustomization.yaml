@@ -1,3 +1,4 @@
+{{- if .Values.argorollouts.enabled }}
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
@@ -6,9 +7,10 @@ namespace: argo-rollouts
 resources:
 - argo-rollouts-ns.yaml
 - cert-cm.yaml
-- argo-rollouts.yaml
+- https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml
 
 ## This is needed becuase Argo Rollouts doesn't support adding CA info on the Prometheus provider
 ## see: https://github.com/argoproj/argo-rollouts/issues/2298
 patchesStrategicMerge:
 - add-ca-to-rollouts.yaml
+{{ end }}
