@@ -163,6 +163,10 @@ spec:
   - name: commit-new-image-tag
     runAfter:
     - change-new-image-tag
+    when:
+      - input: "$(params.STEP)"
+        operator: in
+        values: ["new-version"]
     taskRef:
       kind: Task
       name: git-cli
@@ -183,6 +187,10 @@ spec:
   - name: get-application-url-new-image-tag
     runAfter:
     - commit-new-image-tag
+    when:
+      - input: "$(params.STEP)"
+        operator: in
+        values: ["new-version"]
     taskRef:
       kind: Task
       name: openshift-client
@@ -199,6 +207,10 @@ spec:
   - name: e2e-test-new-image-tag
     runAfter:
     - get-application-url-new-image-tag
+    when:
+      - input: "$(params.STEP)"
+        operator: in
+        values: ["new-version"]
     params:
       - name: TARGET_VERSION
         value: $(params.NEW_IMAGE_TAG)
@@ -216,6 +228,10 @@ spec:
   - name: change-configuration
     runAfter:
     - e2e-test-new-image-tag
+    when:
+      - input: "$(params.STEP)"
+        operator: in
+        values: ["new-version"]
     params:
       - name: CONTEXT_DIR
         value: $(params.CONTEXT_DIR)
@@ -256,6 +272,10 @@ spec:
   - name: commit-configuration
     runAfter:
     - change-configuration
+    when:
+      - input: "$(params.STEP)"
+        operator: in
+        values: ["new-version"]
     taskRef:
       kind: Task
       name: git-cli
@@ -277,6 +297,10 @@ spec:
   - name: get-deployment-replicas
     runAfter:
     - commit-configuration
+    when:
+      - input: "$(params.STEP)"
+        operator: in
+        values: ["new-version"]
     taskRef:
       kind: Task
       name: openshift-client
@@ -299,6 +323,10 @@ spec:
   - name: change-scale-up
     runAfter:
     - get-deployment-replicas
+    when:
+      - input: "$(params.STEP)"
+        operator: in
+        values: ["new-version"]
     params:
       - name: CONTEXT_DIR
         value: $(params.CONTEXT_DIR)
@@ -342,6 +370,10 @@ spec:
   - name: commit-scale-up
     runAfter:
     - change-scale-up
+    when:
+      - input: "$(params.STEP)"
+        operator: in
+        values: ["new-version"]
     taskRef:
       kind: Task
       name: git-cli
@@ -406,6 +438,10 @@ spec:
   - name: commit-switch
     runAfter:
     - change-switch
+    when:
+      - input: "$(params.STEP)"
+        operator: in
+        values: ["switch"]
     taskRef:
       kind: Task
       name: git-cli
@@ -487,6 +523,10 @@ spec:
   - name: commit-scale-down-offline
     runAfter:
     - change-scale-down-offline
+    when:
+      - input: "$(params.STEP)"
+        operator: in
+        values: ["scale-down-offline"]
     taskRef:
       kind: Task
       name: git-cli
@@ -562,6 +602,10 @@ spec:
   - name: commit-switch-rollback
     runAfter:
     - switch-rollback
+    when:
+      - input: "$(params.STEP)"
+        operator: in
+        values: ["switch-rollback"]
     taskRef:
       kind: Task
       name: git-cli
