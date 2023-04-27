@@ -28,7 +28,8 @@ cd cloud-native-deployment-strategies
 #To work with a branch that is not main. ./test.sh ghp_JGFDSFIGJSODIJGF no helm_base
 if [ ${2:-no} != "no" ]
 then
-    git checkout $2
+    git fetch
+    git switch $2
 fi
 git checkout -b release
 git push origin release
