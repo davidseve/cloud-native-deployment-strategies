@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#./test.sh si rollouts no github_pat_XXXXXXXXXXXXXXX
+#./test.sh si rollouts no github_pat_XXXXXXXXXXXXXXX PASSWORD https://api.cluster-XX.XX.XX.opentlc.com:6443 
 
 #token needs:  Read and Write access to code, commit statuses, and pull requests
 user=user1
@@ -33,7 +33,6 @@ fi
 git checkout -b release
 git push origin release
 
-oc login  -u opentlc-mgr -p r3dh4t1! $5
 if [ ${3:-no} = "no" ]
 then
     oc apply -f gitops/gitops-operator.yaml
@@ -68,7 +67,7 @@ sed -i "s/user1/$user/g" blue-green-pipeline-environments/applicationset-shop-bl
 sed -i "s/user1/$user/g" blue-green-pipeline-environments/pipelines/run-products-stage/*
 sed -i "s/user1/$user/g" blue-green-pipeline-environments/pipelines/run-products-prod/*
 
-oc login -u $user -p openshift $5
+oc login -u $user -p $5 $6
 
 oc apply -f blue-green-pipeline-environments/applicationset-shop-blue-green.yaml --wait=true
 sleep 1m

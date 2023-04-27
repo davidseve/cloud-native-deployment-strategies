@@ -1,4 +1,10 @@
 #!/usr/bin/env bash
+
+#./test.sh si rollouts no
+
+# oc extract secret/openshift-gitops-cluster -n openshift-gitops --to=-
+# Add Argo CD Git Webhook to make it faster
+
 rm -rf /tmp/deployment
 mkdir /tmp/deployment
 cd /tmp/deployment
@@ -33,6 +39,9 @@ if [ ${2:-no} != "no" ]
 then
     sed -i "s/HEAD/$2/g" canary-argo-rollouts/application-cluster-config.yaml
 fi
+
+sed -i '/pipeline.enabled/{n;s/.*/        value: "true"/}' blue-green-argo-rollouts/application-cluster-config.yaml
+
 oc apply -f canary-argo-rollouts/application-cluster-config.yaml --wait=true
 
 #First time we install operators take logger

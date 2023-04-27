@@ -1,4 +1,10 @@
 #!/usr/bin/env bash
+
+#./test.sh si rollouts no
+
+# oc extract secret/openshift-gitops-cluster -n openshift-gitops --to=-
+# Add Argo CD Git Webhook to make it faster
+
 rm -rf /tmp/deployment
 mkdir /tmp/deployment
 cd /tmp/deployment

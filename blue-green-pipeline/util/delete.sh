@@ -2,13 +2,12 @@
 
 cd /tmp/deployment/cloud-native-deployment-strategies
 
-
-
 oc delete project gitops
 
 oc delete -f blue-green-pipeline/application-shop-blue-green.yaml
 
 oc delete -f blue-green-pipeline/application-cluster-config.yaml
+
 oc delete subscription openshift-pipelines-operator-rh -n openshift-operators
 oc delete clusterserviceversion openshift-pipelines-operator-rh.v1.8.2 -n openshift-operators
 
