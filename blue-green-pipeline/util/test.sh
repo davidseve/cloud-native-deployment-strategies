@@ -14,7 +14,8 @@ cd cloud-native-deployment-strategies
 
 if [ ${2:-no} != "no" ]
 then
-    git checkout $2
+    git fetch
+    git switch $2
 fi
 git checkout -b blue-green
 git push origin blue-green
