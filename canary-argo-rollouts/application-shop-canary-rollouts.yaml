@@ -11,7 +11,7 @@ spec:
   source:
     path: helm/quarkus-helm-umbrella/chart
     repoURL:  https://github.com/davidseve/cloud-native-deployment-strategies.git
-    targetRevision: rollouts
+    targetRevision: canary
     helm:
       parameters:
       - name: "global.namespace"
