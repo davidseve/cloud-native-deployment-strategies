@@ -47,14 +47,15 @@ oc apply -f blue-green-pipeline/application-cluster-config.yaml --wait=true
 #First time we install operators take logger
 if [ ${1:-no} = "no" ]
 then
-    sleep 1m
-else
     sleep 2m
+else
+    sleep 3m
 fi
 
 sed -i 's/change_me/davidseve/g' blue-green-pipeline/application-shop-blue-green.yaml
 
 oc apply -f blue-green-pipeline/application-shop-blue-green.yaml --wait=true
+sleep 30s
 tkn pipeline start pipeline-blue-green-e2e-test --param NEW_IMAGE_TAG=v1.0.1 --param MODE=online --param LABEL=.version --param APP=products --param NAMESPACE=gitops  --param MESH=False --param JQ_PATH=.metadata --workspace name=app-source,claimName=workspace-pvc-shop-cd-e2e-tests -n gitops --showlog
 
 cd blue-green-pipeline/pipelines/run-products

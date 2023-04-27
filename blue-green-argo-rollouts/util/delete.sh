@@ -13,7 +13,7 @@ argocd app delete argo-rollouts -y
 argocd app delete applications-ci -y
 
 oc delete subscription openshift-pipelines-operator-rh -n openshift-operators
-oc delete clusterserviceversion openshift-pipelines-operator-rh.v1.8.2 -n openshift-operators
+oc delete clusterserviceversion openshift-pipelines-operator-rh.v1.10.0 -n openshift-operators
 
 if [ ${1:-no} = "no" ]
 then
