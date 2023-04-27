@@ -13,18 +13,22 @@ fi
 git checkout -b canary 
 git push origin canary 
 
-oc apply -f gitops/gitops-operator.yaml
-
-#First time we install operators take logger
-if [ ${1:-no} = "no" ]
+if [ ${3:-no} = "no" ]
 then
-    sleep 30s
-else
-    sleep 1m
+    oc apply -f gitops/gitops-operator.yaml
+    #First time we install operators take logger
+    if [ ${1:-no} = "no" ]
+    then
+        sleep 30s
+    else
+        sleep 1m
+    fi
 fi
 
-sed -i '/pipeline.enabled/{n;s/.*/        value: "true"/}' canary-argo-rollouts/application-cluster-config.yaml
-#To work with a branch that is not main. ./test.sh ghp_JGFDSFIGJSODIJGF no helm_base
+kubectl create namespace argo-rollouts
+kubectl apply -n argo-rollouts -f https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml
+
+#To work with a branch that is not main. ./test.sh no helm_base
 if [ ${2:-no} != "no" ]
 then
     sed -i "s/HEAD/$2/g" canary-argo-rollouts/application-cluster-config.yaml
@@ -42,6 +46,7 @@ fi
 sed -i 's/change_me/davidseve/g' canary-argo-rollouts/application-shop-canary-rollouts.yaml
 
 oc apply -f canary-argo-rollouts/application-shop-canary-rollouts.yaml --wait=true
+sleep 1m
 tkn pipeline start pipeline-blue-green-e2e-test --param NEW_IMAGE_TAG=v1.0.1 --param MODE=online --param LABEL=.version --param APP=products --param NAMESPACE=gitops  --param MESH=False --param JQ_PATH=.metadata --workspace name=app-source,claimName=workspace-pvc-shop-cd-e2e-tests -n gitops --showlog
 
 sed -i '/products-blue/{n;n;n;n;s/.*/      tag: v1.1.1/}' helm/quarkus-helm-umbrella/chart/values/values-canary-rollouts.yaml
