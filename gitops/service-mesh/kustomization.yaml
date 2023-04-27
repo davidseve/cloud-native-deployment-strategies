@@ -1,0 +1,22 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+commonAnnotations:
+  argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+
+resources:
+- cluster-monitoring-config.yaml
+- elasticsearch-operator.yaml
+- istio-system-ns.yaml
+- isto-prom-rbac.yaml
+- jaeger-product.yaml
+- kiali-ossm.yaml
+- openshift-distributed-tracing-ns.yaml
+- openshift-distributed-tracing.yaml
+- openshift-operators-redhat-ns.yaml
+- openshift-operators-redhat.yaml
+- servicemeshmemberroll-default.yaml
+- servicemeshoperator.yaml
+- service-monitor.yaml
+- smcp.yaml
+- isto-system-prometheus-htpasswd.yaml

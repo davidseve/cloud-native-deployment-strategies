@@ -14,6 +14,8 @@ spec:
     targetRevision: HEAD
     helm:
      parameters:
+      - name: "bluegreen.enabled"
+        value: "true"
       - name: "github.token"
         value: "changeme_token"
       - name: "github.user"
@@ -25,5 +27,5 @@ spec:
   project: default
   syncPolicy:
     automated:
-      prune: false
-      selfHeal: false
+      prune: true
+      selfHeal: true

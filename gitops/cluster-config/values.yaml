@@ -3,11 +3,12 @@ istio:
   enabled: false
 pipeline:
   enabled: true
+  applications:
+    enabled: false
+    dockerconfigjson: changeme
 bluegreen:
-  enabled: true
-  valuesyaml: values/values.yaml
-argorollouts:
   enabled: false
+  valuesyaml: values/values.yaml
 github:
   enabled: true
   token: changeme

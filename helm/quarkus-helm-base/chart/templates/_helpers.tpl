@@ -48,7 +48,7 @@ Selector labels
 {{- define "quarkus.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "quarkus.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
-app: {{ include "quarkus.name" . }}
+app: {{ include "quarkus.fullname" . }}
 {{- end }}
 
 {{/*

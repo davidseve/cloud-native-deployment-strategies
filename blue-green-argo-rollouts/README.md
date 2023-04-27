@@ -68,12 +68,12 @@ We have packaged both applications in one chart, but we may have different umbre
 
 ### Prerequisites:
 
-- **Red Hat Openshift 4.10** with admin rights.
-  - You can download [Red Hat Openshift Local for OCP 4.10](https://developers.redhat.com/content-gateway/rest/mirror/pub/openshift-v4/clients/crc/2.6.0).
+- **Red Hat Openshift 4.12** with admin rights.
+  - You can download [Red Hat Openshift Local for OCP 4.12](https://developers.redhat.com/content-gateway/rest/mirror/pub/openshift-v4/clients/crc/2.6.0).
   - [Getting Started Guide](https://access.redhat.com/documentation/en-us/red_hat_openshift_local/2.5/html/getting_started_guide/using_gsg)
 - [Git](https://git-scm.com/)
 - [GitHub account](https://github.com/)
-- [oc 4.10 CLI] (https://docs.openshift.com/container-platform/4.10/cli_reference/openshift_cli/getting-started-cli.html)
+- [oc 4.12 CLI] (https://docs.openshift.com/container-platform/4.12/cli_reference/openshift_cli/getting-started-cli.html)
 - [Argo Rollouts CLI](https://argoproj.github.io/argo-rollouts/installation/#kubectl-plugin-installation )
 
 We have a GitHub [repository](https://github.com/davidseve/cloud-native-deployment-strategies) for this demo. As part of the demo, you will have to do some changes and commits. So **it is important that you fork the repository and clone it in your local**.
@@ -115,6 +115,17 @@ Click on Argo CD from the OpenShift Web Console application launcher and then lo
  
 ![Argo CD](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/ArgoCD-UI.png)
  
+### Install Argo Rollouts
+
+
+Log into OpenShift as a cluster admin and install Argo Rollouts with the following command. This may take some minutes.
+```
+kubectl create namespace argo-rollouts
+kubectl apply -n argo-rollouts -f https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml
+```
+If you want to see more information about how to install Argo Rollouts please click [here](https://argoproj.github.io/argo-rollouts/installation/)
+
+
 ### Configure OpenShift with Argo CD
  
 We are going to follow, as much as we can, a GitOps methodology in this demo. So we will have everything in our Git repository and use **ArgoCD** to deploy it in the cluster.
@@ -123,7 +134,6 @@ In the current Git repository, the [gitops/cluster-config](https://github.com/da
 
 - namespaces `gitops`.
 - role binding for ArgoCD to the namespace `gitops`.
-- Argo Rollouts project.
  
 Let's configure Argo CD to recursively sync the content of the [gitops/cluster-config](https://github.com/davidseve/cloud-native-deployment-strategies/tree/main/gitops/cluster-config) directory into the OpenShift cluster.
  
@@ -161,7 +171,7 @@ spec:
       - name: "global.namespace"
         value: gitops
       valueFiles:
-        - values/values-rollouts.yaml
+        - values/values-rollouts-blue-green.yaml
   project: default
   syncPolicy:
     automated:
@@ -242,7 +252,7 @@ This is our current status:
 ![Shop initial status](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/rollout-blue-green-step-0.png)
 ### Step 1 - Deploy a new version
  
-We will deploy a new version v1.1.1. To do it, we have to edit the file `helm/quarkus-helm-umbrella/chart/values/values-rollouts.yaml` under `products-blue` set `tag` value to `v.1.1.1`
+We will deploy a new version v1.1.1. To do it, we have to edit the file `helm/quarkus-helm-umbrella/chart/values/values-rollouts-blue-green.yaml` under `products-blue` set `tag` value to `v.1.1.1`
 
 ```yaml
 products-blue:

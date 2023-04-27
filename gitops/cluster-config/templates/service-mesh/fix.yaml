@@ -1,0 +1,426 @@
+# # create role that can be used to grant users permission to create smcp and smmr resources
+# {{- if .Values.istio.enabled }}
+# apiVersion: rbac.authorization.k8s.io/v1
+# kind: ClusterRole
+# metadata:
+#   name: maistra-admin
+#   labels:
+#     rbac.authorization.k8s.io/aggregate-to-admin: "true"
+# rules:
+# - apiGroups: ["maistra.io"]
+#   resources: ["*"]
+#   verbs: ["*"]
+
+# ---
+
+# apiVersion: rbac.authorization.k8s.io/v1
+# kind: ClusterRoleBinding
+# metadata:
+#   name: maistra-admin
+# roleRef:
+#   kind: ClusterRole
+#   apiGroup: rbac.authorization.k8s.io
+#   name: maistra-admin
+
+# ---
+
+# apiVersion: rbac.authorization.k8s.io/v1
+# kind: ClusterRole
+# metadata:
+#   name: istio-operator
+# rules:
+# # operator-sdk rules
+# - apiGroups:
+#   - monitoring.coreos.com
+#   resources:
+#   - servicemonitors
+#   verbs:
+#   - get
+#   - create
+# - apiGroups:
+#   - ""
+#   resources:
+#   - services/finalizers
+#   verbs:
+#   - '*'
+
+# # operator rules for managing istio
+# - apiGroups:
+#   - ""
+#   resources:
+#   - configmaps
+#   - endpoints
+#   - namespaces
+#   - persistentvolumeclaims
+#   - pods
+#   - replicationcontrollers
+#   - secrets
+#   - serviceaccounts
+#   - services
+#   - events # is this needed?
+#   verbs:
+#   - '*'
+# - apiGroups:
+#   - apps
+#   - extensions
+#   resources:
+#   - daemonsets
+#   - deployments
+#   - deployments/finalizers
+#   - ingresses # is this needed? should it be converted to a route?
+#   - ingresses/status
+#   - replicasets
+#   - statefulsets
+#   verbs:
+#   - '*'
+# - apiGroups:
+#   - autoscaling
+#   resources:
+#   - horizontalpodautoscalers
+#   verbs:
+#   - '*'
+# - apiGroups:
+#   - policy
+#   resources:
+#   - poddisruptionbudgets
+#   verbs:
+#   - '*'
+# - apiGroups:
+#   - admissionregistration.k8s.io
+#   resources:
+#   - mutatingwebhookconfigurations
+#   - validatingwebhookconfigurations
+#   verbs:
+#   - '*'
+# - apiGroups:
+#   - apiextensions.k8s.io
+#   resources:
+#   - customresourcedefinitions
+#   verbs:
+#   - '*'
+# - apiGroups:
+#   - certmanager.k8s.io
+#   resources:
+#   - clusterissuers
+#   verbs:
+#   - '*'
+# - apiGroups:
+#   - networking.k8s.io
+#   resources:
+#   - networkpolicies
+#   - ingresses
+#   verbs:
+#   - '*'
+# - apiGroups:
+#   - rbac.authorization.k8s.io
+#   resources:
+#   - clusterrolebindings
+#   - clusterroles
+#   - rolebindings
+#   - roles
+#   verbs:
+#   - '*'
+# - apiGroups:
+#   - authentication.istio.io
+#   resources:
+#   - '*'
+#   verbs:
+#   - '*'
+# - apiGroups:
+#   - config.istio.io
+#   resources:
+#   - '*'
+#   verbs:
+#   - '*'
+# - apiGroups:
+#   - networking.istio.io
+#   resources:
+#   - '*'
+#   verbs:
+#   - '*'
+# - apiGroups:
+#   - rbac.istio.io
+#   resources:
+#   - '*'
+#   verbs:
+#   - '*'
+# - apiGroups:
+#   - security.istio.io
+#   resources:
+#   - '*'
+#   verbs:
+#   - '*'
+# - apiGroups:
+#   - jaegertracing.io
+#   resources:
+#   - jaegers
+#   verbs:
+#   - '*'
+# - apiGroups:
+#   - kiali.io
+#   resources:
+#   - kialis
+#   verbs:
+#   - '*'
+# - apiGroups:
+#   - maistra.io
+#   resources:
+#   - '*'
+#   verbs:
+#   - '*'
+# - apiGroups:
+#   - authentication.maistra.io
+#   resources:
+#   - '*'
+#   verbs:
+#   - '*'
+# - apiGroups:
+#   - rbac.maistra.io
+#   resources:
+#   - '*'
+#   verbs:
+#   - '*'
+# - apiGroups:
+#   - route.openshift.io
+#   resources:
+#   - routes
+#   - routes/custom-host
+#   verbs:
+#   - '*'
+# # required by smmr controller
+# - apiGroups:
+#   - authorization.k8s.io
+#   resources:
+#   - subjectaccessreviews
+#   verbs:
+#   - create
+# - apiGroups:
+#   - network.openshift.io
+#   resources:
+#   - clusternetworks
+#   verbs:
+#   - get
+#   - list
+#   - watch
+# - apiGroups:
+#   - config.openshift.io
+#   resources:
+#   - networks
+#   verbs:
+#   - get
+#   - list
+#   - watch
+# - apiGroups:
+#   - image.openshift.io
+#   resources:
+#   - imagestreams
+#   verbs:
+#   - get
+#   - list
+#   - watch
+# - apiGroups:
+#   - network.openshift.io
+#   resources:
+#   - netnamespaces
+#   verbs:
+#   - get
+#   - list
+#   - watch
+#   - update
+# - apiGroups:
+#   - k8s.cni.cncf.io
+#   resources:
+#   - network-attachment-definitions
+#   verbs:
+#   - create
+#   - delete
+#   - get
+#   - list
+#   - patch
+#   - watch
+
+# # required by cni daemonset
+# - apiGroups:
+#   - security.openshift.io
+#   resources:
+#   - securitycontextconstraints
+#   resourceNames:
+#   - privileged
+#   verbs:
+#   - use
+
+# # required by pod locality controller
+# - apiGroups:
+#   - ""
+#   resources:
+#   - nodes
+#   - nodes/proxy
+#   verbs:
+#   - get
+#   - list
+#   - watch
+# - apiGroups: # might be required by citadel
+#   - authentication.k8s.io
+#   resources:
+#   - tokenreviews
+#   verbs:
+#   - create
+# - nonResourceURLs:
+#   - /metrics
+#   verbs:
+#   - get
+
+# ---
+
+# kind: ClusterRoleBinding
+# apiVersion: rbac.authorization.k8s.io/v1
+# metadata:
+#   name: istio-operator-account-istio-operator-cluster-role-binding
+# subjects:
+# - kind: ServiceAccount
+#   namespace: openshift-operators
+#   name: istio-operator
+# roleRef:
+#   kind: ClusterRole
+#   name: istio-operator
+#   apiGroup: rbac.authorization.k8s.io
+
+# ---
+
+# apiVersion: v1
+# kind: ServiceAccount
+# metadata:
+#   name: istio-operator
+#   namespace: openshift-operators
+
+# ---
+
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: maistra-admission-controller
+#   namespace: openshift-operators
+#   annotations:
+#     service.beta.openshift.io/serving-cert-secret-name: maistra-operator-serving-cert
+# spec:
+#   ports:
+#   - port: 443
+#     protocol: TCP
+#     targetPort: 11999
+#   selector:
+#     name: istio-operator
+#   type: ClusterIP
+
+# ---
+
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: istio-operator
+#   namespace: openshift-operators
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       name: istio-operator
+#   template:
+#     metadata:
+#       labels:
+#         name: istio-operator
+#       annotations:
+#         "oauth-proxy.name": "oauth-proxy"
+#         "oauth-proxy.namespace": "openshift"
+#         "oauth-proxy.query": "true"
+#         "oauth-proxy.tag": "v4.4"
+#         "olm.relatedImage.v1_0.3scale-istio-adapter": "registry.redhat.io/openshift-service-mesh/3scale-istio-adapter-rhel8@sha256:2a15cb70a8a3290467f552821b50730fa7eaf6339f4f0fd9032cf2fe12d5c602"
+#         "olm.relatedImage.v1_0.citadel": "registry.redhat.io/openshift-service-mesh/citadel-rhel8@sha256:812b01b38300a2f0e9537c96f48caa22a49b5ddd436230f6ae2742dc91673cfa"
+#         "olm.relatedImage.v1_0.cni": "registry.redhat.io/openshift-service-mesh/istio-cni-rhel8@sha256:6312d3d5242bd60182a596453d9ccbfe36bf4144b9442bc5871001dbf1231c79"
+#         "olm.relatedImage.v1_0.galley": "registry.redhat.io/openshift-service-mesh/galley-rhel8@sha256:b8f6562583ce68eb3819f25a43e82e1570173c8374c874d280da81f72dd296f5"
+#         "olm.relatedImage.v1_0.grafana": "registry.redhat.io/openshift-service-mesh/grafana-rhel8@sha256:497bebd338d9c18871482e77e89470ece48d525e027a2d1a4ed971bd525c89cd"
+#         "olm.relatedImage.v1_0.mixer": "registry.redhat.io/openshift-service-mesh/mixer-rhel8@sha256:2fb223a02a72f721acd75311510a954479275605edc9602c04a4f574486fdd6e"
+#         "olm.relatedImage.v1_0.pilot": "registry.redhat.io/openshift-service-mesh/pilot-rhel8@sha256:0622a302ad88755421967733651786c23146c79236e0801f837c692eb14ad6b9"
+#         "olm.relatedImage.v1_0.prometheus": "registry.redhat.io/openshift-service-mesh/prometheus-rhel8@sha256:6c32e8db039dd06429a0e71919e7d2b914baf8e28d35ca17e6c9e40179a0871f"
+#         "olm.relatedImage.v1_0.proxy-init": "registry.redhat.io/openshift-service-mesh/proxy-init-rhel7@sha256:f965d1eb6e9139bfbf55b8e14fcd5cb28619cd89b6576b45aa33ae6211bc0963"
+#         "olm.relatedImage.v1_0.proxyv2": "registry.redhat.io/openshift-service-mesh/proxyv2-rhel8@sha256:6f8df84d1c20842ec1c31fd3171de8f4601b2a99ab77bae93c242763772971b7"
+#         "olm.relatedImage.v1_0.sidecar-injector": "registry.redhat.io/openshift-service-mesh/sidecar-injector-rhel8@sha256:baee6083db8c87d66035b3297b075e00c01b31b6701c25ec72ca438553e923dc"
+#         "olm.relatedImage.v1_1.3scale-istio-adapter": "registry.redhat.io/openshift-service-mesh/3scale-istio-adapter-rhel8@sha256:2a15cb70a8a3290467f552821b50730fa7eaf6339f4f0fd9032cf2fe12d5c602"
+#         "olm.relatedImage.v1_1.citadel": "registry.redhat.io/openshift-service-mesh/citadel-rhel8@sha256:c40a47e17139e81e2ae8f382627afa231ebc4475e805ac7498ecf2daba15dcec"
+#         "olm.relatedImage.v1_1.cni": "registry.redhat.io/openshift-service-mesh/istio-cni-rhel8@sha256:77eddfbfade2da9b329079891e0f3ef361a0fe4abd3a31f5a9e3dd2831bf096c"
+#         "olm.relatedImage.v1_1.galley": "registry.redhat.io/openshift-service-mesh/galley-rhel8@sha256:b2b207773a21f5acf3af4bb01e1c2502daf54a8769db40689f128cd0668e4ac3"
+#         "olm.relatedImage.v1_1.grafana": "registry.redhat.io/openshift-service-mesh/grafana-rhel8@sha256:706d19b4271e7888753cdfae25e0b1eaefb4ec2be924957600aa938911854804"
+#         "olm.relatedImage.v1_1.ior": "registry.redhat.io/openshift-service-mesh/ior-rhel8@sha256:69fbc9f2f73220c3e76f09f3de813f4c612b19cec6179726395e0ac8f9ea8280"
+#         "olm.relatedImage.v1_1.mixer": "registry.redhat.io/openshift-service-mesh/mixer-rhel8@sha256:3cdf12d0884f568d3adc99b9a66c2e99ed5e61e4e781586362d637a80df5e274"
+#         "olm.relatedImage.v1_1.pilot": "registry.redhat.io/openshift-service-mesh/pilot-rhel8@sha256:bd1e41d2b205876ca927d4157bee9ca0204e621565ae09e89ffd330d51b11873"
+#         "olm.relatedImage.v1_1.prometheus": "registry.redhat.io/openshift-service-mesh/prometheus-rhel8@sha256:c1f8a4357749e83ea85ced88448066c33f0d941eb9768797926c73114705c7c0"
+#         "olm.relatedImage.v1_1.proxy-init": "registry.redhat.io/openshift-service-mesh/proxy-init-rhel7@sha256:00d887a1ef0403c3974ecd4930a07cc501b6cc9ffc6a7020acac6cfcdc5c98f7"
+#         "olm.relatedImage.v1_1.proxyv2": "registry.redhat.io/openshift-service-mesh/proxyv2-rhel8@sha256:92e6f500da82627421a3468a03a74979d6a135cd1fb00e2e9a114f9638d9c451"
+#         "olm.relatedImage.v1_1.sidecar-injector": "registry.redhat.io/openshift-service-mesh/sidecar-injector-rhel8@sha256:d4faee8a9a693b2249d119397a7422dcafc408e249b6ef27c41345b8d9f86758"
+#         "olm.relatedImage.v2_0.3scale-istio-adapter": "registry.redhat.io/openshift-service-mesh/3scale-istio-adapter-rhel8@sha256:6c22db40d77225263ee88e449caad76a3730464c21adb50aca6acbaa44432cff"
+#         "olm.relatedImage.v2_0.cni": "registry.redhat.io/openshift-service-mesh/istio-cni-rhel8@sha256:e282119365fe2b7ac5aa5fc04e772c30e7f79d82974fd81a6286648828990b46"
+#         "olm.relatedImage.v2_0.grafana": "registry.redhat.io/openshift-service-mesh/grafana-rhel8@sha256:f00e97f91329b7be49e87f8f870b905967c76b233f91815023004e5139b32ed2"
+#         "olm.relatedImage.v2_0.mixer": "registry.redhat.io/openshift-service-mesh/mixer-rhel8@sha256:2e517a126a2152d7675648354356d6223962d3ea70391caa93d1d3189f5ea68f"
+#         "olm.relatedImage.v2_0.pilot": "registry.redhat.io/openshift-service-mesh/pilot-rhel8@sha256:0b83f3f252fa8aa3a43a3832a8d16aa0a989dcd82b4aeec62426d4ce5d54a737"
+#         "olm.relatedImage.v2_0.prometheus": "registry.redhat.io/openshift-service-mesh/prometheus-rhel8@sha256:4e5460053a283548a5686a945ce9d56fd1f9df745b26e466016feac56754a579"
+#         "olm.relatedImage.v2_0.proxy-init": "registry.redhat.io/openshift-service-mesh/proxy-init-rhel7@sha256:3c2c85bd33c5394b943573c7c3eea8210edaa25e708d2ee42358467a8eef1ab5"
+#         "olm.relatedImage.v2_0.proxyv2": "registry.redhat.io/openshift-service-mesh/proxyv2-rhel8@sha256:8aa1bec558973fc4359ef2d19695f2a884dfb612253992451633060c1a608f3e"
+#         "olm.relatedImage.v2_0.wasm-cacher": "registry.redhat.io/openshift-service-mesh/pilot-rhel8@sha256:0b83f3f252fa8aa3a43a3832a8d16aa0a989dcd82b4aeec62426d4ce5d54a737"
+#         "olm.relatedImage.v2_1.cni": "registry.redhat.io/openshift-service-mesh/istio-cni-rhel8@sha256:b98edbc9dfd0b88919dc01632aa1bc63f5bdbee892db33bb7525d896e0ff2192"
+#         "olm.relatedImage.v2_1.grafana": "registry.redhat.io/openshift-service-mesh/grafana-rhel8@sha256:741462a03480562dc3147d0b9b69556e339fb0f96f1da7784021b5124ed4e35a"
+#         "olm.relatedImage.v2_1.pilot": "registry.redhat.io/openshift-service-mesh/pilot-rhel8@sha256:e50eb8021ac638ac4ac2cf4f5bfac35ef6a7bd4a573dd0bb83d9c88c0e9fea9f"
+#         "olm.relatedImage.v2_1.prometheus": "registry.redhat.io/openshift-service-mesh/prometheus-rhel8@sha256:2c3547f1ac8cdc33a648c2317d917c8da31ab8ac04529e478341828cb35d6ce9"
+#         "olm.relatedImage.v2_1.proxyv2": "registry.redhat.io/openshift-service-mesh/proxyv2-rhel8@sha256:1d0b1923f82a06c1c318cb73bee362eaf396b66205e541509f36bea90a7a12aa"
+#         "olm.relatedImage.v2_1.rls": "registry.redhat.io/openshift-service-mesh/ratelimit-rhel8@sha256:7ae12ac408fca5745fb7397eca3ccc0bfcf121af224840e261212ccd3b887b6d"
+#         "olm.relatedImage.v2_1.wasm-cacher": "registry.redhat.io/openshift-service-mesh/pilot-rhel8@sha256:e50eb8021ac638ac4ac2cf4f5bfac35ef6a7bd4a573dd0bb83d9c88c0e9fea9f"
+#     spec:
+#       serviceAccountName: istio-operator
+#       containers:
+#       - name: istio-operator
+#         image: registry.redhat.io/openshift-service-mesh/istio-rhel8-operator@sha256:1679e52893f7227c9d9c1a1803e66702947682c6e9851ed6730a86ad927a5237
+#         ports:
+#         - containerPort: 11999
+#           name: validation
+#         - containerPort: 60000
+#           name: metrics
+#         command:
+#         - istio-operator
+#         - --config
+#         - /etc/operator/olm/config.properties
+#         imagePullPolicy: Always
+#         env:
+#         - name: WATCH_NAMESPACE
+#           value: ""
+#         - name: POD_NAME
+#           valueFrom:
+#             fieldRef:
+#               fieldPath: metadata.name
+#         - name: OPERATOR_NAME
+#           value: istio-operator
+# #        - name: ISTIO_CNI_IMAGE_PULL_SECRET
+# #          value: name-of-secret
+#         volumeMounts:
+#         - name: operator-olm-config
+#           mountPath: /etc/operator/olm
+#           readOnly: true
+#         - name: webhook-tls-volume
+#           readOnly: true
+#           mountPath: /tmp/k8s-webhook-server/serving-certs
+#         - name: smcp-templates
+#           readOnly: true
+#           mountPath: /usr/local/share/istio-operator/templates/
+#       volumes:
+#       - name: operator-olm-config
+#         downwardAPI:
+#           defaultMode: 420
+#           items:
+#           - fieldRef:
+#               fieldPath: metadata.annotations
+#             path: config.properties
+#       - name: webhook-tls-volume
+#         secret:
+#           secretName: maistra-operator-serving-cert
+#           optional: true # this won't be available until service-ca creates the secret
+#       - name: smcp-templates
+#         configMap:
+#           name: smcp-templates
+#           optional: true
+# {{ end }}
