@@ -16,6 +16,9 @@ discounts-blue:
     version: none
     rollouts:
       enabled: true
+      analysis:
+        web: true
+        service: "discounts-umbrella-offline"
       blueGreen:
         enabled: true
         activeService: "discounts-umbrella-online"
@@ -32,6 +35,9 @@ products-blue:
     version: none
     rollouts:
       enabled: true
+      analysis:
+        web: true
+        service: "products-umbrella-online"
       blueGreen:
         enabled: true
         activeService: "products-umbrella-online"

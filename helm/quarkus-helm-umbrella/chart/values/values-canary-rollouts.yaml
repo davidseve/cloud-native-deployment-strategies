@@ -7,8 +7,7 @@ tags:
 global:
   namespace: test
   #needed for rollouts analysis
-  prometheusAddress: https://thanos-ruler.openshift-user-workload-monitoring.svc.cluster.local:9091 #Does not work
-
+  prometheusAddress: https://prometheus-user-workload.openshift-user-workload-monitoring.svc.cluster.local:9091
 
 discounts-blue:
   mode: online
@@ -20,7 +19,8 @@ discounts-blue:
     rollouts:
       enabled: true
       analysis:
-        query: sum(http_server_requests_seconds_count{method="GET",outcome="SUCCESS",status="200", service="products-umbrella-online",response_code!~"5.*", uri="/products",})
+        web: true
+        service: "discounts-umbrella-online"
       canary:
         steps:
           - setWeight: 50
@@ -39,7 +39,8 @@ products-blue:
     rollouts:
       enabled: true
       analysis:
-        query: sum(http_server_requests_seconds_count{method="GET",outcome="SUCCESS",status="200", service="products-umbrella-online",response_code!~"5.*", uri="/products",})
+        web: true
+        service: "products-umbrella-online"
       canary:
         steps:
           - setWeight: 10

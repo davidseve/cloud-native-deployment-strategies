@@ -78,6 +78,9 @@ global:
 
 rollouts:
   enabled: false
+  analysis:
+    web: false
+    prometheus: false
   blueGreen:
     enabled: false
     activeService: changeme
