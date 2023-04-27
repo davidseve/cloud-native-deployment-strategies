@@ -18,8 +18,6 @@ spec:
         value: "false"
       - name: "github.enabled"
         value: "false"
-      # - name: "argorollouts.enabled"
-      #   value: "true"
       # - name: "istio.enabled"
       #   value: "true"
   project: default

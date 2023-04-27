@@ -9,8 +9,6 @@ pipeline:
 bluegreen:
   enabled: false
   valuesyaml: values/values.yaml
-argorollouts:
-  enabled: false
 github:
   enabled: true
   token: changeme
