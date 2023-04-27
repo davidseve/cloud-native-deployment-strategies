@@ -13,7 +13,7 @@ argocd app delete argo-rollouts -y
 argocd app delete applications-ci -y
 
 oc delete subscription tekton -n openshift-operators
-oc delete clusterserviceversion openshift-pipelines-operator-rh.v1.6.4 -n openshift-operators
+oc delete clusterserviceversion openshift-pipelines-operator-rh.v1.8.2 -n openshift-operators
 
 kubectl delete -n argo-rollouts -f https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml
 kubectl delete namespace argo-rollouts
@@ -22,7 +22,7 @@ if [ ${1:-no} = "no" ]
 then
     oc delete -f gitops/gitops-operator.yaml
     oc delete subscription openshift-gitops-operator -n openshift-operators
-    oc delete clusterserviceversion openshift-gitops-operator.v1.5.6-0.1664915551.p  -n openshift-operators
+    oc delete clusterserviceversion openshift-gitops-operator.v1.6.7  -n openshift-operators
 fi
 
 git checkout main

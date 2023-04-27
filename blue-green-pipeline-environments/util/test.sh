@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 
+#./test.sh si rollouts no github_pat_XXXXXXXXXXXXXXX
+
 #token needs:  Read and Write access to code, commit statuses, and pull requests
 user=user1
-token=$1
+token=$4
 funcPull()
 {
     pull_number=$(curl -H "Accept: application/vnd.github+json"   -H "Authorization: Bearer $token"   https://api.github.com/repos/davidseve/cloud-native-deployment-strategies/pulls | jq -r '.[0].number')
@@ -24,35 +26,37 @@ cd /tmp/deployment
 git clone https://github.com/davidseve/cloud-native-deployment-strategies.git
 cd cloud-native-deployment-strategies
 #To work with a branch that is not main. ./test.sh ghp_JGFDSFIGJSODIJGF no helm_base
-if [ ${3:-no} != "no" ]
+if [ ${2:-no} != "no" ]
 then
-    git checkout $3
+    git checkout $2
 fi
 git checkout -b release
 git push origin release
 
-oc login  -u opentlc-mgr -p r3dh4t1! $4
-oc apply -f gitops/gitops-operator.yaml
-
-#First time we install operators take logger
-if [ ${2:-no} = "no" ]
+oc login  -u opentlc-mgr -p r3dh4t1! $5
+if [ ${3:-no} = "no" ]
 then
-    sleep 30s
-else
-    sleep 1m
+    oc apply -f gitops/gitops-operator.yaml
+    #First time we install operators take logger
+    if [ ${1:-no} = "no" ]
+    then
+        sleep 30s
+    else
+        sleep 1m
+    fi
 fi
 
 #To work with a branch that is not main. ./test.sh ghp_JGFDSFIGJSODIJGF no helm_base
-if [ ${3:-no} != "no" ]
+if [ ${2:-no} != "no" ]
 then
-    sed -i "s/HEAD/$3/g" blue-green-pipeline-environments/application-cluster-config.yaml
+    sed -i "s/HEAD/$2/g" blue-green-pipeline-environments/application-cluster-config.yaml
 fi
 
 
 oc apply -f blue-green-pipeline-environments/application-cluster-config.yaml --wait=true
 
 #First time we install operators take logger
-if [ ${2:-no} = "no" ]
+if [ ${1:-no} = "no" ]
 then
     sleep 1m
 else
@@ -64,11 +68,11 @@ sed -i "s/user1/$user/g" blue-green-pipeline-environments/applicationset-shop-bl
 sed -i "s/user1/$user/g" blue-green-pipeline-environments/pipelines/run-products-stage/*
 sed -i "s/user1/$user/g" blue-green-pipeline-environments/pipelines/run-products-prod/*
 
-oc login -u $user -p openshift $4
+oc login -u $user -p openshift $5
 
 oc apply -f blue-green-pipeline-environments/applicationset-shop-blue-green.yaml --wait=true
 sleep 1m
-export TOKEN=$1
+export TOKEN=$4
 export GIT_USER=davidseve
 oc create secret generic github-token --from-literal=username=${GIT_USER} --from-literal=password=${TOKEN} --type "kubernetes.io/basic-auth" -n $user-continuous-deployment
 oc annotate secret github-token "tekton.dev/git-0=https://github.com/davidseve" -n $user-continuous-deployment
