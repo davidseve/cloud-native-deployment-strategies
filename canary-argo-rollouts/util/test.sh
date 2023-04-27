@@ -22,6 +22,8 @@ git push origin canary
 if [ ${3:-no} = "no" ]
 then
     oc apply -f gitops/gitops-operator.yaml
+    kubectl create namespace argo-rollouts
+    kubectl apply -n argo-rollouts -f https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml
     #First time we install operators take logger
     if [ ${1:-no} = "no" ]
     then
@@ -31,16 +33,13 @@ then
     fi
 fi
 
-kubectl create namespace argo-rollouts
-kubectl apply -n argo-rollouts -f https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml
-
 #To work with a branch that is not main. ./test.sh no helm_base
 if [ ${2:-no} != "no" ]
 then
     sed -i "s/HEAD/$2/g" canary-argo-rollouts/application-cluster-config.yaml
 fi
 
-sed -i '/pipeline.enabled/{n;s/.*/        value: "true"/}' blue-green-argo-rollouts/application-cluster-config.yaml
+sed -i '/pipeline.enabled/{n;s/.*/        value: "true"/}' canary-argo-rollouts/application-cluster-config.yaml
 
 oc apply -f canary-argo-rollouts/application-cluster-config.yaml --wait=true
 
