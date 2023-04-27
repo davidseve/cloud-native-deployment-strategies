@@ -29,7 +29,7 @@ then
     then
         sleep 30s
     else
-        sleep 1m
+        sleep 2m
     fi
 fi
 
@@ -85,8 +85,8 @@ tkn pipeline start pipeline-blue-green-e2e-test --param NEW_IMAGE_TAG=v1.1.1 --p
 #Rollback
 #this is not neccesary becase argo rollouts do the rollback because of scaleDownDelaySeconds (default 30 seconds), just to make it work I add the sleep
 git revert HEAD --no-edit
-sed -i '/products-blue/{n;n;n;n;n;n;n;n;n;n;n;n;n;n;N;N;N;N;N;d;}' helm/quarkus-helm-umbrella/chart/values/values-canary-rollouts.yaml
-sed -i '/products-blue/{n;n;n;n;n;n;n;n;n;n;n;n;n;s/.*/          - setWeight: 100/}' helm/quarkus-helm-umbrella/chart/values/values-canary-rollouts.yaml
+sed -i '/products-blue/{n;n;n;n;n;n;n;n;n;n;n;n;n;n;n;N;N;N;N;d;}' helm/quarkus-helm-umbrella/chart/values/values-canary-rollouts.yaml
+sed -i '/products-blue/{n;n;n;n;n;n;n;n;n;n;n;n;n;n;n;s/.*/          - setWeight: 100/}' helm/quarkus-helm-umbrella/chart/values/values-canary-rollouts.yaml
 git add .
 git commit -m "delete steps for rollout"
 git push origin canary

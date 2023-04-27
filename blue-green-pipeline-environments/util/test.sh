@@ -41,7 +41,7 @@ then
     then
         sleep 30s
     else
-        sleep 1m
+        sleep 2m
     fi
 fi
 
