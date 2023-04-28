@@ -18,6 +18,8 @@ spec:
       parameters:
       - name: "domain"
         value: "cluster-kbx49.kbx49.sandbox971.opentlc.com" #TODO change_me
+      - name: "global.namespace"
+        value: gitops
   project: default
   syncPolicy:
     automated:
