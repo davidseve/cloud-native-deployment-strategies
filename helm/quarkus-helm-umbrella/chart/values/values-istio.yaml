@@ -15,6 +15,8 @@ domain: change_me
 global:
   istio:
     enabled: true
+    rollouts:
+      enabled: false
     productsblueWeight: 100
     productsgreenWeight: 0
     discountsblueWeight: 100
