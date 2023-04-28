@@ -1,9 +1,0 @@
-{{- if .Values.istio.enabled }}
-# apiVersion: v1
-# kind: Namespace
-# metadata:
-#   annotations:
-#     argocd.argoproj.io/sync-wave: "0"
-#   name: openshift-distributed-tracing
-# spec: {}
-{{ end }}
