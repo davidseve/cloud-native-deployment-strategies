@@ -19,7 +19,7 @@ spec:
       - name: "global.namespace"
         value: gitops
       - name: "domain"
-        value: "cluster-g2v85.g2v85.sandbox1007.opentlc.com" #TODO change_me
+        value: "cluster-bd2sv.bd2sv.sandbox744.opentlc.com" #TODO change_me
   project: default
   syncPolicy:
     automated:
