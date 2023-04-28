@@ -4,6 +4,8 @@ kind: RoleBinding
 metadata:
   name: gitops-istio-role-binding
   namespace: istio-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole

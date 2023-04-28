@@ -2,8 +2,8 @@
 apiVersion: maistra.io/v1
 kind: ServiceMeshMemberRoll
 metadata:
-  # annotations:
-  #   argocd.argoproj.io/sync-wave: "21"
+  annotations:
+    argocd.argoproj.io/sync-wave: "21"
   name: default
   namespace: istio-system
   annotations:

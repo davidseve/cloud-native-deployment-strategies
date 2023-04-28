@@ -4,6 +4,8 @@ kind: Subscription
 metadata:
   name: jaeger-product
   namespace: openshift-distributed-tracing
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
 spec:
   channel: stable
   installPlanApproval: Automatic
