@@ -100,14 +100,7 @@ spec:
   - name: primary        # referenced in canary.trafficRouting.istio.virtualService.routes
     match:
     - uri:
-        exact: discountsNetworkingOnline:
-  router:
-    enabled: false
-
-productsNetworkingOnline:
-  router:
-    enabled: false
-/discounts
+        exact: /discounts
     route:
     {{- if .Values.global.istio.rollouts.enabled }}
     - destination:
