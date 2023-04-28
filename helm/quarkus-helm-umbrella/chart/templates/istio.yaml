@@ -1,4 +1,5 @@
 {{- if .Values.global.istio.enabled }}
+---
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
@@ -84,7 +85,7 @@ spec:
       name: http
       protocol: HTTP
     hosts:
-    - products-{{ .Values.global.namespace }}-istio-system.apps.{{ .Values.domain }}
+    - discounts-{{ .Values.global.namespace }}-istio-system.apps.{{ .Values.domain }}
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
