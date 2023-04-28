@@ -15,7 +15,7 @@ spec:
       name: http
       protocol: HTTP
     hosts:
-    - "products-{{ .Values.global.namespace }}-istio-system.apps.{{ .Values.domain }}"
+    - "*"
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
@@ -85,7 +85,7 @@ spec:
       name: http
       protocol: HTTP
     hosts:
-    - "discounts-{{ .Values.global.namespace }}-istio-system.apps.{{ .Values.domain }}"
+    - "*"
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
