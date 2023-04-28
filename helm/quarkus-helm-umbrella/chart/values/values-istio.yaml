@@ -10,10 +10,9 @@ productsNetworkingOnline:
   router:
     enabled: false
 
-domain: cluster-kbx49.kbx49.sandbox971.opentlc.com
+domain: change_me
 
 global:
-  namespace: gitops
   istio:
     enabled: true
     productsblueWeight: 100
