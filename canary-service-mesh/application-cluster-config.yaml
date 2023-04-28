@@ -11,15 +11,17 @@ spec:
   source:
     path: gitops/cluster-config
     repoURL: 'https://github.com/davidseve/cloud-native-deployment-strategies.git'
-    targetRevision: HEAD
+    targetRevision: mesh #TODO change to HEAD
     helm:
      parameters:
       - name: "istio.enabled"
         value: "true"
       - name: "pipeline.enabled"
         value: "false"
+      - name: "github.enabled"
+        value: "false"
   project: default
   syncPolicy:
     automated:
-      prune: false
-      selfHeal: false
+      prune: true
+      selfHeal: true
