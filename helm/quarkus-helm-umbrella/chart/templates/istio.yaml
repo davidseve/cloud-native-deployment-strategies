@@ -2,7 +2,7 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
-  name: {{ include "shop.fullname" $ }}-gateway
+  name: {{ include "shop.fullname" $ }}-products-gateway
   labels:
     {{- include "shop.labels" . | nindent 4 }}
 spec:
@@ -14,7 +14,7 @@ spec:
       name: http
       protocol: HTTP
     hosts:
-    - "*"
+    - "products-{{ .Release.Namespace }}-istio-system.apps.{{ .Values.domain }}"
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
@@ -70,6 +70,23 @@ spec:
 ---
 {{ end }}
 apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: {{ include "shop.fullname" $ }}-discounts-gateway
+  labels:
+    {{- include "shop.labels" . | nindent 4 }}
+spec:
+  selector:
+    istio: ingressgateway # use istio default controller
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "discounts-{{ .Release.Namespace }}-istio-system.apps.{{ .Values.domain }}"
+---
+apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
   name: {{ include "shop.fullname" $ }}-vs-discounts
@@ -82,7 +99,14 @@ spec:
   - name: primary        # referenced in canary.trafficRouting.istio.virtualService.routes
     match:
     - uri:
-        exact: /discounts
+        exact: discountsNetworkingOnline:
+  router:
+    enabled: false
+
+productsNetworkingOnline:
+  router:
+    enabled: false
+/discounts
     route:
     {{- if .Values.global.istio.rollouts.enabled }}
     - destination:
@@ -119,4 +143,34 @@ spec:
     labels:
       version: green
 {{ end }}
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ include "shop.fullname" $ }}-discounts-route
+  namespace: istio-system
+spec:
+  to:
+    kind: Service
+    name: istio-ingressgateway
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  port:
+    targetPort: http2
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ include "shop.fullname" $ }}-products-route
+  namespace: istio-system
+spec:
+  to:
+    kind: Service
+    name: istio-ingressgateway
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  port:
+    targetPort: http2
 {{ end }}

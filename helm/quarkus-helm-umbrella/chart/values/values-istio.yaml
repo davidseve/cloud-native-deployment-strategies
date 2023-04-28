@@ -10,6 +10,8 @@ productsNetworkingOnline:
   router:
     enabled: false
 
+domain: change_me
+
 global:
   istio:
     enabled: true
