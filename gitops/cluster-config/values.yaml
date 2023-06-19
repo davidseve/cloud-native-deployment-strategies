@@ -17,3 +17,5 @@ github:
   repository: changeme
 monitoring:
   enabled: true
+argo-rollouts:
+  enabled: false
