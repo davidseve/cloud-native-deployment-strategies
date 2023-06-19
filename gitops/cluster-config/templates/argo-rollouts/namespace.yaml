@@ -1,4 +1,4 @@
-{{- if .Values.argo-rollouts.enabled }}
+{{- if .Values.argoRollouts.enabled }}
 ---
 apiVersion: v1
 kind: Namespace
