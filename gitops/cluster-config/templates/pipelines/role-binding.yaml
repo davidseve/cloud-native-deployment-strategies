@@ -26,4 +26,16 @@ subjects:
 - kind: ServiceAccount
   name: default
   namespace: {{ .Values.namespace }}
+---
+{{ end }}
+{{- if .Values.github.enabled }}
+kind: ServiceAccount
+apiVersion: v1
+metadata:
+  name: pipeline
+  namespace: {{ .Values.namespace }}
+  annotations:
+    argocd.argoproj.io/sync-options: ServerSideApply=true
+secrets:
+  - name: github-token
 {{ end }}
