@@ -33,10 +33,8 @@ kind: ServiceAccount
 apiVersion: v1
 metadata:
   name: pipeline
-  namespace: {{ .Values.namespace }}
   annotations:
     argocd.argoproj.io/sync-options: ServerSideApply=true
-    argocd.argoproj.io/sync-wave: "20"
 secrets:
   - name: github-token
 {{ end }}
