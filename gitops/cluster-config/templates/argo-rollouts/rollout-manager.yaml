@@ -6,5 +6,5 @@ metadata:
   namespace: argo-rollouts
 spec:
   extraCommandArgs:
-   - --namespaced=false
+   - "--namespaced=false"
 {{ end }}
