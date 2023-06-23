@@ -8,7 +8,7 @@ metadata:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
     argocd.argoproj.io/sync-wave: "21"
 spec:
-  version: v2.3
+  version: v2.4
   tracing:
     type: Jaeger
     sampling: 10000
