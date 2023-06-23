@@ -8,19 +8,42 @@ metadata:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
     argocd.argoproj.io/sync-wave: "21"
 spec:
-  version: v2.4
+  runtime:
+    components:
+      pilot:
+        deployment:
+          replicas: 3
   tracing:
-    type: Jaeger
     sampling: 10000
+    type: Jaeger
+  gateways:
+    enabled: true
+    egress:
+      enabled: true
+      runtime:
+        deployment:
+          replicas: 3
+    ingress:
+      enabled: true
+      runtime:
+        deployment:
+          replicas: 3
+    openshiftRoute:
+      enabled: false
+  policy:
+    type: Istiod
   addons:
+    grafana:
+      enabled: true
     jaeger:
-      name: jaeger
       install:
         storage:
           type: Memory
     kiali:
       enabled: true
-      name: kiali
-    grafana:
+    prometheus:
       enabled: true
+  version: v2.4
+  telemetry:
+    type: Istiod
 {{ end }}

@@ -20,7 +20,7 @@ oc delete -f canary-service-mesh/application-shop-mesh.yaml
 oc delete -f canary-service-mesh/application-cluster-config.yaml
 
 oc delete subscription openshift-pipelines-operator-rh -n openshift-operators
-oc delete clusterserviceversion openshift-pipelines-operator-rh.v1.10.0 -n openshift-operators
+oc delete clusterserviceversion openshift-pipelines-operator-rh.v1.10.4 -n openshift-operators
 
 oc delete subscription jaeger-product -n openshift-operators
 oc delete clusterserviceversion jaeger-operator.v1.42.0-5-0.1687199951.p  -n openshift-operators
