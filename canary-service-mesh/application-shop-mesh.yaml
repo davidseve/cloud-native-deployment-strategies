@@ -10,7 +10,7 @@ spec:
     server: 'https://kubernetes.default.svc'
   source:
     path: helm/quarkus-helm-umbrella/chart
-    repoURL:  https://github.com/davidseve/cloud-native-deployment-strategies.git #TODO
+    repoURL:  https://github.com/change_me/cloud-native-deployment-strategies.git
     targetRevision: mesh
     helm:
       valueFiles:
@@ -19,7 +19,7 @@ spec:
       - name: "global.namespace"
         value: gitops
       - name: "domain"
-        value: "cluster-bd2sv.bd2sv.sandbox744.opentlc.com" #TODO change_me
+        value: "change_domain"
   project: default
   syncPolicy:
     automated:

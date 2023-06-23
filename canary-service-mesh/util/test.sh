@@ -14,22 +14,28 @@ fi
 git checkout -b mesh 
 git push origin mesh 
 
-oc apply -f gitops/gitops-operator.yaml
-
-#First time we install operators take logger
-if [ ${1:-no} = "no" ]
+if [ ${3:-no} = "no" ]
 then
-    sleep 30s
-else
-    sleep 1m
+    oc apply -f gitops/gitops-operator.yaml
+
+    #First time we install operators take logger
+    if [ ${1:-no} = "no" ]
+    then
+        sleep 30s
+    else
+        sleep 2m
+    fi
 fi
 
-sed -i '/pipeline.enabled/{n;s/.*/        value: "true"/}' canary-service-mesh/application-cluster-config.yaml
-#To work with a branch that is not main. ./test.sh ghp_JGFDSFIGJSODIJGF no helm_base
+#To work with a branch that is not main. ./test.sh no helm_base no rollouts.sandbox2229.opentlc.com
 if [ ${2:-no} != "no" ]
 then
     sed -i "s/HEAD/$2/g" canary-service-mesh/application-cluster-config.yaml
 fi
+
+sed -i '/pipeline.enabled/{n;s/.*/        value: "true"/}' canary-service-mesh/application-cluster-config.yaml
+sed -i "s/change_domain/$4/g" canary-service-mesh/application-cluster-config.yaml
+
 oc apply -f canary-service-mesh/application-cluster-config.yaml --wait=true
 
 #First time we install operators take logger
@@ -43,6 +49,7 @@ fi
 sed -i 's/change_me/davidseve/g' canary-service-mesh/application-shop-mesh.yaml
 
 oc apply -f canary-service-mesh/application-shop-mesh.yaml --wait=true
+sleep 1m
 tkn pipeline start pipeline-blue-green-e2e-test --param NEW_IMAGE_TAG=v1.0.1 --param MODE=online --param LABEL=.version --param APP=products --param NAMESPACE=gitops --param JQ_PATH=.metadata --param MESH=true --workspace name=app-source,claimName=workspace-pvc-shop-cd-e2e-tests -n gitops --showlog
 
 sed -i '/products-green/{n;n;n;n;s/.*/      tag: v1.1.1/}' helm/quarkus-helm-umbrella/chart/values/values-canary-rollouts.yaml
