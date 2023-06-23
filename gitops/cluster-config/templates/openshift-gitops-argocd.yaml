@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ArgoCD
+metadata:
+  name: openshift-gitops
+  namespace: openshift-gitops
+  annotations:
+    argocd.argoproj.io/sync-options: ServerSideApply=true
+spec:
+  extraConfig:
+    resource.customizations: |
+      operators.coreos.com/Subscription:
+        health.lua: |
+          hs = {}
+          hs.status = "Progressing"
+          hs.message = ""
+          if obj.status ~= nil then
+            if obj.status.state ~= nil then
+              if obj.status.state == "AtLatestKnown" then
+                hs.message = obj.status.state .. " - " .. obj.status.currentCSV
+                hs.status = "Healthy"
+              end
+            end
+          end
+          return hs
+ 

@@ -23,8 +23,6 @@ git push origin rollouts-blue-green
 if [ ${3:-no} = "no" ]
 then
     oc apply -f gitops/gitops-operator.yaml
-    kubectl create namespace argo-rollouts
-    kubectl apply -n argo-rollouts -f https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml
 
     #First time we install operators take logger
     if [ ${1:-no} = "no" ]
