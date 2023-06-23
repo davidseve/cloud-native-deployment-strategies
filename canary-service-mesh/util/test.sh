@@ -11,8 +11,8 @@ then
     git fetch
     git switch $2
 fi
-git checkout -b mesh 
-git push origin mesh 
+# git checkout -b mesh 
+# git push origin mesh 
 
 if [ ${3:-no} = "no" ]
 then
@@ -34,7 +34,6 @@ then
 fi
 
 sed -i '/pipeline.enabled/{n;s/.*/        value: "true"/}' canary-service-mesh/application-cluster-config.yaml
-sed -i "s/change_domain/$4/g" canary-service-mesh/application-cluster-config.yaml
 
 oc apply -f canary-service-mesh/application-cluster-config.yaml --wait=true
 
@@ -47,6 +46,7 @@ else
 fi
 
 sed -i 's/change_me/davidseve/g' canary-service-mesh/application-shop-mesh.yaml
+sed -i "s/change_domain/$4/g" canary-service-mesh/application-shop-mesh.yaml
 
 oc apply -f canary-service-mesh/application-shop-mesh.yaml --wait=true
 sleep 1m
