@@ -1,0 +1,12 @@
+{{- if .Values.argoRollouts.enabled }}
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: argo-rollouts
+  labels:
+     argocd.argoproj.io/managed-by: openshift-gitops
+spec:
+  finalizers:
+  - kubernetes
+{{ end }}
