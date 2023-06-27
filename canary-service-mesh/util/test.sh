@@ -3,6 +3,8 @@ rm -rf /tmp/deployment
 mkdir /tmp/deployment
 cd /tmp/deployment
 
+# oc extract secret/openshift-gitops-cluster -n openshift-gitops --to=-
+
 git clone https://github.com/davidseve/cloud-native-deployment-strategies.git
 cd cloud-native-deployment-strategies
 #To work with a branch that is not main. ./test.sh no helm_base
