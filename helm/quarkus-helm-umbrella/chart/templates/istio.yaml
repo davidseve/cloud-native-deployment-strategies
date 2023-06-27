@@ -35,6 +35,7 @@ spec:
         exact: /products
     route:
     {{- if .Values.global.istio.rollouts.enabled }}
+    #TODO reviewed this
     - destination:
         host: {{ .Values.productsNetworkingOnline.fullnameOverride }}
       weight: 100
@@ -43,11 +44,11 @@ spec:
       weight: 0
     {{ else}}
     - destination:
-        host: {{ .Values.productsNetworkingOnline.fullnameOverride }}
+        host: {{ .Values.productsNetworkingOnline.fullnameOverride }}.{{ .Values.global.namespace }}.svc.cluster.local
         subset: blue
       weight: {{ .Values.global.istio.productsblueWeight}}
     - destination:
-        host: {{ .Values.productsNetworkingOnline.fullnameOverride }}
+        host: {{ .Values.productsNetworkingOnline.fullnameOverride }}.{{ .Values.global.namespace }}.svc.cluster.local
         subset: green
       weight: {{ .Values.global.istio.productsgreenWeight}}
     {{ end }}
