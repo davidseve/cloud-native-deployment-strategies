@@ -29,10 +29,10 @@ spec:
   hosts:
   - {{ include "shop.fullname" $ }}-products-route-istio-system.apps.{{ .Values.domain }}
   http:
-  - name: primary        # referenced in canary.trafficRouting.istio.virtualService.routes
-    match:
-    - uri:
-        exact: /products
+  # - name: primary        # referenced in canary.trafficRouting.istio.virtualService.routes
+  #   match:
+  #   - uri:
+  #       exact: /products
     route:
     {{- if .Values.global.istio.rollouts.enabled }}
     - destination:
@@ -103,9 +103,9 @@ spec:
   - {{ include "shop.fullname" $ }}-discounts-route-istio-system.apps.{{ .Values.domain }}
   http:
   - name: primary        # referenced in canary.trafficRouting.istio.virtualService.routes
-    match:
-    - uri:
-        exact: /discounts
+    # match:
+    # - uri:
+    #     exact: /discounts
     route:
     {{- if .Values.global.istio.rollouts.enabled }}
     - destination:
