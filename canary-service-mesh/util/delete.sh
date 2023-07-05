@@ -1,12 +1,5 @@
 #!/usr/bin/env bash
 
-#desabilitar auto sinc argo application
-#borrar service member
-#borrar member roll, 
-#borrar smcp
-#borra cluster application
-#desinstalar operadores
-
 cd /tmp/deployment/cloud-native-deployment-strategies
 
 argocd login --core

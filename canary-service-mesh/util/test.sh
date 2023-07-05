@@ -54,12 +54,13 @@ oc apply -f canary-service-mesh/application-shop-mesh.yaml --wait=true
 sleep 1m
 tkn pipeline start pipeline-blue-green-e2e-test --param NEW_IMAGE_TAG=v1.0.1 --param MODE=online --param LABEL=.version --param APP=products --param NAMESPACE=gitops --param JQ_PATH=.metadata --param MESH=true --workspace name=app-source,claimName=workspace-pvc-shop-cd-e2e-tests -n gitops --showlog
 
-sed -i '/products-green/{n;n;n;n;s/.*/      tag: v1.1.1/}' helm/quarkus-helm-umbrella/chart/values/values-canary-rollouts.yaml
+#TODO esto cambia donde no es
+# sed -i '/products-green/{n;n;n;n;s/.*/      tag: v1.1.1/}' helm/quarkus-helm-umbrella/chart/values/values-canary-rollouts.yaml
 
-git add helm/quarkus-helm-umbrella/chart/values/values-canary-rollouts.yaml
-git commit -m "Change products version to v1.1.1"
-git push origin mesh 
+# git add helm/quarkus-helm-umbrella/chart/values/values-canary-rollouts.yaml
+# git commit -m "Change products version to v1.1.1"
+# git push origin mesh 
 
-tkn pipeline start pipeline-blue-green-e2e-test --param NEW_IMAGE_TAG=v1.0.1 --param MODE=online --param LABEL=.version --param APP=products --param NAMESPACE=gitops --param JQ_PATH=.metadata --param MESH=True --workspace name=app-source,claimName=workspace-pvc-shop-cd-e2e-tests -n gitops --showlog
+# tkn pipeline start pipeline-blue-green-e2e-test --param NEW_IMAGE_TAG=v1.0.1 --param MODE=online --param LABEL=.version --param APP=products --param NAMESPACE=gitops --param JQ_PATH=.metadata --param MESH=True --workspace name=app-source,claimName=workspace-pvc-shop-cd-e2e-tests -n gitops --showlog
 
 ##hasta aqui
