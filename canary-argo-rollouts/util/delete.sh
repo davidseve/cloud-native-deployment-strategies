@@ -4,7 +4,6 @@ cd /tmp/deployment/cloud-native-deployment-strategies
 
 argocd login --core
 oc project openshift-gitops
-argocd app delete argo-rollouts -y
 argocd app delete shop -y
 
 oc delete project gitops
@@ -14,8 +13,7 @@ oc delete -f canary-argo-rollouts/application-shop-canary-rollouts.yaml
 oc delete -f canary-argo-rollouts/application-cluster-config.yaml
 
 oc delete subscription openshift-pipelines-operator-rh -n openshift-operators
-oc delete clusterserviceversion openshift-pipelines-operator-rh.v1.10.0 -n openshift-operators
-
+oc delete clusterserviceversion openshift-pipelines-operator-rh.v1.10.4 -n openshift-operators
 
 if [ ${1:-no} = "no" ]
 then
