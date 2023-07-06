@@ -110,12 +110,12 @@ We have to get the Istio gateway route.
 oc get routes istio-ingressgateway -n istio-system --template='http://{{.spec.host}}/products'
 ```
 
- 
+TODO
 ## Delete environment
  
 To delete all the things that we have done for the demo you have to:
 
-- In GitHub delete the branch `rollouts`
+- In GitHub delete the branch `mesh`
 - In ArgoCD delete the application `cluster-configuration` and `shop`
 - In Openshift, go to project `openshift-operators` and delete the installed operators **Openshift GitOps**, **OpenShift Service Mesh**, **Kiali Operator**, **OpenShift Elasticsearch Operator**, **Red Hat OpenShift distributed tracing platform**
 

@@ -14,7 +14,7 @@ spec:
     targetRevision: mesh
     helm:
       valueFiles:
-        - values/values-istio.yaml
+        - values/values-mesh.yaml
       parameters:
       - name: "global.namespace"
         value: gitops
