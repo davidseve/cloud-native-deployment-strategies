@@ -11,11 +11,13 @@ spec:
   source:
     path: helm/quarkus-helm-umbrella/chart
     repoURL:  https://github.com/change_me/cloud-native-deployment-strategies.git
-    targetRevision: rollouts
+    targetRevision: rollouts-mesh
     helm:
       parameters:
       - name: "global.namespace"
         value: gitops
+      - name: "domain"
+        value: "change_domain"
       valueFiles:
         - values/values-canary-rollouts-mesh.yaml
   project: default

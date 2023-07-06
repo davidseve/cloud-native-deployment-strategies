@@ -11,17 +11,19 @@ spec:
   source:
     path: gitops/cluster-config
     repoURL: 'https://github.com/davidseve/cloud-native-deployment-strategies.git'
-    targetRevision: rollouts
+    targetRevision: HEAD
     helm:
      parameters:
       - name: "pipeline.enabled"
         value: "false"
       - name: "github.enabled"
         value: "false"
-      # - name: "istio.enabled"
-      #   value: "true"
+      - name: "argoRollouts.enabled"
+        value: "true"
+      - name: "istio.enabled"
+        value: "true"
   project: default
   syncPolicy:
     automated:
-      prune: false
-      selfHeal: false
+      prune: true
+      selfHeal: true

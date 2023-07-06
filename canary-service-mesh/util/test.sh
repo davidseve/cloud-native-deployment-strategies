@@ -1,4 +1,10 @@
 #!/usr/bin/env bash
+
+#./test.sh si rollouts no rollouts.sandbox2653.opentlc.com
+
+# oc extract secret/openshift-gitops-cluster -n openshift-gitops --to=-
+# Add Argo CD Git Webhook to make it faster
+
 rm -rf /tmp/deployment
 mkdir /tmp/deployment
 cd /tmp/deployment
@@ -19,7 +25,6 @@ git push origin canary-mesh
 if [ ${3:-no} = "no" ]
 then
     oc apply -f gitops/gitops-operator.yaml
-
     #First time we install operators take logger
     if [ ${1:-no} = "no" ]
     then
@@ -27,12 +32,6 @@ then
     else
         sleep 2m
     fi
-fi
-
-
-
-if [ ${3:-no} = "no" ]
-then
 
     #To work with a branch that is not main. ./test.sh no helm_base no rollouts.sandbox2229.opentlc.com
     if [ ${2:-no} != "no" ]

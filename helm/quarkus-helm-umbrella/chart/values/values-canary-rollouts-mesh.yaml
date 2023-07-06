@@ -1,21 +1,16 @@
 tags:
   discounts-green: false
   products-green: false
-
-discountsNetworkingOnline:
-  router:
-    enabled: false
-
-productsNetworkingOnline:
-  router:
-    enabled: false
+  discountsNetworkingOffline: false
+  productsNetworkingOffline: false
 
 global:
   istio:
     enabled: true
     rollouts:
       enabled: true
-  # prometheusAddress: https://internal:demo@prometheus.istio-system.svc.cluster.local:9090
+  namespace: test
+  #TODO fixme prometheus pass
   prometheusAddress: https://redhat:redhatpass@prometheus.istio-system.svc.cluster.local:9090
 
 discounts-blue:
@@ -28,6 +23,7 @@ discounts-blue:
     rollouts:
       enabled: true
       analysis:
+        prometheus: true
         query: sum(irate(
             istio_requests_total{reporter="source",destination_service_name=~"discounts-umbrella-online",response_code!~"5.*"}[30s]
           )) /
@@ -35,22 +31,21 @@ discounts-blue:
             istio_requests_total{reporter="source",destination_service_name=~"discounts-umbrella-online"}[30s]
           ))
       canary:
-        canaryService: discounts-umbrella-offline
-        stableService: discounts-umbrella-online
         trafficRouting:
           istio:
             virtualService:
-              name: shop-vs-discounts
               routes:
               - primary
+              name: shop-shop-umbrella-vs-discounts
+            destinationRule:
+              name: shop-shop-umbrella-discounts-rule
+              canarySubsetName: canary
+              stableSubsetName: stable
         steps:
           - setWeight: 10
           - pause:
               duration: 30s
           - setWeight: 50
-          - pause:
-              duration: 30s
-          - setWeight: 75
           - pause:
               duration: 30s
   fullnameOverride: "discounts"
@@ -66,6 +61,7 @@ products-blue:
     rollouts:
       enabled: true
       analysis:
+        prometheus: true
         query: sum(irate(
             istio_requests_total{reporter="source",destination_service_name=~"products-umbrella-online",response_code!~"5.*"}[30s]
           )) /
@@ -73,14 +69,16 @@ products-blue:
             istio_requests_total{reporter="source",destination_service_name=~"products-umbrella-online"}[30s]
           ))
       canary:
-        canaryService: products-umbrella-offline
-        stableService: products-umbrella-online
         trafficRouting:
           istio:
             virtualService:
-              name: shop-vs-products
               routes:
               - primary
+              name: shop-shop-umbrella-vs-products
+            destinationRule:
+              name: shop-shop-umbrella-products-rule
+              canarySubsetName: canary
+              stableSubsetName: stable
         steps:
           - setWeight: 10
           - pause:
@@ -88,14 +86,7 @@ products-blue:
           - setWeight: 50
           - pause:
               duration: 30s
-          - setWeight: 75
-          - pause:
-              duration: 30s
   fullnameOverride: "products"
-
-fullnameOverride: "shop"
-  
-
 
 
 
