@@ -53,9 +53,9 @@ then
 fi
 
 
-#TODO delete the other operators
-# git checkout main
-# git branch -d mesh
-# git push origin --delete mesh
+
+git checkout main
+git branch -d canary-mesh
+git push origin --delete canary-mesh
 
 
