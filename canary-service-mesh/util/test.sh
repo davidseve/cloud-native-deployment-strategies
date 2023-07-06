@@ -57,7 +57,7 @@ sed -i 's/change_me/davidseve/g' canary-service-mesh/application-shop-mesh.yaml
 sed -i "s/change_domain/$4/g" canary-service-mesh/application-shop-mesh.yaml
 
 oc apply -f canary-service-mesh/application-shop-mesh.yaml --wait=true
-sleep 1m
+sleep 30
 tkn pipeline start pipeline-blue-green-e2e-test --param NEW_IMAGE_TAG=v1.0.1 --param MODE=online --param LABEL=.version --param APP=products --param NAMESPACE=gitops --param JQ_PATH=.metadata --param MESH=true --workspace name=app-source,claimName=workspace-pvc-shop-cd-e2e-tests -n gitops --showlog
 
 #Deploy products v1.1.1 with 10% traffic
@@ -68,7 +68,7 @@ sed -i '/products-green:/{n;n;s/.*/    replicaCount: 1/}' helm/quarkus-helm-umbr
 git add helm/quarkus-helm-umbrella/chart/values/values-mesh.yaml
 git commit -m "Deploy products v1.1.1 with 10% traffic"
 git push origin canary-mesh 
-sleep 1m
+sleep 30
 tkn pipeline start pipeline-blue-green-e2e-test --param NEW_IMAGE_TAG=v1.0.1 --param MODE=online --param LABEL=.version --param APP=products --param NAMESPACE=gitops --param JQ_PATH=.metadata --param MESH=true --workspace name=app-source,claimName=workspace-pvc-shop-cd-e2e-tests -n gitops --showlog
 tkn pipeline start pipeline-blue-green-e2e-test --param NEW_IMAGE_TAG=v1.1.1 --param MODE=online --param LABEL=.version --param APP=products --param NAMESPACE=gitops --param JQ_PATH=.metadata --param MESH=true --workspace name=app-source,claimName=workspace-pvc-shop-cd-e2e-tests -n gitops --showlog
 
@@ -81,7 +81,7 @@ sed -i '/products-blue:/{n;n;s/.*/    replicaCount: 2/}' helm/quarkus-helm-umbre
 git add helm/quarkus-helm-umbrella/chart/values/values-mesh.yaml
 git commit -m "Deploy products v1.1.1 with 50% traffic"
 git push origin canary-mesh 
-sleep 1m
+sleep 30
 tkn pipeline start pipeline-blue-green-e2e-test --param NEW_IMAGE_TAG=v1.0.1 --param MODE=online --param LABEL=.version --param APP=products --param NAMESPACE=gitops --param JQ_PATH=.metadata --param MESH=true --workspace name=app-source,claimName=workspace-pvc-shop-cd-e2e-tests -n gitops --showlog
 tkn pipeline start pipeline-blue-green-e2e-test --param NEW_IMAGE_TAG=v1.1.1 --param MODE=online --param LABEL=.version --param APP=products --param NAMESPACE=gitops --param JQ_PATH=.metadata --param MESH=true --workspace name=app-source,claimName=workspace-pvc-shop-cd-e2e-tests -n gitops --showlog
 
@@ -95,7 +95,6 @@ sed -i '/products-blue:/{n;n;s/.*/    replicaCount: 0/}' helm/quarkus-helm-umbre
 git add helm/quarkus-helm-umbrella/chart/values/values-mesh.yaml
 git commit -m "Delete product v1.0.1"
 git push origin canary-mesh 
-sleep 1m
-tkn pipeline start pipeline-blue-green-e2e-test --param NEW_IMAGE_TAG=v1.0.1 --param MODE=online --param LABEL=.version --param APP=products --param NAMESPACE=gitops --param JQ_PATH=.metadata --param MESH=true --workspace name=app-source,claimName=workspace-pvc-shop-cd-e2e-tests -n gitops --showlog
+sleep 30
 tkn pipeline start pipeline-blue-green-e2e-test --param NEW_IMAGE_TAG=v1.1.1 --param MODE=online --param LABEL=.version --param APP=products --param NAMESPACE=gitops --param JQ_PATH=.metadata --param MESH=true --workspace name=app-source,claimName=workspace-pvc-shop-cd-e2e-tests -n gitops --showlog
 
