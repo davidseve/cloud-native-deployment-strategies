@@ -2,14 +2,14 @@
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
 metadata:
+  name: jaeger-product
+  namespace: openshift-distributed-tracing
   annotations:
     argocd.argoproj.io/sync-wave: "10"
-  name: elasticsearch-operator
-  namespace: openshift-operators
 spec:
   channel: stable
-  name: elasticsearch-operator
+  installPlanApproval: Automatic
+  name: jaeger-product
   source: redhat-operators
   sourceNamespace: openshift-marketplace
-  installPlanApproval: Automatic
 {{ end }}

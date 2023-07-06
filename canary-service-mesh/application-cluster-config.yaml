@@ -18,8 +18,10 @@ spec:
         value: "true"
       - name: "pipeline.enabled"
         value: "false"
+      - name: "github.enabled"
+        value: "false"
   project: default
   syncPolicy:
     automated:
-      prune: false
-      selfHeal: false
+      prune: true
+      selfHeal: true

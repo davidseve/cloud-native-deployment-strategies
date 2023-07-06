@@ -6,26 +6,30 @@ metadata:
   namespace: istio-system
   annotations:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+    argocd.argoproj.io/sync-wave: "21"
 spec:
+  runtime:
+    components:
+      pilot:
+        deployment:
+          replicas: 3
+  tracing:
+    sampling: 10000
+    type: Jaeger
   gateways:
+    enabled: true
     egress:
       enabled: true
       runtime:
         deployment:
-          autoScaling:
-            enabled: false
+          replicas: 3
     ingress:
       enabled: true
       runtime:
         deployment:
-          autoScaling:
-            enabled: false
-
-  tracing:
-    sampling: 10000
-    type: Jaeger
-  telemetry:
-    type: Istiod
+          replicas: 3
+    openshiftRoute:
+      enabled: false
   policy:
     type: Istiod
   addons:
@@ -39,4 +43,7 @@ spec:
       enabled: true
     prometheus:
       enabled: true
+  version: v2.4
+  telemetry:
+    type: Istiod
 {{ end }}

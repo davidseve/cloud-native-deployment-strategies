@@ -2,8 +2,8 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   labels:
-    {{- include "quarkus.labels" . | nindent 4 }}
-  name: "{{ include "quarkus.fullname" . }}-prometheus-monitor"
+    {{- include "networking.labels" . | nindent 4 }}
+  name: "{{ include "networking.fullname" . }}-prometheus-monitor"
 spec:
   endpoints:
   - interval: 30s
@@ -12,4 +12,4 @@ spec:
     scheme: http
   selector:
     matchLabels:
-      {{- include "quarkus.labels" . | nindent 6 }}
+      {{- include "networking.labels" . | nindent 6 }}

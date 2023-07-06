@@ -2,6 +2,9 @@
 
 cd /tmp/deployment/cloud-native-deployment-strategies
 
+argocd login --core
+oc project openshift-gitops
+argocd app delete shop -y
 oc delete project gitops
 
 oc delete -f blue-green-pipeline/application-shop-blue-green.yaml
@@ -15,12 +18,9 @@ if [ ${1:-no} = "no" ]
 then
     oc delete -f gitops/gitops-operator.yaml
     oc delete subscription openshift-gitops-operator -n openshift-operators
-    oc delete clusterserviceversion openshift-gitops-operator.v1.9.0  -n openshift-operators
+    oc delete clusterserviceversion openshift-gitops-operator.v1.9.0 -n openshift-operators
 fi
 
 git checkout main
 git branch -d blue-green
 git push origin --delete blue-green
-
-#manual
-#gitops operator
