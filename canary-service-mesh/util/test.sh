@@ -30,7 +30,7 @@ then
 fi
 
 #To work with a branch that is not main. ./test.sh no helm_base no rollouts.sandbox2229.opentlc.com
-if [ ${2:-no} != "no" ]
+if [ ${3:-no} != "no" ]
 then
     sed -i "s/HEAD/$2/g" canary-service-mesh/application-cluster-config.yaml
 fi
