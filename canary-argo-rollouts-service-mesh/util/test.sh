@@ -9,8 +9,6 @@ rm -rf /tmp/deployment
 mkdir /tmp/deployment
 cd /tmp/deployment
 
-# oc extract secret/openshift-gitops-cluster -n openshift-gitops --to=-
-
 git clone https://github.com/davidseve/cloud-native-deployment-strategies.git
 cd cloud-native-deployment-strategies
 #To work with a branch that is not main. ./test.sh no helm_base
@@ -51,10 +49,10 @@ then
     fi
 fi
 
-sed -i 's/change_me/davidseve/g' canary-argo-rollouts-service-mesh/application-shop-canary-rollouts.yaml
-sed -i "s/change_domain/$4/g" canary-argo-rollouts-service-mesh/application-shop-mesh.yaml
+sed -i 's/change_me/davidseve/g' canary-argo-rollouts-service-mesh/application-shop-canary-rollouts-mesh.yaml
+sed -i "s/change_domain/$4/g" canary-argo-rollouts-service-mesh/application-shop-canary-rollouts-mesh.yaml
 
-oc apply -f canary-argo-rollouts-service-mesh/application-shop-canary-rollouts.yaml --wait=true
+oc apply -f canary-argo-rollouts-service-mesh/application-shop-canary-rollouts-mesh.yaml --wait=true
 sleep 30s
 tkn pipeline start pipeline-blue-green-e2e-test --param NEW_IMAGE_TAG=v1.0.1 --param MODE=online --param LABEL=.version --param APP=products --param NAMESPACE=gitops --param JQ_PATH=.metadata --param MESH=true --workspace name=app-source,claimName=workspace-pvc-shop-cd-e2e-tests -n gitops --showlog
 

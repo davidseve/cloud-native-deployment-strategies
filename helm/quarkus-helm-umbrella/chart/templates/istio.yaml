@@ -61,13 +61,21 @@ metadata:
 spec:
   host: {{ .Values.productsNetworkingOnline.fullnameOverride }}
   subsets:
+  {{- if .Values.global.istio.rollouts.enabled }}
+  - name: canary
+    labels:
+      version: blue
+  - name: stable
+    labels:
+      version: green
+  {{ else}}
   - name: blue
     labels:
       version: blue
   - name: green
     labels:
       version: green
-      #TODO reviewed this for rollouts
+  {{ end }}
 ---
 {{ end }}
 apiVersion: networking.istio.io/v1alpha3
@@ -129,12 +137,21 @@ metadata:
 spec:
   host: {{ .Values.discountsNetworkingOnline.fullnameOverride }}
   subsets:
+  {{- if .Values.global.istio.rollouts.enabled }}
+  - name: canary
+    labels:
+      version: blue
+  - name: stable
+    labels:
+      version: green
+  {{ else}}
   - name: blue
     labels:
       version: blue
   - name: green
     labels:
       version: green
+  {{ end }}
 {{ end }}
 ---
 apiVersion: route.openshift.io/v1
