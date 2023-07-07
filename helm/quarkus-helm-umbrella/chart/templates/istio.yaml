@@ -63,10 +63,10 @@ spec:
   {{- if .Values.global.istio.rollouts.enabled }}
   - name: canary
     labels:
-      version: blue
+      app: products
   - name: stable
     labels:
-      version: green
+      app: products
   {{ else}}
   - name: blue
     labels:
@@ -139,10 +139,10 @@ spec:
   {{- if .Values.global.istio.rollouts.enabled }}
   - name: canary
     labels:
-      version: blue
+      app: discounts
   - name: stable
     labels:
-      version: green
+      app: discounts
   {{ else}}
   - name: blue
     labels:
