@@ -40,13 +40,7 @@ then
     sed -i '/pipeline.enabled/{n;s/.*/        value: "true"/}' canary-argo-rollouts-service-mesh/application-cluster-config.yaml
 
     oc apply -f canary-argo-rollouts-service-mesh/application-cluster-config.yaml --wait=true
-    #First time we install operators take logger
-    if [ ${1:-no} = "no" ]
-    then
-        sleep 2m
-    else
-        sleep 4m
-    fi
+    sleep 4m
 fi
 
 sed -i 's/change_me/davidseve/g' canary-argo-rollouts-service-mesh/application-shop-canary-rollouts-mesh.yaml

@@ -19,7 +19,7 @@ global:
       enabled: true
   namespace: test
   #TODO fixme prometheus pass
-  prometheusAddress: https://redhat:redhatpass@prometheus.istio-system.svc.cluster.local:9090
+  prometheusAddress: https://internal:<PROMETHEUS-PASSWORD>@prometheus.istio-system.svc.cluster.local:9090
 
 discounts-blue:
   mode: online

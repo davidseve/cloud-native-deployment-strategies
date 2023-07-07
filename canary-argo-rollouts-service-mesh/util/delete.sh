@@ -24,11 +24,6 @@ then
     #oc delete svc admission-controller -n <operator-project>
     oc delete project istio-system
 
-
-
-
-    oc delete project gitops
-
     oc delete -f canary-argo-rollouts-service-mesh/application-cluster-config.yaml
 
     oc delete subscription openshift-pipelines-operator-rh -n openshift-operators
@@ -50,6 +45,10 @@ then
     oc delete -f gitops/gitops-operator.yaml
     oc delete subscription openshift-gitops-operator -n openshift-operators
     oc delete clusterserviceversion openshift-gitops-operator.v1.9.0 -n openshift-operators
+
+    oc delete project argo-rollouts
+
+    oc delete project gitops
 fi
 
 
