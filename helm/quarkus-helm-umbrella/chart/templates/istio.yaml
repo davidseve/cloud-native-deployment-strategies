@@ -51,7 +51,6 @@ spec:
       weight: {{ .Values.global.istio.productsgreenWeight}}
     {{ end }}
 ---
-{{- if not .Values.global.istio.rollouts.enabled }}
 apiVersion: networking.istio.io/v1beta1
 kind: DestinationRule
 metadata:
@@ -77,7 +76,6 @@ spec:
       version: green
   {{ end }}
 ---
-{{ end }}
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
@@ -112,9 +110,11 @@ spec:
     {{- if .Values.global.istio.rollouts.enabled }}
     - destination:
         host: {{ .Values.discountsNetworkingOnline.fullnameOverride }}.{{ .Values.global.namespace }}.svc.cluster.local
+        subset: stable
       weight: 100
     - destination:
-         host: {{ .Values.discountsNetworkingOnline.fullnameOverride }}.{{ .Values.global.namespace }}.svc.cluster.local
+        host: {{ .Values.discountsNetworkingOnline.fullnameOverride }}.{{ .Values.global.namespace }}.svc.cluster.local
+        subset: canary
       weight: 0
     {{ else}}
     - destination:
@@ -127,7 +127,6 @@ spec:
       weight: {{ .Values.global.istio.discountsgreenWeight}}
     {{ end }}
 ---
-{{- if not .Values.global.istio.rollouts.enabled }}
 apiVersion: networking.istio.io/v1beta1
 kind: DestinationRule
 metadata:
@@ -152,7 +151,6 @@ spec:
     labels:
       version: green
   {{ end }}
-{{ end }}
 ---
 apiVersion: route.openshift.io/v1
 kind: Route

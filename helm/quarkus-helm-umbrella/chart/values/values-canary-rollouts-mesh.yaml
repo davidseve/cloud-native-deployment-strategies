@@ -4,6 +4,14 @@ tags:
   discountsNetworkingOffline: false
   productsNetworkingOffline: false
 
+discountsNetworkingOnline:
+  router:
+    enabled: false
+
+productsNetworkingOnline:
+  router:
+    enabled: false
+
 global:
   istio:
     enabled: true
