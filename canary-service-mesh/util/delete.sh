@@ -34,8 +34,8 @@ then
     oc delete subscription openshift-pipelines-operator-rh -n openshift-operators
     oc delete clusterserviceversion openshift-pipelines-operator-rh.v1.10.4 -n openshift-operators
 
-    oc delete subscription jaeger-product -n openshift-operators
-    oc delete clusterserviceversion jaeger-operator.v1.42.0-5-0.1687199951.p  -n openshift-operators
+    oc delete subscription -product -n openshift-distributed-tracing
+    oc delete clusterserviceversion jaeger-operator.v1.42.0-5-0.1687199951.p  -n openshift-distributed-tracing
 
     oc delete subscription elasticsearch-operator -n openshift-operators
     oc delete clusterserviceversion elasticsearch-operator.v5.6.7 -n openshift-operators
