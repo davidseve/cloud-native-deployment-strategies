@@ -102,8 +102,10 @@ metadata:
 spec:
   gateways:
   - {{ include "shop.fullname" $ }}-discounts-gateway
+  - mesh #intramesh traffic
   hosts:
   - {{ include "shop.fullname" $ }}-discounts-route-istio-system.apps.{{ .Values.domain }}
+  - {{ .Values.discountsNetworkingOnline.fullnameOverride }}.{{ .Values.global.namespace }}.svc.cluster.local #intramesh traffic
   http:
   - name: primary        # referenced in canary.trafficRouting.istio.virtualService.routes
     route:

@@ -1,7 +1,7 @@
 tags:
   productsNetworkingOffline: false
   discountsNetworkingOffline: false
-  discounts-green: false
+  discounts-green: true
 
 discountsNetworkingOnline:
   router:
@@ -40,6 +40,12 @@ products-blue:
 discounts-blue:
   quarkus-base:
     replicaCount: 2
+    image:
+      tag: v1.0.1
+  mode: online
+discounts-green:
+  quarkus-base:
+    replicaCount: 1
     image:
       tag: v1.0.1
   mode: online
