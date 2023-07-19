@@ -21,12 +21,12 @@ We have created a chart for each application that does not know anything about c
 
 ### Prerequisites:
 
-- **Red Hat Openshift 4.12** with admin rights.
-  - You can download [Red Hat Openshift Local for OCP 4.12](https://developers.redhat.com/content-gateway/rest/mirror/pub/openshift-v4/clients/crc/2.6.0).
+- **Red Hat Openshift 4.13** with admin rights.
+  - You can download [Red Hat Openshift Local for OCP 4.13](https://developers.redhat.com/content-gateway/rest/mirror/pub/openshift-v4/clients/crc/2.6.0).
   - [Getting Started Guide](https://access.redhat.com/documentation/en-us/red_hat_openshift_local/2.5/html/getting_started_guide/using_gsg)
 - [Git](https://git-scm.com/)
 - [GitHub account](https://github.com/)
-- [oc 4.12 CLI] (https://docs.openshift.com/container-platform/4.12/cli_reference/openshift_cli/getting-started-cli.html)
+- [oc 4.13 CLI] (https://docs.openshift.com/container-platform/4.13/cli_reference/openshift_cli/getting-started-cli.html)
  
 We have a GitHub [repository](https://github.com/davidseve/cloud-native-deployment-strategies) for this demo. As part of the demo, you will have to do some changes and commits. So **it is important that you fork the repository and clone it in your local**.
 

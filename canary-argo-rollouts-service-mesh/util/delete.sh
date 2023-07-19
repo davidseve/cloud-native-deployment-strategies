@@ -26,14 +26,11 @@ then
 
     oc delete -f canary-argo-rollouts-service-mesh/application-cluster-config.yaml
 
-
-    #oc delete clusterserviceversion openshift-pipelines-operator-rh.v1.10.4 -n openshift-operators
     currentCSV=$(oc get subscription openshift-pipelines-operator-rh -n openshift-operators -o yaml | grep currentCSV | sed 's/  currentCSV: //')
     echo $currentCSV
     oc delete subscription openshift-pipelines-operator-rh -n openshift-operators
     oc delete clusterserviceversion $currentCSV -n openshift-operators
 
-    #oc delete clusterserviceversion jaeger-operator.v1.42.0-5-0.1687199951.p  -n openshift-distributed-tracing
     currentCSV=$(oc get subscription jaeger-product -n openshift-distributed-tracing -o yaml | grep currentCSV | sed 's/  currentCSV: //')
     echo $currentCSV
     oc delete subscription jaeger-product -n openshift-distributed-tracing

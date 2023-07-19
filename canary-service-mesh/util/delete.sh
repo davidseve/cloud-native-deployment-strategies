@@ -24,32 +24,43 @@ then
     #oc delete svc admission-controller -n <operator-project>
     oc delete project istio-system
 
-
-
-
-    oc delete project gitops
-
     oc delete -f canary-service-mesh/application-cluster-config.yaml
 
+    currentCSV=$(oc get subscription openshift-pipelines-operator-rh -n openshift-operators -o yaml | grep currentCSV | sed 's/  currentCSV: //')
+    echo $currentCSV
     oc delete subscription openshift-pipelines-operator-rh -n openshift-operators
-    oc delete clusterserviceversion openshift-pipelines-operator-rh.v1.10.4 -n openshift-operators
+    oc delete clusterserviceversion $currentCSV -n openshift-operators
 
-    oc delete subscription -product -n openshift-distributed-tracing
-    oc delete clusterserviceversion jaeger-operator.v1.42.0-5-0.1687199951.p  -n openshift-distributed-tracing
+    currentCSV=$(oc get subscription jaeger-product -n openshift-distributed-tracing -o yaml | grep currentCSV | sed 's/  currentCSV: //')
+    echo $currentCSV
+    oc delete subscription jaeger-product -n openshift-distributed-tracing
+    oc delete clusterserviceversion $currentCSV -n openshift-distributed-tracing
 
+    currentCSV=$(oc get subscription elasticsearch-operator -n openshift-operators -o yaml | grep currentCSV | sed 's/  currentCSV: //')
+    echo $currentCSV
     oc delete subscription elasticsearch-operator -n openshift-operators
-    oc delete clusterserviceversion elasticsearch-operator.v5.6.8 -n openshift-operators
+    oc delete clusterserviceversion $currentCSV  -n openshift-operators
 
+    currentCSV=$(oc get subscription kiali-ossm -n openshift-operators -o yaml | grep currentCSV | sed 's/  currentCSV: //')
+    echo $currentCSV
     oc delete subscription kiali-ossm -n openshift-operators
-    oc delete clusterserviceversion kiali-operator.v1.65.7  -n openshift-operators
+    oc delete clusterserviceversion $currentCSV  -n openshift-operators
 
+    currentCSV=$(oc get subscription servicemeshoperator -n openshift-operators -o yaml | grep currentCSV | sed 's/  currentCSV: //')
+    echo $currentCSV
     oc delete subscription servicemeshoperator -n openshift-operators
-    oc delete clusterserviceversion servicemeshoperator.v2.4.1  -n openshift-operators
+    oc delete clusterserviceversion $currentCSV   -n openshift-operators
 
 
+    currentCSV=$(oc get subscription openshift-gitops-operator -n openshift-operators -o yaml | grep currentCSV | sed 's/  currentCSV: //')
+    echo $currentCSV
     oc delete -f gitops/gitops-operator.yaml
     oc delete subscription openshift-gitops-operator -n openshift-operators
-    oc delete clusterserviceversion openshift-gitops-operator.v1.9.1 -n openshift-operators
+    oc delete clusterserviceversion $currentCSV  -n openshift-operators
+
+    oc delete project argo-rollouts
+
+    oc delete project gitops
 fi
 
 

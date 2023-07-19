@@ -2,32 +2,29 @@
 
 cd /tmp/deployment/cloud-native-deployment-strategies
 
-oc delete project gitops
-
-oc delete -f blue-green-argo-rollouts/application-shop-blue-green-rollouts.yaml
-
-oc delete -f blue-green-argo-rollouts/application-cluster-config.yaml
 argocd login --core
 oc project openshift-gitops
-argocd app delete argo-rollouts -y
-argocd app delete applications-ci -y
-
-oc delete subscription openshift-pipelines-operator-rh -n openshift-operators
-oc delete clusterserviceversion openshift-pipelines-operator-rh.v1.10.4 -n openshift-operators
+argocd app delete shop -y
+oc delete -f blue-green-argo-rollouts/application-shop-blue-green-rollouts.yaml
 
 if [ ${1:-no} = "no" ]
 then
+
+    oc delete -f blue-green-argo-rollouts/application-cluster-config.yaml
+    currentCSV=$(oc get subscription openshift-pipelines-operator-rh -n openshift-operators -o yaml | grep currentCSV | sed 's/  currentCSV: //')
+    echo $currentCSV
+    oc delete subscription openshift-pipelines-operator-rh -n openshift-operators
+    oc delete clusterserviceversion $currentCSV -n openshift-operators
+
+    currentCSV=$(oc get subscription openshift-gitops-operator -n openshift-operators -o yaml | grep currentCSV | sed 's/  currentCSV: //')
+    echo $currentCSV
     oc delete -f gitops/gitops-operator.yaml
     oc delete subscription openshift-gitops-operator -n openshift-operators
-    oc delete clusterserviceversion openshift-gitops-operator.v1.9.1  -n openshift-operators
-    # kubectl delete -n argo-rollouts -f https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml
-    # kubectl delete namespace argo-rollouts
+    oc delete clusterserviceversion $currentCSV  -n openshift-operators
+
+    oc delete project gitops
 fi
 
 git checkout main
 git branch -d rollouts-blue-green
 git push origin --delete rollouts-blue-green
-
-#manual
-#argo app argo-rollouts
-#gitops operator
