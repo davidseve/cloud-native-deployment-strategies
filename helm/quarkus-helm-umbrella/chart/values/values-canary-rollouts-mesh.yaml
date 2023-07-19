@@ -50,12 +50,8 @@ discounts-blue:
               canarySubsetName: canary
               stableSubsetName: stable
         steps:
-          - setWeight: 10
-          - pause:
-              duration: 30s
-          - setWeight: 50
-          - pause:
-              duration: 30s
+          - setWeight: 100
+
   fullnameOverride: "discounts"
     
 products-blue:
