@@ -58,7 +58,7 @@ then
 
     oc apply -f canary-argo-rollouts-service-mesh/application-cluster-config.yaml --wait=true
     
-    sleep 2m
+    sleep 3m
     waitjaegerpod jaeger
     waitoperatorpod kiali
     waitoperatorpod istio
