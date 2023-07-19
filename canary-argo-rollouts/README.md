@@ -157,8 +157,8 @@ spec:
   project: default
   syncPolicy:
     automated:
-      prune: false
-      selfHeal: false
+      prune: true
+      selfHeal: true
 
 ```
 

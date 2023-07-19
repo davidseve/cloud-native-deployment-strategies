@@ -49,8 +49,6 @@ discounts-blue:
               name: shop-shop-umbrella-discounts-rule
               canarySubsetName: canary
               stableSubsetName: stable
-        steps:
-          - setWeight: 100
 
   fullnameOverride: "discounts"
     
