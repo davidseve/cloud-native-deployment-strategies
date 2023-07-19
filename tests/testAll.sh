@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+#./testAll.sh si no github_pat_ rollouts.sandbox61.opentlc.com
+
 echo $2
 echo $2
 echo $3
@@ -37,4 +39,13 @@ cd ../../canary-service-mesh/util
 sleep 1m
 echo ¡¡Fin canary-service-mesh!!
 cd ../../canary-service-mesh/util
+./delete.sh
+
+sleep 1m
+echo ¡¡canary-argo-rollouts-service-mesh!!
+cd ../../canary-argo-rollouts-service-mesh/util
+./test.sh no $2 no $4
+sleep 1m
+echo ¡¡Fin canary-argo-rollouts-service-mesh!!
+cd ../../canary-argo-rollouts-service-mesh/util
 ./delete.sh

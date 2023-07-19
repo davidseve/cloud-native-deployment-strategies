@@ -38,18 +38,18 @@ then
     oc delete clusterserviceversion jaeger-operator.v1.42.0-5-0.1687199951.p  -n openshift-distributed-tracing
 
     oc delete subscription elasticsearch-operator -n openshift-operators
-    oc delete clusterserviceversion elasticsearch-operator.v5.6.7 -n openshift-operators
+    oc delete clusterserviceversion elasticsearch-operator.v5.6.8 -n openshift-operators
 
     oc delete subscription kiali-ossm -n openshift-operators
-    oc delete clusterserviceversion kiali-operator.v1.65.6  -n openshift-operators
+    oc delete clusterserviceversion kiali-operator.v1.65.7  -n openshift-operators
 
     oc delete subscription servicemeshoperator -n openshift-operators
-    oc delete clusterserviceversion servicemeshoperator.v2.4.0  -n openshift-operators
+    oc delete clusterserviceversion servicemeshoperator.v2.4.1  -n openshift-operators
 
 
     oc delete -f gitops/gitops-operator.yaml
     oc delete subscription openshift-gitops-operator -n openshift-operators
-    oc delete clusterserviceversion openshift-gitops-operator.v1.9.0 -n openshift-operators
+    oc delete clusterserviceversion openshift-gitops-operator.v1.9.1 -n openshift-operators
 fi
 
 

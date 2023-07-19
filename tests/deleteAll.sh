@@ -15,3 +15,7 @@ cd ../../canary-argo-rollouts/util
 echo ¡¡canary-service-mesh!!
 cd ../../canary-service-mesh/util
 ./delete.sh
+
+echo ¡¡canary-argo-rollouts-service-mesh!!
+cd ../../canary-argo-rollouts-service-mesh/util
+./delete.sh

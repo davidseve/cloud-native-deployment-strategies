@@ -104,7 +104,9 @@ spec:
 {{- with .Values.rollouts.canary }}
   strategy:
     canary:
+  {{- if .Values.global.istio.enabled }}
       dynamicStableScale: true
+  {{- end }}
       analysis:
         templates:
         - templateName: {{ include "quarkus.fullname" $ }}-analysis-template

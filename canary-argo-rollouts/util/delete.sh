@@ -19,7 +19,7 @@ if [ ${1:-no} = "no" ]
 then
     oc delete -f gitops/gitops-operator.yaml
     oc delete subscription openshift-gitops-operator -n openshift-operators
-    oc delete clusterserviceversion openshift-gitops-operator.v1.9.0 -n openshift-operators
+    oc delete clusterserviceversion openshift-gitops-operator.v1.9.1 -n openshift-operators
 fi
 
 git checkout main

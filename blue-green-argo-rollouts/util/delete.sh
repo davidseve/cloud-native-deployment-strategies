@@ -19,7 +19,7 @@ if [ ${1:-no} = "no" ]
 then
     oc delete -f gitops/gitops-operator.yaml
     oc delete subscription openshift-gitops-operator -n openshift-operators
-    oc delete clusterserviceversion openshift-gitops-operator.v1.9.0  -n openshift-operators
+    oc delete clusterserviceversion openshift-gitops-operator.v1.9.1  -n openshift-operators
     # kubectl delete -n argo-rollouts -f https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml
     # kubectl delete namespace argo-rollouts
 fi
