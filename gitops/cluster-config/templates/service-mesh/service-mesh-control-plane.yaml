@@ -51,6 +51,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: prometheus-backdoor
+  namespace: istio-system
 spec:
   ports:
     - name: http-prometheus

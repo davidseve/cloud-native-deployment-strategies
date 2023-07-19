@@ -1,9 +1,32 @@
 #!/usr/bin/env bash
 
-#./test.sh no f/mesh-rllouts no rollouts.sandbox2653.opentlc.com
+#./test.sh si mesh-rollouts-test no rollouts.sandbox61.opentlc.com
 
 # oc extract secret/openshift-gitops-cluster -n openshift-gitops --to=-
 # Add Argo CD Git Webhook to make it faster
+
+waitpodup(){
+  x=1
+  test=""
+  while [ -z "${test}" ]
+  do 
+    echo "Waiting ${x} times for pod ${1} in ns ${2}" $(( x++ ))
+    sleep 1 
+    test=$(oc get po -n ${2} | grep ${1})
+  done
+}
+
+waitoperatorpod() {
+  NS=openshift-operators
+  waitpodup $1 ${NS}
+  oc get pods -n ${NS} | grep ${1} | awk '{print "oc wait --for condition=Ready -n '${NS}' pod/" $1 " --timeout 300s"}' | sh
+}
+
+waitjaegerpod() {
+  NS=openshift-distributed-tracing
+  waitpodup $1 ${NS}
+  oc get pods -n ${NS} | grep ${1} | awk '{print "oc wait --for condition=Ready -n '${NS}' pod/" $1 " --timeout 300s"}' | sh
+}
 
 rm -rf /tmp/deployment
 mkdir /tmp/deployment
@@ -23,13 +46,7 @@ git push origin rollouts-mesh
 if [ ${3:-no} = "no" ]
 then
     oc apply -f gitops/gitops-operator.yaml
-    #First time we install operators take logger
-    if [ ${1:-no} = "no" ]
-    then
-        sleep 30s
-    else
-        sleep 2m
-    fi
+    waitoperatorpod gitops
 
     #To work with a branch that is not main. ./test.sh no helm_base no rollouts.sandbox2229.opentlc.com
     if [ ${2:-no} != "no" ]
@@ -40,7 +57,11 @@ then
     sed -i '/pipeline.enabled/{n;s/.*/        value: "true"/}' canary-argo-rollouts-service-mesh/application-cluster-config.yaml
 
     oc apply -f canary-argo-rollouts-service-mesh/application-cluster-config.yaml --wait=true
-    oc wait --for condition=Ready -n istio-system smmr/default --timeout 300s
+    
+    sleep 2m
+    waitjaegerpod jaeger
+    waitoperatorpod kiali
+    waitoperatorpod istio
 fi
 
 sed -i 's/change_me/davidseve/g' canary-argo-rollouts-service-mesh/application-shop-canary-rollouts-mesh.yaml
