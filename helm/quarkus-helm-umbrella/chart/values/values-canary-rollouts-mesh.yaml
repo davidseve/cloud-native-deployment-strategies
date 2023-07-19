@@ -89,7 +89,8 @@ products-blue:
           - pause:
               duration: 30s
   fullnameOverride: "products"
-  
+
+  fullnameOverride: "shop-umbrella" 
 
 
 

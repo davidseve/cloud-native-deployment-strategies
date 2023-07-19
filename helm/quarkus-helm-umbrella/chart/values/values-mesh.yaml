@@ -50,3 +50,4 @@ discounts-green:
       tag: v1.0.1
   mode: online
 
+fullnameOverride: "shop-umbrella" 
