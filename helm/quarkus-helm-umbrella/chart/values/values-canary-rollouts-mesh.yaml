@@ -90,7 +90,7 @@ products-blue:
               duration: 30s
   fullnameOverride: "products"
 
-  fullnameOverride: "shop-umbrella" 
+fullnameOverride: "shop-umbrella" 
 
 
 
