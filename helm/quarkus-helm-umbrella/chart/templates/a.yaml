@@ -1,0 +1,55 @@
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: prometheus-pw
+#   namespace: istio-system
+#   labels:
+#     a: a
+# spec:
+#   selector:
+#     matchLabels:
+#       varsion: a
+#   template:
+#     metadata:
+#       labels:
+#         varsion: a
+#     spec:
+#       containers:
+#       - name: get-prometheus-pw
+#         image: quay.io/rhdevelopers/origin-cli-yq-jq
+#         env:
+#         - name: PROM_PASSWORD
+#           valueFrom:
+#             secretKeyRef:
+#               name: htpasswd  # Replace with the name of your Prometheus secrets
+#               key: rawPassword  # Replace with the key where the password is stored
+#         command: ["/bin/sh", "-c"]
+#         args:
+#           - |
+#             echo ${PROM_PASSWORD}
+#             urlpass=$(jq -rn --arg x ${PROM_PASSWORD} '$x|@uri')
+#             echo $urlpass
+#             echo $urlpass > /data/urlpass
+#         volumeMounts:
+#         - name: shared-data
+#           mountPath: /data
+#       - name: set-prometheus-pw
+#         image: quay.io/argoproj/argocd
+#         env:
+#         - name: ARGOCD_PASS
+#           value: n5Fhfp8WZqLHBiKvVoDsP7ca13xjRgIJ
+#         command: ["/bin/sh", "-c"]
+#         args:
+#           - |
+#             cd /data
+#             cat /data/urlpass
+#             argocd login openshift-gitops-server.openshift-gitops.svc.cluster.local:443 --username admin --password $ARGOCD_PASS --insecure --config /data
+#             sleep 100m
+#             argocd app set shop \
+#             -p global.prometheusAddress=https://internal:$(cat /data/urlpass)@prometheus.istio-system.svc.cluster.local:9090
+#         volumeMounts:
+#         - name: shared-data
+#           mountPath: /data
+#       volumes:
+#       - name: shared-data
+#         emptyDir: {}

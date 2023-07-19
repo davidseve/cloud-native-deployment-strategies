@@ -40,7 +40,7 @@ then
     sed -i '/pipeline.enabled/{n;s/.*/        value: "true"/}' canary-argo-rollouts-service-mesh/application-cluster-config.yaml
 
     oc apply -f canary-argo-rollouts-service-mesh/application-cluster-config.yaml --wait=true
-    sleep 4m
+    oc wait --for condition=Ready -n istio-system smmr/default --timeout 300s
 fi
 
 sed -i 's/change_me/davidseve/g' canary-argo-rollouts-service-mesh/application-shop-canary-rollouts-mesh.yaml
