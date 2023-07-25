@@ -13,7 +13,7 @@ spec:
   - name: LABEL
   steps:
   - name: set-results
-    image: badouralix/curl-jq
+    image: quay.io/jsimas/alpine-curl-jq:1.0
     script: |
       version="none"
       cat $(workspaces.source.path)/url

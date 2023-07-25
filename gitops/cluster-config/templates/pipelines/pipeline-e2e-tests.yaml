@@ -46,7 +46,7 @@ spec:
         MESH=$(params.MESH)
         if [ $MESH = "true" ] 
         then
-          host=$(oc get routes shop-shop-umbrella-$(params.APP)-route -n istio-system -o=jsonpath='{.spec.host}')
+          host=$(oc get routes shop-umbrella-$(params.APP)-route -n istio-system -o=jsonpath='{.spec.host}')
         else
           host=$(oc get routes $(params.APP)-umbrella-$(params.MODE) -n $(params.NAMESPACE) -o=jsonpath='{.spec.host}')
         fi

@@ -19,7 +19,7 @@ spec:
 #this have to be tested
   - name: {{ include "quarkus.fullname" . }}-prometheus-metric
     interval: 10s
-    successCondition: len(result) == 0 || result[0] >= 0.95
+    successCondition: len(result) > 0 && (isNaN(result[0]) || result[0] >= 0.95)
     failureLimit: 2
     provider:
       prometheus:

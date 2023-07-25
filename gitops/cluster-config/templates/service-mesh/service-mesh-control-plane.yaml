@@ -46,4 +46,19 @@ spec:
   version: v2.4
   telemetry:
     type: Istiod
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: prometheus-backdoor
+  namespace: istio-system
+spec:
+  ports:
+    - name: http-prometheus
+      protocol: TCP
+      port: 9090
+      targetPort: 9090
+  type: ClusterIP
+  selector:
+    app: prometheus 
 {{ end }}

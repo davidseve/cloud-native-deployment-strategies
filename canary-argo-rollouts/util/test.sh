@@ -5,6 +5,29 @@
 # oc extract secret/openshift-gitops-cluster -n openshift-gitops --to=-
 # Add Argo CD Git Webhook to make it faster
 
+waitpodup(){
+  x=1
+  test=""
+  while [ -z "${test}" ]
+  do 
+    echo "Waiting ${x} times for pod ${1} in ns ${2}" $(( x++ ))
+    sleep 1 
+    test=$(oc get po -n ${2} | grep ${1})
+  done
+}
+
+waitoperatorpod() {
+  NS=openshift-operators
+  waitpodup $1 ${NS}
+  oc get pods -n ${NS} | grep ${1} | awk '{print "oc wait --for condition=Ready -n '${NS}' pod/" $1 " --timeout 300s"}' | sh
+}
+
+waitjaegerpod() {
+  NS=openshift-distributed-tracing
+  waitpodup $1 ${NS}
+  oc get pods -n ${NS} | grep ${1} | awk '{print "oc wait --for condition=Ready -n '${NS}' pod/" $1 " --timeout 300s"}' | sh
+}
+
 rm -rf /tmp/deployment
 mkdir /tmp/deployment
 cd /tmp/deployment
@@ -23,31 +46,19 @@ git push origin canary
 if [ ${3:-no} = "no" ]
 then
     oc apply -f gitops/gitops-operator.yaml
-    #First time we install operators take logger
-    if [ ${1:-no} = "no" ]
+    waitoperatorpod gitops
+
+    #To work with a branch that is not main. ./test.sh no helm_base
+    if [ ${2:-no} != "no" ]
     then
-        sleep 30s
-    else
-        sleep 2m
+        sed -i "s/HEAD/$2/g" canary-argo-rollouts/application-cluster-config.yaml
     fi
-fi
 
-#To work with a branch that is not main. ./test.sh no helm_base
-if [ ${2:-no} != "no" ]
-then
-    sed -i "s/HEAD/$2/g" canary-argo-rollouts/application-cluster-config.yaml
-fi
+    sed -i '/pipeline.enabled/{n;s/.*/        value: "true"/}' canary-argo-rollouts/application-cluster-config.yaml
 
-sed -i '/pipeline.enabled/{n;s/.*/        value: "true"/}' canary-argo-rollouts/application-cluster-config.yaml
+    oc apply -f canary-argo-rollouts/application-cluster-config.yaml --wait=true
 
-oc apply -f canary-argo-rollouts/application-cluster-config.yaml --wait=true
-
-#First time we install operators take logger
-if [ ${1:-no} = "no" ]
-then
-    sleep 1m
-else
-    sleep 2m
+    waitoperatorpod pipelines
 fi
 
 sed -i 's/change_me/davidseve/g' canary-argo-rollouts/application-shop-canary-rollouts.yaml

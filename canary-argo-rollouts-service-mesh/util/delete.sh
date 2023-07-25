@@ -5,7 +5,7 @@ cd /tmp/deployment/cloud-native-deployment-strategies
 argocd login --core
 oc project openshift-gitops
 argocd app delete shop -y
-oc delete -f canary-service-mesh/application-shop-mesh.yaml
+oc delete -f canary-argo-rollouts-service-mesh/application-shop-canary-rollouts-mesh.yaml
 
 if [ ${1:-no} = "no" ]
 then
@@ -24,7 +24,7 @@ then
     #oc delete svc admission-controller -n <operator-project>
     oc delete project istio-system
 
-    oc delete -f canary-service-mesh/application-cluster-config.yaml
+    oc delete -f canary-argo-rollouts-service-mesh/application-cluster-config.yaml
 
     currentCSV=$(oc get subscription openshift-pipelines-operator-rh -n openshift-operators -o yaml | grep currentCSV | sed 's/  currentCSV: //')
     echo $currentCSV
@@ -66,7 +66,7 @@ fi
 
 
 git checkout main
-git branch -d canary-mesh
-git push origin --delete canary-mesh
+git branch -d rollouts-mesh
+git push origin --delete rollouts-mesh
 
 

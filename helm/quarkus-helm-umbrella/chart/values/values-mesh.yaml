@@ -1,7 +1,6 @@
 tags:
   productsNetworkingOffline: false
   discountsNetworkingOffline: false
-  discounts-green: false
 
 discountsNetworkingOnline:
   router:
@@ -43,4 +42,11 @@ discounts-blue:
     image:
       tag: v1.0.1
   mode: online
+discounts-green:
+  quarkus-base:
+    replicaCount: 1
+    image:
+      tag: v1.0.1
+  mode: online
 
+fullnameOverride: "shop-umbrella" 
