@@ -3,6 +3,24 @@
 | :warning: WARNING          |
 |:---------------------------|
 | Work in progress           |
+## Introduction
+
+One important topic in the `Cloud Native` is the `Microservice Architecture`. We are not any more dealing with one monolithic application. We have several applications that have dependencies on each other and also have other dependencies like brokers or databases.
+ 
+Applications have their own life cycle, so we should be able to execute independent canary deployment. All the applications and dependencies will not change their version at the same time.
+ 
+Another important topic in the `Cloud Native` is `Continuous Delivery`. If we are going to have several applications doing canary deployment independently we have to automate it. We will use **Helm**, **Argo Rollouts**, **Openshift GitOps**, and of course **Red Hat Openshift** to help us.
+
+[**Argo Rollouts**](https://argoproj.github.io/argo-rollouts/) is a Kubernetes controller and set of CRDs which provide advanced deployment capabilities such as blue-green, canary, canary analysis, experimentation, and progressive delivery features to Kubernetes.
+In this demo we are going to use canary capabilities.
+ 
+**In the next steps we will see a real example of how to install, deploy and manage the life cycle of Cloud Native applications doing canary deployment using Argo Rollouts.**
+
+Let's start with some theory...after it, we will have the **hands-on example**.
+
+## Canary Deployment
+
+A canary deployment is a strategy where the operator releases a new version of their application to a small percentage of the production traffic. This small percentage may test the new version and provide feedback. If the new version is working well the operator may increase the percentage, till all the traffic is using the new version. Unlike Blue/Green, canary deployments are smoother, and failures have limited impact. 
 
 ## Shop application
  
