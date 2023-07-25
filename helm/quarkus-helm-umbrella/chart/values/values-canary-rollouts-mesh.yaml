@@ -44,9 +44,9 @@ discounts-blue:
             virtualService:
               routes:
               - primary
-              name: shop-shop-umbrella-vs-discounts
+              name: shop-umbrella-vs-discounts
             destinationRule:
-              name: shop-shop-umbrella-discounts-rule
+              name: shop-umbrella-discounts-rule
               canarySubsetName: canary
               stableSubsetName: stable
 
@@ -76,9 +76,9 @@ products-blue:
             virtualService:
               routes:
               - primary
-              name: shop-shop-umbrella-vs-products
+              name: shop-umbrella-vs-products
             destinationRule:
-              name: shop-shop-umbrella-products-rule
+              name: shop-umbrella-products-rule
               canarySubsetName: canary
               stableSubsetName: stable
         steps:
