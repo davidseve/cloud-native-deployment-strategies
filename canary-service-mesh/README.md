@@ -9,12 +9,7 @@ One important topic in the `Cloud Native` is the `Microservice Architecture`. We
  
 Applications have their own life cycle, so we should be able to execute independent canary deployment. All the applications and dependencies will not change their version at the same time.
  
-Another important topic in the `Cloud Native` is `Continuous Delivery`. If we are going to have several applications doing canary deployment independently we have to automate it. We will use **Helm**, **Argo Rollouts**, **Openshift GitOps**, and of course **Red Hat Openshift** to help us.
-
-[**Argo Rollouts**](https://argoproj.github.io/argo-rollouts/) is a Kubernetes controller and set of CRDs which provide advanced deployment capabilities such as blue-green, canary, canary analysis, experimentation, and progressive delivery features to Kubernetes.
-In this demo we are going to use canary capabilities.
- 
-**In the next steps we will see a real example of how to install, deploy and manage the life cycle of Cloud Native applications doing canary deployment using Argo Rollouts.**
+**In the next steps we will see a real example of how to install, deploy and manage the life cycle of Cloud Native applications doing canary deployment.**
 
 Let's start with some theory...after it, we will have the **hands-on example**.
 
@@ -24,15 +19,32 @@ A canary deployment is a strategy where the operator releases a new version of t
 
 ## Shop application
  
-We are going to use very simple applications to test canary deployment. We have create two Quarkus applications `Products` and `Discounts`
+We are going to use very simple applications to test canary deployment. We have created two Quarkus applications `Products` and `Discounts`
  
 ![Shop Application](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/Shop.png)
  
 `Products` call `Discounts` to get the product`s discount and expose an API with a list of products with its discounts.
+
+## Shop Canary
  
+To achieve canary deployment with `Cloud Native` applications using **Openshift Service Mesh**, we have designed this architecture.
+
+TODO
+<!-- ![Shop initial status](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-initial.png)
+ 
+OpenShift Components - Online
+
+- Routes and Services declared with the suffix -online
+- Routes mapped only to the online services
+- Services mapped to the rollout.
+
+In Blue/Green deployment we always have an offline service to test the version that is not in production. In the case of canary deployment we do not need it because progressively we will have the new version in production. 
+
+
+We have defined an active or online service 'products-umbrella-online'. Final user will always use 'products-umbrella-online'. When a new version is deployed **Argo Rollouts** create a new revision (ReplicaSet). The number of replicas in the new release increases based on the information in the steps, the number of replicas in the old release decreases in the same number. We have configured a pause duration between each step. To learn more about **Argo Rollouts**, please read [this](https://argoproj.github.io/argo-rollouts/features/canary/). -->
 ## Shop Umbrella Helm Chart
  
-One of the best ways to package `Cloud Native` applications is `Helm`. In canary deployment it makes even more sense.
+One of the best ways to package `Cloud Native` applications is `Helm`. In canary deployment, it makes even more sense.
 We have created a chart for each application that does not know anything about canary deployment. Then we pack everything together in an umbrella helm chart.
 
 ## Demo!!
@@ -54,10 +66,10 @@ git clone https://github.com/your_user/cloud-native-deployment-strategies
  
 ### Install OpenShift GitOps
  
-Go to the folder where you have clone your forked repository and create a new branch `mesh`
+Go to the folder where you have cloned your forked repository and create a new branch `canary-mesh`
 ```
-git checkout -b mesh
-git push origin mesh
+git checkout -b canary-mesh 
+git push origin canary-mesh 
 ```
  
 Log into OpenShift as a cluster admin and install the OpenShift GitOps operator with the following command. This may take some minutes.
@@ -69,9 +81,9 @@ Once OpenShift GitOps is installed, an instance of Argo CD is automatically inst
  
 ![Application Launcher](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/gitops-link.png)
  
-### Log into Argo CD dashboard
+### Log into the Argo CD dashboard
  
-Argo CD upon installation generates an initial admin password which is stored in a Kubernetes secret. In order to retrieve this password, run the following command to decrypt the admin password:
+Argo CD upon installation generates an initial admin password which is stored in a Kubernetes secret. To retrieve this password, run the following command to decrypt the admin password:
  
 ```
 oc extract secret/openshift-gitops-cluster -n openshift-gitops --to=-
@@ -110,7 +122,38 @@ You can click on the `cluster-configuration` application to check the details of
 
 ### Create Shop application
 
-We are going to create the application `shop`, that we are going to use to test canary deployment. It is important to wait till **OpenShift Service Mesh** installation has finished, if not the Istio sidecar will not be injected in our applications.
+We are going to create the application `shop`, that we will use to test canary deployment. Because we will make changes in the application's GitHub repository, we have to use the repository that you have just forked. Please edit the file `canary-service-mesh/application-shop-mesh.yaml` and set your own GitHub repository in the `reportURL` and the OCP cluster domain in `change_domain`.
+
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: shop
+  namespace: openshift-gitops
+spec:
+  destination:
+    name: ''
+    namespace: gitops
+    server: 'https://kubernetes.default.svc'
+  source:
+    path: helm/quarkus-helm-umbrella/chart
+    repoURL:  https://github.com/change_me/cloud-native-deployment-strategies.git
+    targetRevision: canary-mesh
+    helm:
+      valueFiles:
+        - values/values-mesh.yaml
+      parameters:
+      - name: "global.namespace"
+        value: gitops
+      - name: "domain"
+        value: "change_domain"
+  project: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+
+```
 
 ```
 oc apply -f canary-service-mesh/application-shop-mesh.yaml
@@ -125,15 +168,224 @@ We have deployed the `shop` with ArgoCD. We can test that it is up and running.
  
 We have to get the Istio gateway route.
 ```
-oc get routes istio-ingressgateway -n istio-system --template='http://{{.spec.host}}/products'
+oc get routes shop-umbrella-products-route -n istio-system --template='http://{{.spec.host}}/products'
 ```
 
+Notice that in each microservice response, we have added metadata information to see better the `version` of each application. This will help us to see the changes while we do the canary deployment.
+We can see that the current version is `v1.0.1`:
+```json
+{
+   "products":[
+      {
+         ...
+         "name":"TV 4K",
+         "price":"1500€"
+      }
+   ],
+   "metadata":{
+      "version":"v1.0.1", <--
+      "colour":"none",
+      "mode":"online"
+   }
+}
+```
+## Products Canary deployment
+ 
+We have already deployed the products version v1.0.1 with 4 replicas, and we are ready to use a new products version v1.1.1 that has a new `description` attribute.
+
+This is our current status:
 TODO
+<!-- ![Shop initial status](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-0.png) -->
+
+We have split a `Cloud Native` Canary deployment into three automatic step:
+
+1. Deploy canary version for 10%
+2. Scale canary version to 50%
+3. Scale canary version to 100%
+
+This is just an example. The key point here is that, very easily we can have the canary deployment that better fits our needs. 
+
+### Step 1 - Deploy canary version for 10%
+ 
+We will deploy a new version v1.1.1. To do it, we have already configure products-green with the new version v1.1.1. And we have to edit the file `helm/quarkus-helm-umbrella/chart/values/values-mesh.yaml` and do some changes:
+
+1. In `global.istio` change the weight to send 10% of the traffic to the new version.
+
+```yaml
+global:
+  istio:
+    productsblueWeight: 90
+    productsgreenWeight: 10
+```
+
+2. Increase the number of replicas to be able to support the 10% of the traffic in the new version.
+
+```yaml
+products-green:
+  quarkus-base:
+    replicaCount: 1
+```
+
+Push the changes to start the deployment.
+```
+git add .
+git commit -m "Deploy products v1.1.1 with 10% traffic"
+git push origin canary-mesh 
+```
+
+ArgoCD will refresh the status after some minutes. If you don't want to wait you can refresh it manually from ArgoCD UI or configure the Argo CD Git Webhook.[^note2].
+ 
+[^note2]:
+    Here you can see how to configure the Argo CD Git [Webhook]( https://argo-cd.readthedocs.io/en/stable/operator-manual/webhook/)
+    ![Argo CD Git Webhook](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/ArgoCD-webhook.png)
+
+TODO
+<!-- ![Refresh Shop](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/ArgoCD-Shop-Refresh.png) -->
+
+TODO
+<!-- This is our current status:
+![Shop Step 1](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-1.png) -->
+
+
+In the products url`s response you will have the new version in 10% of the requests.
+
+New revision:
+```json
+{
+  "products":[
+     {
+        "discountInfo":{...},
+        "name":"TV 4K",
+        "price":"1500€",
+        "description":"The best TV" <--
+     }
+  ],
+  "metadata":{
+     "version":"v1.1.1", <--
+  }
+}
+```
+
+Old revision:
+```json
+{
+  "products":[
+     {
+        "discountInfo":{...},
+        "name":"TV 4K",
+        "price":"1500€"
+     }
+  ],
+  "metadata":{
+     "version":"v1.0.1", <--
+  }
+}
+```
+### Step 2 - Scale canary version to 50%
+
+Now we have to do the changes to send 50% of the traffic to the new version v1.1.1. We have to edit the file `helm/quarkus-helm-umbrella/chart/values/values-mesh.yaml`.
+
+1. In `global.istio` change the weight to send 50% of the traffic to the new version.
+
+```yaml
+global:
+  istio:
+    productsblueWeight: 50
+    productsgreenWeight: 50
+```
+
+2. Increase the number of replicas to be able to support 50% of the traffic in the new version.
+
+```yaml
+products-green:
+  quarkus-base:
+    replicaCount: 2
+```
+
+3. We can decrease the number of replicas in the old version, becuase it will recived less traffic.
+
+```yaml
+products-blue:
+  quarkus-base:
+    replicaCount: 2
+```
+
+Push the changes to start the deployment.
+```
+git add .
+git commit -m "Deploy products v1.1.1 with 50% traffic"
+git push origin canary-mesh 
+```
+TODO
+<!-- This is our current status:
+![Shop Step 2](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-2.png) -->
+
+In the products url`s response, you will have the new version in 50% of the requests.
+
+
+### Step 3 - Scale canary version to 100%
+
+Now we have to do the changes to send 100% of the traffic to the new version v1.1.1. We have to edit the file `helm/quarkus-helm-umbrella/chart/values/values-mesh.yaml`.
+
+1. In `global.istio` change the weight to send 50% of the traffic to the new version.
+
+```yaml
+global:
+  istio:
+    productsblueWeight: 0
+    productsgreenWeight: 100
+```
+
+2. Increase the number of replicas to be able to support 100% of the traffic in the new version.
+
+```yaml
+products-green:
+  quarkus-base:
+    replicaCount: 4
+```
+
+3. We can decrease the number of replicas in the old version, becuase it will not recived traffic.
+
+```yaml
+products-blue:
+  quarkus-base:
+    replicaCount: 0
+```
+
+Push the changes to start the deployment.
+```
+git add .
+git commit -m "Delete product v1.0.1"
+git push origin canary-mesh 
+```
+TODO
+<!-- This is our current status:
+![Shop Step 2](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-2.png) -->
+
+In the products url`s response, you will only have the new version v1.1.1!!!
+```json
+{
+  "products":[
+     {
+        "discountInfo":{...},
+        "name":"TV 4K",
+        "price":"1500€",
+        "description":"The best TV" <--
+     }
+  ],
+  "metadata":{
+     "version":"v1.1.1", <--
+  }
+}
+```
+
+TODO Rollback
+
 ## Delete environment
  
 To delete all the things that we have done for the demo you have to:
 
-- In GitHub delete the branch `mesh`
+- In GitHub delete the branch `canary-mesh`
 - In ArgoCD delete the application `cluster-configuration` and `shop`
 - In Openshift, go to project `openshift-operators` and delete the installed operators **Openshift GitOps**, **OpenShift Service Mesh**, **Kiali Operator**, **OpenShift Elasticsearch Operator**, **Red Hat OpenShift distributed tracing platform**
 

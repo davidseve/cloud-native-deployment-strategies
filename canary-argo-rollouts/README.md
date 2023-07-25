@@ -179,7 +179,7 @@ We have to get the Online route
 curl "$(oc get routes products-umbrella-online -n gitops --template='https://{{.spec.host}}')/products"
 ```
 
-Notice that in each microservice response we have added metadata information to see better the `version` of each application. This will help us to see the changes while we do the canary deployment.
+Notice that in each microservice response, we have added metadata information to see better the `version` of each application. This will help us to see the changes while we do the canary deployment.
 We can see that the current version is `v1.0.1`:
 ```json
 {
@@ -245,16 +245,17 @@ We have split a `Cloud Native` Canary deployment into three automatic step:
 2. Scale canary version to 50%
 3. Scale canary version to 100%
 
-This is just an example. The key point here is that, very easily we can have the canary deployment that better fits our needs. In order to make this demo faster we have not set a pause with out duration in any step, so  **Argo Rollouts** will go throw each step automatically.
+This is just an example. The key point here is that, very easily we can have the canary deployment that better fits our needs. To make this demo faster we have not set a pause with out duration in any step, so  **Argo Rollouts** will go throw each step automatically.
+
 ### Step 1 - Deploy canary version for 10%
  
-We will deploy a new version v1.1.1. To do it, we have to edit the file `helm/quarkus-helm-umbrella/chart/values/values-canary-rollouts.yaml` under `products-blue` set `tag` value to `v.1.1.1`
+We will deploy a new version v1.1.1. To do it, we have to edit the file `helm/quarkus-helm-umbrella/chart/values/values-canary-rollouts.yaml` under `products-blue` set `tag` value to `v1.1.1`
 
 ```yaml
-products-blue:
-  mode: online
-  image:
-    tag: v1.1.1
+discounts-blue:
+  quarkus-base:
+    image:
+      tag: v1.1.1
 ```
 
 **Argo Rollouts** will automatically deploy a new products revision. The canary version will be 10% of the replicas. In this demo we are no using [traffic management](https://argoproj.github.io/argo-rollouts/features/traffic-management/). **Argo Rollouts** makes a best effort attempt to achieve the percentage listed in the last setWeight step between the new and old version. This means that it will create only one replica in the new revision, because it is rounded up. All the requests are load balanced between the old and the new replicas.
@@ -266,7 +267,7 @@ git commit -m "Change products version to v1.1.1"
 git push origin canary
 ```
 
- ArgoCD will refresh the status after some minutes. If you don't want to wait you can refresh it manually from ArgoCD UI or configure the Argo CD Git Webhook.[^note2].
+ArgoCD will refresh the status after some minutes. If you don't want to wait you can refresh it manually from ArgoCD UI or configure the Argo CD Git Webhook.[^note2].
  
 [^note2]:
     Here you can see how to configure the Argo CD Git [Webhook]( https://argo-cd.readthedocs.io/en/stable/operator-manual/webhook/)
@@ -293,7 +294,7 @@ NAME                                  KIND        STATUS     AGE    INFO
       └──□ products-67fc9fb79b-xlkhp  Pod         ✔ Running  3m13s  ready:1/1
 ```
 
-In the products url`s response you will have the new version in 25% of the requests.
+In the products url`s response you will have the new version in 10% of the requests.
 
 New revision:
 ```json

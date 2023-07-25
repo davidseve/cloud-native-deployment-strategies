@@ -1,7 +1,6 @@
 tags:
   productsNetworkingOffline: false
   discountsNetworkingOffline: false
-  discounts-green: true
 
 discountsNetworkingOnline:
   router:
