@@ -193,11 +193,11 @@ We have deployed the `shop` with ArgoCD. We can test that it is up and running.
  
 We have to get the Online route
 ```
-curl "$(oc get routes products-umbrella-online -n gitops --template='https://{{.spec.host}}')/products"
+curl -k "$(oc get routes products-umbrella-online -n gitops --template='https://{{.spec.host}}')/products"
 ```
 And the Offline route
 ```
-curl "$(oc get routes products-umbrella-offline -n gitops --template='https://{{.spec.host}}')/products"
+curl -k "$(oc get routes products-umbrella-offline -n gitops --template='https://{{.spec.host}}')/products"
 ```
 Notice that in each microservice response we have added metadata information to see better the `version` of each application. This will help us to see the changes while we do the Blue/Green deployment.
 Because right now we have both routers against the same rollout revision we will have the same response with version `v1.0.1`:

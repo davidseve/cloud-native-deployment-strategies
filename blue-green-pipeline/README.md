@@ -16,7 +16,7 @@ Let's start with some theory...after it, we will have a **hands-on example**.
  
 Blue green deployment is an application release model that transfers user traffic from a previous version of an app or microservice to a nearly identical new release, both of which are running in production.
 
-For instance, the old version can be called the blue environment while the new version can be known as the green environment. Once production traffic is transferred from blue to green, blue can standby in case of rollback or pulled from production and updated to become the template upon which the next update is made.
+For instance, the old version can be called the blue environment while the new version can be known as the green environment. Once production traffic is transferred from blue to green, blue can stand by in case of rollback or pulled from production and updated to become the template upon which the next update is made.
  
 Advantages:
 
@@ -76,62 +76,6 @@ One of the best ways to package `Cloud Native` applications is `Helm`. In Blue/G
 We have created a chart for each application that does not know anything about Blue/Green. Then we pack everything together in an umbrella helm chart.
  
 ![Shop Umbrella Helm Chart](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/Shop-helm.png)
- 
-In the `Shop Umbrella Chart` we use several times the same charts as helm dependencies but with different names if they are Blue/Green or online/offline. This will allow us to have different configurations for each color.
- 
-This is the Chart.yaml
-```
-apiVersion: v2
-name: shop-umbrella-blue-green
-description: A Helm chart for Kubernetes
-type: application
-version: 0.1.0
-appVersion: "1.16.0"
- 
-dependencies:
- - name: quarkus-helm-discounts
-   version: 0.1.0
-   alias: discounts-blue
-   tags:
-     - discounts-blue
- - name: quarkus-helm-discounts
-   version: 0.1.0
-   alias: discounts-green
-   tags:
-     - discounts-green
- - name: quarkus-base-networking
-   version: 0.1.0
-   alias: discountsNetworkingOnline 
-   tags:
-     - discountsNetworkingOnline
- - name: quarkus-base-networking
-   version: 0.1.0
-   alias: discountsNetworkingOffline
-   tags:
-     - discountsNetworkingOffline
- - name: quarkus-helm-products
-   version: 0.1.0
-   alias: products-blue
-   tags:
-     - products-blue
- - name: quarkus-helm-products
-   version: 0.1.0
-   alias: products-green
-   tags:
-     - products-green
- - name: quarkus-base-networking
-   version: 0.1.0
-   alias: productsNetworkingOnline
-   tags:
-     - productsNetworkingOnline
- - name: quarkus-base-networking
-   version: 0.1.0
-   alias: productsNetworkingOffline
-   tags:
-     - productsNetworkingOffline
-```
- 
-We have packaged both applications in one chart, but we may have different umbrella charts per application.
  
 ## Demo!!
 
@@ -199,7 +143,7 @@ In the current Git repository, the [gitops/cluster-config](https://github.com/da
  
 Let's configure Argo CD to recursively sync the content of the [gitops/cluster-config](https://github.com/davidseve/cloud-native-deployment-strategies/tree/main/gitops/cluster-config) directory into the OpenShift cluster.
 
-But first, we have to set your GitHub credentials. Please edit the file `blue-green-pipeline/application-cluster-config.yaml`. It should look like this:
+But first, we have to set your GitHub credentials. Please edit the file `blue-green-pipeline/application-cluster-config.yaml`.
 
 ```yaml
 apiVersion: argoproj.io/v1alpha1
@@ -218,14 +162,16 @@ spec:
     targetRevision: HEAD
     helm:
      parameters:
+      - name: "bluegreen.enabled"
+        value: "true"
       - name: "github.token"
-        value: "ghp_34me082uU5prxdS5Y54xIAQBcb4acW49b9gc"
+        value: "changeme_token"
       - name: "github.user"
-        value: "davidseve"
+        value: "changeme_user"
       - name: "github.mail"
-        value: "dseveria@redhat.com"
+        value: "changeme_mail"
       - name: "github.repository"
-        value: davidseve
+        value: "changeme_repository"
   project: default
   syncPolicy:
     automated:
@@ -289,11 +235,11 @@ We have deployed the `shop` with ArgoCD. We can test that it is up and running.
  
 We have to get the Online route
 ```
-curl "$(oc get routes products-umbrella-online -n gitops --template='https://{{.spec.host}}')/products"
+curl -k "$(oc get routes products-umbrella-online -n gitops --template='https://{{.spec.host}}')/products"
 ```
 And the Offline route
 ```
-curl "$(oc get routes products-umbrella-offline -n gitops --template='https://{{.spec.host}}')/products"
+curl -k "$(oc get routes products-umbrella-offline -n gitops --template='https://{{.spec.host}}')/products"
 ```
 Notice that in each microservice response we have added metadata information to see better the `version`, `color`, and `mode` of each application. This will help us to see the changes while we do the Blue/Green deployment.
 Because right now we have the same version v1.0.1 in both colors we will have almost the same response, only the mode will change.
@@ -534,6 +480,4 @@ To delete all the things that we have done for the demo you have to:
 - In GitHub delete the branch `blue-green`
 - In ArgoCD delete the application `cluster-configuration` and `shop`
 - In Openshift, go to project `openshift-operators` and delete the installed operators **Openshift GitOps** and **Openshift Pipelines**
-![Installed Operators](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/installed-operators.png)
-![Delete Pipeline Operator](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/delete-pipeline.png)
 
