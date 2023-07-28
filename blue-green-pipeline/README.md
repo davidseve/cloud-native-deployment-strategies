@@ -239,10 +239,7 @@ Execute this command to add a new Argo CD application that syncs a Git repositor
 oc apply -f blue-green-pipeline/application-cluster-config.yaml
 ```
  
-Looking at the Argo CD dashboard, you would notice that an application has been created[^note].
- 
-[^note]:
-    `cluster-configuration` will have the status `Progressing` till we execute the first pipeline.
+Looking at the Argo CD dashboard, you would notice that an application has been created.
 
 You can click on the `cluster-configuration` application to check the details of sync resources and their status on the cluster.
  
