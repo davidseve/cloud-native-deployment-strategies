@@ -33,7 +33,7 @@ Disadvantages:
 ![Blue/Green](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/blue-green.png)
  
 We have two versions up and running in production, online and offline. The routers and services never change, they are always online or offline.
-Because we have an offline version, we can do **smoke test** before switching to online.
+Because we have an offline version, we can do the **smoke test** before switching to online.
 When a new version is ready to be used by the final users, we only change the deployment that the online service is using.
  
 ![Blue/Green Switch](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/blue-green-switch.png)
@@ -68,7 +68,7 @@ OpenShift Components - Offline
 - Routes mapped only to the offline services
 - Services mapped to the deployment with the color flag (Green or Orange)
  
-**Notice that the routers and services do not have color, this is because they never change, they are always online or offline. However, deployments and pods will change their version.**
+**Notice that the routers and services do not have color, this is because they never change, and they are always online or offline. However, deployments and pods will change their version.**
  
 ## Shop Umbrella Helm Chart
  
@@ -115,7 +115,7 @@ Once OpenShift GitOps is installed, an instance of Argo CD is automatically inst
  
 ### Log into Argo CD dashboard
  
-Argo CD upon installation generates an initial admin password which is stored in a Kubernetes secret. In order to retrieve this password, run the following command to decrypt the admin password:
+Argo CD upon installation generates an initial admin password which is stored in a Kubernetes secret. To retrieve this password, run the following command to decrypt the admin password:
  
 ```
 oc extract secret/openshift-gitops-cluster -n openshift-gitops --to=-
@@ -241,7 +241,7 @@ And the Offline route
 ```
 curl -k "$(oc get routes products-umbrella-offline -n gitops --template='https://{{.spec.host}}')/products"
 ```
-Notice that in each microservice response we have added metadata information to see better the `version`, `color`, and `mode` of each application. This will help us to see the changes while we do the Blue/Green deployment.
+Notice that in each microservice response, we have added metadata information to see better the `version`, `color`, and `mode` of each application. This will help us to see the changes while we do the Blue/Green deployment.
 Because right now we have the same version v1.0.1 in both colors we will have almost the same response, only the mode will change.
 ```json
 {
@@ -277,8 +277,8 @@ Because right now we have the same version v1.0.1 in both colors we will have al
  
 We have split a `Cloud Native` Blue/Green deployment into three steps:
 
-1. Deploy new version.
-2. Switch new version to Online.
+1. Deploy the new version.
+2. Switch the new version to Online.
    - Rollback
 3. Align and scale down Offline.
  
@@ -290,7 +290,7 @@ This is our current status:
 ![Shop initial status](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/blue-green-step-0.png)
  
  
-### Step 1 - Deploy new version
+### Step 1 - Deploy the new version
  
 We will start deploying a new version v1.1.1 in the offline color. But instead of going manually to see which is the offline color and deploying the new version on it, let's let the pipeline find the current offline color and automatically deploy the new version, with no manual intervention.
 We will use the already created pipelinerun.
@@ -308,7 +308,7 @@ oc create -f 1-pipelinerun-products-new-version.yaml -n gitops
 ```
 ![Pipeline step 1](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/pipeline-step-1.png)
 
-This pipeline may take more time because we are doing three different commits, so ArgoCD has to synchronize them in order to continue with the pipeline. If you want to make it faster, you can refresh ArgoCD manually after each  `commit-*` step or configure the Argo CD Git Webhook.[^note2].
+This pipeline may take more time because we are doing three different commits, so ArgoCD has to synchronize them to continue with the pipeline. If you want to make it faster, you can refresh ArgoCD manually after each `commit-*` step or configure the Argo CD Git Webhook.[^note2].
  
 [^note2]:
     Here you can see how to configure the Argo CD Git [Webhook]( https://argo-cd.readthedocs.io/en/stable/operator-manual/webhook/)
@@ -353,7 +353,7 @@ Functional testing users can execute `Smoke tests` to validate this new v1.1.1 v
  
 ### Step 2 - Switch new version to Online
  
-We are going to open the new version to final users. The pipeline will just change the service to use the other color. Again the pipeline does this automatically without manual intervention. We  `minimize downtime` because it just changes the service label.
+We are going to open the new version to final users. The pipeline will just change the service to use the other color. Again the pipeline does this automatically without manual intervention. We `minimize downtime` because it just changes the service label.
 ```
 oc create -f 2-pipelinerun-products-switch.yaml -n gitops
 ```
@@ -382,7 +382,7 @@ After the pipeline is finished and ArgoCD has synchronized the changes this will
  
 ### Step 2,5 - Rollback
  
-Imagine that something goes wrong, we know that this never happens but just in case. We can do a very `quick rollback` just undoing the change in the `Products` online service. But, are we sure that with all the pressure that we will have at this moment, we will find the right service and change the label to the right color? Let's move this pressure to the pipeline. We can have a pipeline for rollback.
+Imagine that something goes wrong, we know that this never happens but just in case. We can do a very `quick rollback` just by undoing the change in the `Products` online service. But, are we sure that with all the pressure that we will have at this moment, we will find the right service and change the label to the right color? Let's move this pressure to the pipeline. We can have a pipeline for rollback.
 ```
 oc create -f 2-pipelinerun-products-switch-rollback.yaml -n gitops
 ```
@@ -480,4 +480,5 @@ To delete all the things that we have done for the demo you have to:
 - In GitHub delete the branch `blue-green`
 - In ArgoCD delete the application `cluster-configuration` and `shop`
 - In Openshift, go to project `openshift-operators` and delete the installed operators **Openshift GitOps** and **Openshift Pipelines**
+
 
