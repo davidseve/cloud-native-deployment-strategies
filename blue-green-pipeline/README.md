@@ -2,7 +2,7 @@
  
 ## Introduction
  
-One important topic in `Cloud Native` is `Microservice Architecture`. We are not any more dealing with one monolithic application. We have several applications that have dependencies on each other and also have other dependencies like brokers or databases.
+A critical topic in `Cloud Native` applications is the deployment strategy. We are no longer dealing with one monolithic application. We have several applications that have dependencies on each other and also have other dependencies like brokers or databases.
  
 Applications have their own life cycle, so we should be able to execute independent Blue/Green deployment. All the applications and dependencies will not change their version at the same time.
  
