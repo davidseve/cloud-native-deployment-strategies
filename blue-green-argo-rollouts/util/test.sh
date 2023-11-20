@@ -5,6 +5,23 @@
 # oc extract secret/openshift-gitops-cluster -n openshift-gitops --to=-
 # Add Argo CD Git Webhook to make it faster
 
+waitpodup(){
+  x=1
+  test=""
+  while [ -z "${test}" ]
+  do 
+    echo "Waiting ${x} times for pod ${1} in ns ${2}" $(( x++ ))
+    sleep 1 
+    test=$(oc get po -n ${2} | grep ${1})
+  done
+}
+
+waitoperatorpod() {
+  NS=openshift-operators
+  waitpodup $1 ${NS}
+  oc get pods -n ${NS} | grep ${1} | awk '{print "oc wait --for condition=Ready -n '${NS}' pod/" $1 " --timeout 300s"}' | sh
+}
+
 rm -rf /tmp/deployment
 mkdir /tmp/deployment
 cd /tmp/deployment
@@ -23,43 +40,35 @@ git push origin rollouts-blue-green
 if [ ${3:-no} = "no" ]
 then
     oc apply -f gitops/gitops-operator.yaml
+    waitoperatorpod gitops
+
+    #To work with a branch that is not main. ./test.sh no helm_base
+    if [ ${2:-no} != "no" ]
+    then
+        sed -i "s/HEAD/$2/g" blue-green-argo-rollouts/application-cluster-config.yaml
+    fi
+
+    sed -i '/pipeline.enabled/{n;s/.*/        value: "true"/}' blue-green-argo-rollouts/application-cluster-config.yaml
+
+    # #$4 quay token
+    # #To install applicatins ci pipeline ./test.sh no helm_base no eHBZwYVc5djhsdkpfhWphVHBEVTBaWsTUkRGV1EwNHlTVlRraE5OUldUSXlWak
+    # if [ ${4:-no} != "no" ]
+    # then
+    # sed -i '/project: default/i \ \     - name: "pipeline.applications.enabled"' blue-green-argo-rollouts/application-cluster-config.yaml
+    # sed -i '/project: default/i \ \       value: "true"' blue-green-argo-rollouts/application-cluster-config.yaml
+    # sed -i '/project: default/i \ \     - name: "pipeline.applications.dockerconfigjson"' blue-green-argo-rollouts/application-cluster-config.yaml
+    # sed -i "/project: default/i \ \       value: $4" blue-green-argo-rollouts/application-cluster-config.yaml
+    # fi
+
+    oc apply -f blue-green-argo-rollouts/application-cluster-config.yaml --wait=true
 
     #First time we install operators take logger
     if [ ${1:-no} = "no" ]
     then
-        sleep 30s
+        sleep 1m
     else
         sleep 2m
     fi
-fi
-
-#To work with a branch that is not main. ./test.sh no helm_base
-if [ ${2:-no} != "no" ]
-then
-    sed -i "s/HEAD/$2/g" blue-green-argo-rollouts/application-cluster-config.yaml
-fi
-
-sed -i '/pipeline.enabled/{n;s/.*/        value: "true"/}' blue-green-argo-rollouts/application-cluster-config.yaml
-
-# #$4 quay token
-# #To install applicatins ci pipeline ./test.sh no helm_base no eHBZwYVc5djhsdkpfhWphVHBEVTBaWsTUkRGV1EwNHlTVlRraE5OUldUSXlWak
-# if [ ${4:-no} != "no" ]
-# then
-# sed -i '/project: default/i \ \     - name: "pipeline.applications.enabled"' blue-green-argo-rollouts/application-cluster-config.yaml
-# sed -i '/project: default/i \ \       value: "true"' blue-green-argo-rollouts/application-cluster-config.yaml
-# sed -i '/project: default/i \ \     - name: "pipeline.applications.dockerconfigjson"' blue-green-argo-rollouts/application-cluster-config.yaml
-# sed -i "/project: default/i \ \       value: $4" blue-green-argo-rollouts/application-cluster-config.yaml
-# fi
-
-
-oc apply -f blue-green-argo-rollouts/application-cluster-config.yaml --wait=true
-
-#First time we install operators take logger
-if [ ${1:-no} = "no" ]
-then
-    sleep 1m
-else
-    sleep 2m
 fi
 
 sed -i 's/change_me/davidseve/g' blue-green-argo-rollouts/application-shop-blue-green-rollouts.yaml

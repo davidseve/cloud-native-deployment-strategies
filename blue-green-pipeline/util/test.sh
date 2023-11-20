@@ -5,6 +5,23 @@
 # oc extract secret/openshift-gitops-cluster -n openshift-gitops --to=-
 # Add Argo CD Git Webhook to make it faster
 
+waitpodup(){
+  x=1
+  test=""
+  while [ -z "${test}" ]
+  do 
+    echo "Waiting ${x} times for pod ${1} in ns ${2}" $(( x++ ))
+    sleep 1 
+    test=$(oc get po -n ${2} | grep ${1})
+  done
+}
+
+waitoperatorpod() {
+  NS=openshift-operators
+  waitpodup $1 ${NS}
+  oc get pods -n ${NS} | grep ${1} | awk '{print "oc wait --for condition=Ready -n '${NS}' pod/" $1 " --timeout 300s"}' | sh
+}
+
 rm -rf /tmp/deployment
 mkdir /tmp/deployment
 cd /tmp/deployment
@@ -23,14 +40,8 @@ git push origin blue-green
 if [ ${3:-no} = "no" ]
 then
     oc apply -f gitops/gitops-operator.yaml
-    #First time we install operators take logger
-    if [ ${1:-no} = "no" ]
-    then
-        sleep 30s
-    else
-        sleep 2m
-    fi
-
+    waitoperatorpod gitops
+    
     sed -i "s/changeme_token/$4/g" blue-green-pipeline/application-cluster-config.yaml
     sed -i 's/changeme_user/davidseve/g' blue-green-pipeline/application-cluster-config.yaml
     sed -i 's/changeme_mail/davidseve@gmail.com/g' blue-green-pipeline/application-cluster-config.yaml
