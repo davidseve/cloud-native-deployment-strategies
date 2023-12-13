@@ -16,6 +16,14 @@ spec:
       parameters:
         - name: "bluegreen.enabled"
           value: "true"
+        - name: "github.token"
+          value: "changeme_token"
+        - name: "github.user"
+          value: "changeme_user"
+        - name: "github.mail"
+          value: "changeme_mail"
+        - name: "github.repository"
+          value: "changeme_repository"
         - name: "users[0]"
           value: user1
         - name: "users[1]"
