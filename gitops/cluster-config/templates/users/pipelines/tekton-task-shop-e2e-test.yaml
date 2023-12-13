@@ -22,7 +22,7 @@ spec:
       while [[ "$version" != "$(params.TARGET_VERSION)" ]]
       do
         sleep 5
-        curl $(cat $(workspaces.source.path)/url) | jq -r '$(params.JQ_PATH)' > metadata
+        curl -k $(cat $(workspaces.source.path)/url) | jq -r '$(params.JQ_PATH)' > metadata
         cat metadata
         version=$(jq -r '$(params.LABEL)' metadata)
         echo $version
