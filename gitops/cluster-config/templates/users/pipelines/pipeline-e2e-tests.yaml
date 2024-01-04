@@ -78,7 +78,7 @@ metadata:
   namespace: {{ $user }}-continuous-deployment
   name: workspace-pvc-shop-cd-e2e-tests
   annotations:
-    argocd.argoproj.io/sync-wave: "1000"
+    argocd.argoproj.io/sync-wave: "1000" # issue: https://github.com/argoproj-labs/argocd-operator/issues/936
 spec:
   accessModes:
   - ReadWriteOnce

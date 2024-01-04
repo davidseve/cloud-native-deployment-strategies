@@ -60,6 +60,7 @@ spec:
         hs.status = "Progressing"
         hs.message = "Waiting for InstallPlan to complete"
         return hs
+    # issue: https://github.com/argoproj-labs/argocd-operator/issues/936
     # - kind: PersistentVolumeClaim
     #   check: |
     #     hs = {}
