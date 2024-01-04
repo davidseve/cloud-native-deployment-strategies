@@ -60,7 +60,7 @@ spec:
         hs.status = "Progressing"
         hs.message = "Waiting for InstallPlan to complete"
         return hs
-  resourceHealthChecks: |
+  resourceHealthChecks:
     - group: ""
       kind: PersistentVolumeClaim
       check: |
