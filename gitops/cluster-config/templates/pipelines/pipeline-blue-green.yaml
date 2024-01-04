@@ -629,6 +629,8 @@ kind: PersistentVolumeClaim
 metadata:
   namespace: {{ .Values.namespace }}
   name: workspace-pvc-shop-cd-new-version
+  annotations:
+    argocd.argoproj.io/sync-wave: "1000"
 spec:
   accessModes:
   - ReadWriteOnce
