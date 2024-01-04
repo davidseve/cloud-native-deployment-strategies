@@ -106,7 +106,7 @@ do
 
     
     oc create -f 1-pipelinerun-products-new-version.yaml -n $user-continuous-deployment
-    sleep 2m
+    sleep 1m
     funcPull
 
     oc get service products-umbrella-offline -n $namespace --output="jsonpath={.spec.selector.version}" > color
@@ -124,25 +124,25 @@ do
 
 
     oc create -f 2-pipelinerun-products-switch.yaml -n $user-continuous-deployment
-    sleep 3m
+    sleep 2m
     funcPull
     tkn pipeline start pipeline-blue-green-e2e-test --param NEW_IMAGE_TAG=v1.1.1 --param MODE=online --param LABEL=.version --param APP=products --param NAMESPACE=$namespace  --param MESH=False --param JQ_PATH=.metadata --workspace name=app-source,claimName=workspace-pvc-shop-cd-e2e-tests -n $user-continuous-deployment --showlog
 
     #Rollback
     oc create -f 2-pipelinerun-products-switch-rollback.yaml -n $user-continuous-deployment
-    sleep 2m
+    sleep 1m
     funcPull
     tkn pipeline start pipeline-blue-green-e2e-test --param NEW_IMAGE_TAG=v1.0.1 --param MODE=online --param LABEL=.version --param APP=products --param NAMESPACE=$namespace  --param MESH=False --param JQ_PATH=.metadata --workspace name=app-source,claimName=workspace-pvc-shop-cd-e2e-tests -n $user-continuous-deployment --showlog
 
 
     oc create -f 2-pipelinerun-products-switch.yaml -n $user-continuous-deployment
-    sleep 3m
+    sleep 2m
     funcPull
     tkn pipeline start pipeline-blue-green-e2e-test --param NEW_IMAGE_TAG=v1.1.1 --param MODE=online --param LABEL=.version --param APP=products --param NAMESPACE=$namespace  --param MESH=False --param JQ_PATH=.metadata --workspace name=app-source,claimName=workspace-pvc-shop-cd-e2e-tests -n $user-continuous-deployment --showlog
 
 
     oc create -f 3-pipelinerun-products-align-offline.yaml -n $user-continuous-deployment
-    sleep 2m
+    sleep 1m
     funcPull
 
     tkn pipeline start pipeline-blue-green-e2e-test --param NEW_IMAGE_TAG=online --param MODE=online --param LABEL=.mode --param APP=products --param NAMESPACE=$namespace  --param MESH=False --param JQ_PATH=.products[0].discountInfo.metadata --workspace name=app-source,claimName=workspace-pvc-shop-cd-e2e-tests -n $user-continuous-deployment --showlog
