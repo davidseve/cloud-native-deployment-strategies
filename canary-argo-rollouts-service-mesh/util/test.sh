@@ -68,7 +68,7 @@ sed -i 's/change_me/davidseve/g' canary-argo-rollouts-service-mesh/application-s
 sed -i "s/change_domain/$4/g" canary-argo-rollouts-service-mesh/application-shop-canary-rollouts-mesh.yaml
 
 oc apply -f canary-argo-rollouts-service-mesh/application-shop-canary-rollouts-mesh.yaml --wait=true
-sleep 30s
+sleep 1m
 tkn pipeline start pipeline-blue-green-e2e-test --param NEW_IMAGE_TAG=v1.0.1 --param MODE=online --param LABEL=.version --param APP=products --param NAMESPACE=gitops --param JQ_PATH=.metadata --param MESH=true --workspace name=app-source,claimName=workspace-pvc-shop-cd-e2e-tests -n gitops --showlog
 
 sed -i '/products-blue/{n;n;n;n;s/.*/      tag: v1.1.1/}' helm/quarkus-helm-umbrella/chart/values/values-canary-rollouts-mesh.yaml
