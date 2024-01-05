@@ -5,11 +5,12 @@
 | Work in progress           |
 ## Introduction
 
-One important topic in the `Cloud Native` is the `Microservice Architecture`. We are not any more dealing with one monolithic application. We have several applications that have dependencies on each other and also have other dependencies like brokers or databases.
+A critical topic in `Cloud Native` is the `Microservice Architecture`. We are not any more dealing with one monolithic application. We have several applications that have dependencies on each other and also have other dependencies like brokers or databases.
  
 Applications have their own life cycle, so we should be able to execute independent canary deployment. All the applications and dependencies will not change their version at the same time.
- 
-**In the next steps we will see a real example of how to install, deploy and manage the life cycle of Cloud Native applications doing canary deployment.**
+
+Another important topic in the `Cloud Native` is `Continuous Delivery`. If we are going to have several applications doing canary deployment independently we have to automate it. We will use **Helm**, **Openshift Service Mesh**, **Openshift GitOps**, and of course **Red Hat Openshift** to help us.
+**In the next steps we will see a real example of how to install, deploy and manage the life cycle of Cloud Native applications doing canary deployment using Openshift Service Mesh.**
 
 Let's start with some theory...after it, we will have the **hands-on example**.
 
@@ -27,21 +28,20 @@ We are going to use very simple applications to test canary deployment. We have 
 
 ## Shop Canary
  
-To achieve canary deployment with `Cloud Native` applications using **Openshift Service Mesh**, we have designed this architecture.
+To achieve canary deployment with `Cloud Native` applications using **Openshift Service Mesh**, we have designed this architecture. This is a simplification.
 
-TODO
-<!-- ![Shop initial status](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-initial.png)
+![Shop initial status](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-mesh-initial.png)
  
 OpenShift Components - Online
 
-- Routes and Services declared with the suffix -online
-- Routes mapped only to the online services
-- Services mapped to the rollout.
+- Route, Gateway and Virtual Services.
+- Services mapped to the deployment.
 
 In Blue/Green deployment we always have an offline service to test the version that is not in production. In the case of canary deployment we do not need it because progressively we will have the new version in production. 
 
 
-We have defined an active or online service 'products-umbrella-online'. Final user will always use 'products-umbrella-online'. When a new version is deployed **Argo Rollouts** create a new revision (ReplicaSet). The number of replicas in the new release increases based on the information in the steps, the number of replicas in the old release decreases in the same number. We have configured a pause duration between each step. To learn more about **Argo Rollouts**, please read [this](https://argoproj.github.io/argo-rollouts/features/canary/). -->
+We have defined an active or online service 'products-umbrella-online'. The final user will always use 'products-umbrella-online'. When a new version is deployed **Openshift Service Mesh** will send the amount of traffic that has been defined in the Virtual Service. We have to take care of the number of replicas in the new release and the old release, based on the amount of traffic that we have defined in the Virtual Service.
+
 ## Shop Umbrella Helm Chart
  
 One of the best ways to package `Cloud Native` applications is `Helm`. In canary deployment, it makes even more sense.
@@ -58,7 +58,7 @@ We have created a chart for each application that does not know anything about c
 - [GitHub account](https://github.com/)
 - [oc 4.13 CLI] (https://docs.openshift.com/container-platform/4.13/cli_reference/openshift_cli/getting-started-cli.html)
  
-We have a GitHub [repository](https://github.com/davidseve/cloud-native-deployment-strategies) for this demo. As part of the demo, you will have to do some changes and commits. So **it is important that you fork the repository and clone it in your local**.
+We have a GitHub [repository](https://github.com/davidseve/cloud-native-deployment-strategies) for this demo. As part of the demo, you will have to make some changes and commits. So **it is important that you fork the repository and clone it in your local**.
 
 ```
 git clone https://github.com/your_user/cloud-native-deployment-strategies
@@ -116,7 +116,7 @@ Execute this command to add a new Argo CD application that syncs a Git repositor
 oc apply -f canary-service-mesh/application-cluster-config.yaml
 ```
  
-Looking at the Argo CD dashboard, you would notice that an application has been created.
+Looking at the Argo CD dashboard, you will notice that an application has been created.
 
 You can click on the `cluster-configuration` application to check the details of sync resources and their status on the cluster.
 
@@ -159,14 +159,14 @@ spec:
 oc apply -f canary-service-mesh/application-shop-mesh.yaml
 ```
 
-Looking at the Argo CD dashboard, you would notice that we have a new `shop` application.
+Looking at the Argo CD dashboard, you will notice that we have a new `shop` application.
 
 
 ## Test Shop application
  
 We have deployed the `shop` with ArgoCD. We can test that it is up and running.
  
-We have to get the Istio gateway route.
+We have to get the route that we have created.
 ```
 oc get routes shop-umbrella-products-route -n istio-system --template='http://{{.spec.host}}/products'
 ```
@@ -191,11 +191,10 @@ We can see that the current version is `v1.0.1`:
 ```
 ## Products Canary deployment
  
-We have already deployed the products version v1.0.1 with 4 replicas, and we are ready to use a new products version v1.1.1 that has a new `description` attribute.
+We have already deployed the products version v1.0.1 with 2 replicas, and we are ready to use a new products version v1.1.1 that has a new `description` attribute.
 
 This is our current status:
-TODO
-<!-- ![Shop initial status](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-0.png) -->
+![Shop initial status](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-mesh-step-0.png) -->
 
 We have split a `Cloud Native` Canary deployment into three automatic step:
 
@@ -239,12 +238,8 @@ ArgoCD will refresh the status after some minutes. If you don't want to wait you
     Here you can see how to configure the Argo CD Git [Webhook]( https://argo-cd.readthedocs.io/en/stable/operator-manual/webhook/)
     ![Argo CD Git Webhook](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/ArgoCD-webhook.png)
 
-TODO
-<!-- ![Refresh Shop](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/ArgoCD-Shop-Refresh.png) -->
-
-TODO
-<!-- This is our current status:
-![Shop Step 1](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-1.png) -->
+This is our current status:
+![Shop Step 1](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-mesh-step-1.png)
 
 
 In the products url`s response you will have the new version in 10% of the requests.
@@ -283,7 +278,7 @@ Old revision:
 ```
 ### Step 2 - Scale canary version to 50%
 
-Now we have to do the changes to send 50% of the traffic to the new version v1.1.1. We have to edit the file `helm/quarkus-helm-umbrella/chart/values/values-mesh.yaml`.
+Now we have to make the changes to send 50% of the traffic to the new version v1.1.1. We have to edit the file `helm/quarkus-helm-umbrella/chart/values/values-mesh.yaml`.
 
 1. In `global.istio` change the weight to send 50% of the traffic to the new version.
 
@@ -302,23 +297,15 @@ products-green:
     replicaCount: 2
 ```
 
-3. We can decrease the number of replicas in the old version, becuase it will recived less traffic.
-
-```yaml
-products-blue:
-  quarkus-base:
-    replicaCount: 2
-```
-
 Push the changes to start the deployment.
 ```
 git add .
 git commit -m "Deploy products v1.1.1 with 50% traffic"
 git push origin canary-mesh 
 ```
-TODO
-<!-- This is our current status:
-![Shop Step 2](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-2.png) -->
+
+This is our current status:
+![Shop Step 2](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-mesh-step-2.png)
 
 In the products url`s response, you will have the new version in 50% of the requests.
 
@@ -336,15 +323,7 @@ global:
     productsgreenWeight: 100
 ```
 
-2. Increase the number of replicas to be able to support 100% of the traffic in the new version.
-
-```yaml
-products-green:
-  quarkus-base:
-    replicaCount: 4
-```
-
-3. We can decrease the number of replicas in the old version, becuase it will not recived traffic.
+2. We can decrease the number of replicas in the old version, becuase it will not recived traffic.
 
 ```yaml
 products-blue:
@@ -358,9 +337,8 @@ git add .
 git commit -m "Delete product v1.0.1"
 git push origin canary-mesh 
 ```
-TODO
-<!-- This is our current status:
-![Shop Step 2](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-2.png) -->
+This is our current status:
+![Shop Step 3](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-mesh-step-3.png)
 
 In the products url`s response, you will only have the new version v1.1.1!!!
 ```json
@@ -378,8 +356,6 @@ In the products url`s response, you will only have the new version v1.1.1!!!
   }
 }
 ```
-
-TODO Rollback
 
 ## Delete environment
  

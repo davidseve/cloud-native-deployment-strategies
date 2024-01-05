@@ -2,7 +2,7 @@
 
 ## Introduction
 
-One important topic in the `Cloud Native` is the `Microservice Architecture`. We are not any more dealing with one monolithic application. We have several applications that have dependencies on each other and also have other dependencies like brokers or databases.
+A critical topic in `Cloud Native` is the `Microservice Architecture`. We are not any more dealing with one monolithic application. We have several applications that have dependencies on each other and also have other dependencies like brokers or databases.
  
 Applications have their own life cycle, so we should be able to execute independent canary deployment. All the applications and dependencies will not change their version at the same time.
  
@@ -354,7 +354,7 @@ NAME                                  KIND        STATUS     AGE    INFO
 After other 30 seconds **Argo Rollouts** will increase the number of replicas in the new release to 4 and scale down the old revision.
 
 This is our current status:
-![Shop Step 1](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-3.png)
+![Shop Step 3](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-3.png)
 
 ```
 kubectl argo rollouts get rollout products --watch -n gitops
