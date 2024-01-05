@@ -1,8 +1,5 @@
 # Cloud Native Canary Deployment Strategy using Openshift Service Mesh
 
-| :warning: WARNING          |
-|:---------------------------|
-| Work in progress           |
 ## Introduction
 
 A critical topic in `Cloud Native` is the `Microservice Architecture`. We are not any more dealing with one monolithic application. We have several applications that have dependencies on each other and also have other dependencies like brokers or databases.
