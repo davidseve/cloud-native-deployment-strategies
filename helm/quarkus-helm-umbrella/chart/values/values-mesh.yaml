@@ -17,15 +17,15 @@ global:
     enabled: true
     rollouts:
       enabled: false
-    productsblueWeight: 100
-    productsgreenWeight: 0
+    productsblueWeight: 90
+    productsgreenWeight: 10
     discountsblueWeight: 100
     discountsgreenWeight: 0
 
 
 products-green:
   quarkus-base:
-    replicaCount: 0
+    replicaCount: 1
     image:
       tag: v1.1.1
   mode: online
