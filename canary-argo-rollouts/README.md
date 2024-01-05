@@ -2,7 +2,7 @@
 
 ## Introduction
 
-One important topic in the `Cloud Native` is the `Microservice Architecture`. We are not any more dealing with one monolithic application. We have several applications that have dependencies on each other and also have other dependencies like brokers or databases.
+A critical topic in `Cloud Native` is the `Microservice Architecture`. We are not any more dealing with one monolithic application. We have several applications that have dependencies on each other and also have other dependencies like brokers or databases.
  
 Applications have their own life cycle, so we should be able to execute independent canary deployment. All the applications and dependencies will not change their version at the same time.
  
@@ -42,7 +42,7 @@ OpenShift Components - Online
 In Blue/Green deployment we always have an offline service to test the version that is not in production. In the case of canary deployment we do not need it because progressively we will have the new version in production. 
 
 
-We have defined an active or online service 'products-umbrella-online'. Final user will always use 'products-umbrella-online'. When a new version is deployed **Argo Rollouts** create a new revision (ReplicaSet). The number of replicas in the new release increases based on the information in the steps, the number of replicas in the old release decreases in the same number. We have configured a pause duration between each step. To learn more about **Argo Rollouts**, please read [this](https://argoproj.github.io/argo-rollouts/features/canary/).
+We have defined an active or online service 'products-umbrella-online'. The final user will always use 'products-umbrella-online'. When a new version is deployed **Argo Rollouts** create a new revision (ReplicaSet). The number of replicas in the new release increases based on the information in the steps, the number of replicas in the old release decreases in the same number. We have configured a pause duration between each step. To learn more about **Argo Rollouts**, please read [this](https://argoproj.github.io/argo-rollouts/features/canary/).
 
 
 ## Shop Umbrella Helm Chart
@@ -125,7 +125,7 @@ Execute this command to add a new Argo CD application that syncs a Git repositor
 oc apply -f canary-argo-rollouts/application-cluster-config.yaml
 ```
  
-Looking at the Argo CD dashboard, you would notice that an application has been created.
+Looking at the Argo CD dashboard, you will notice that an application has been created.
 
 You can click on the `cluster-configuration` application to check the details of sync resources and their status on the cluster.
 
@@ -166,7 +166,7 @@ spec:
 oc apply -f canary-argo-rollouts/application-shop-canary-rollouts.yaml
 ```
 
-Looking at the Argo CD dashboard, you would notice that we have a new `shop` application.
+Looking at the Argo CD dashboard, you will notice that we have a new `shop` application.
 
 ![Argo CD - Cluster Config](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/ArgoCD-Applications.png)
 
@@ -245,7 +245,7 @@ We have split a `Cloud Native` Canary deployment into three automatic step:
 2. Scale canary version to 50%
 3. Scale canary version to 100%
 
-This is just an example. The key point here is that, very easily we can have the canary deployment that better fits our needs. To make this demo faster we have not set a pause with out duration in any step, so  **Argo Rollouts** will go throw each step automatically.
+This is just an example. The key point here is that, very easily we can have the canary deployment that better fits our needs. To make this demo faster we have not set a pause without duration in any step, so  **Argo Rollouts** will go throw each step automatically.
 
 ### Step 1 - Deploy canary version for 10%
  
@@ -354,7 +354,7 @@ NAME                                  KIND        STATUS     AGE    INFO
 After other 30 seconds **Argo Rollouts** will increase the number of replicas in the new release to 4 and scale down the old revision.
 
 This is our current status:
-![Shop Step 1](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-3.png)
+![Shop Step 3](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-step-3.png)
 
 ```
 kubectl argo rollouts get rollout products --watch -n gitops
