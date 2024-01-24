@@ -10,7 +10,7 @@ Another important topic in `Cloud Native` is `Continuous Delivery`. If we are go
  
 **In the next steps, we will see a real example of how to install, deploy and manage the life cycle of Cloud Native applications doing Blue/Green deployment.**
  
-Let's start with some theory...after it, we will have a **hands-on example**.
+Let's start with some theory...after that, we will have a **hands-on example**.
  
 ## Blue/Green Deployment
  

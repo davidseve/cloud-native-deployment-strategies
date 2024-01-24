@@ -10,11 +10,11 @@ Another important topic in the `Cloud Native` is `Continuous Delivery`. If we ar
 [**Argo Rollouts**](https://argoproj.github.io/argo-rollouts/) is a Kubernetes controller and set of CRDs which provide advanced deployment capabilities such as blue-green, canary, canary analysis, experimentation, and progressive delivery features to Kubernetes.
 In this demo we are going to use blue-green capabilities.
  
-**In the next steps we will see a real example of how to install, deploy and manage the life cycle of Cloud Native applications doing Blue/Green deployment using Argo Rollouts.**
+**In the next steps, we will see a real example of how to install, deploy and manage the life cycle of Cloud Native applications doing Blue/Green deployment using Argo Rollouts.**
  
 If you want to know more about Blue/Green deployment please read [**Blue/Green Deployment**](https://github.com/davidseve/cloud-native-deployment-strategies/tree/main/blue-green-pipeline#bluegreen-deployment)
 
-Let's start with some theory...after it, we will have the **hands-on example**.
+Let's start with some theory...after that, we will have a **hands-on example**.
 ## Shop application
  
 We are going to use very simple applications to test Blue/Green deployment. We have created two Quarkus applications `Products` and `Discounts`

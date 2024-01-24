@@ -2,14 +2,15 @@
 
 ## Introduction
 
-A critical topic in `Cloud Native` is the `Microservice Architecture`. We are not any more dealing with one monolithic application. We have several applications that have dependencies on each other and also have other dependencies like brokers or databases.
+A critical topic in `Cloud Native` is the `Microservice Architecture`. We are no longer dealing with one monolithic application. We have several applications that have dependencies on each other and also have other dependencies like brokers or databases.
  
 Applications have their own life cycle, so we should be able to execute independent canary deployment. All the applications and dependencies will not change their version at the same time.
 
 Another important topic in the `Cloud Native` is `Continuous Delivery`. If we are going to have several applications doing canary deployment independently we have to automate it. We will use **Helm**, **Openshift Service Mesh**, **Openshift GitOps**, and of course **Red Hat Openshift** to help us.
-**In the next steps we will see a real example of how to install, deploy and manage the life cycle of Cloud Native applications doing canary deployment using Openshift Service Mesh.**
 
-Let's start with some theory...after it, we will have the **hands-on example**.
+**In the next steps, we will see a real example of how to install, deploy and manage the life cycle of Cloud Native applications doing canary deployment using Openshift Service Mesh.**
+
+Let's start with some theory...after that, we will have a **hands-on example**.
 
 ## Canary Deployment
 
@@ -191,7 +192,7 @@ We can see that the current version is `v1.0.1`:
 We have already deployed the products version v1.0.1 with 2 replicas, and we are ready to use a new products version v1.1.1 that has a new `description` attribute.
 
 This is our current status:
-![Shop initial status](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-mesh-step-0.png) -->
+![Shop initial status](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-mesh-step-0.png)
 
 We have split a `Cloud Native` Canary deployment into three automatic step:
 
@@ -203,7 +204,7 @@ This is just an example. The key point here is that, very easily we can have the
 
 ### Step 1 - Deploy canary version for 10%
  
-We will deploy a new version v1.1.1. To do it, we have already configure products-green with the new version v1.1.1. And we have to edit the file `helm/quarkus-helm-umbrella/chart/values/values-mesh.yaml` and do some changes:
+We will deploy a new version v1.1.1. To do it, we have already configured products-green with the new version v1.1.1. And we have to edit the file `helm/quarkus-helm-umbrella/chart/values/values-mesh.yaml` and do some changes:
 
 1. In `global.istio` change the weight to send 10% of the traffic to the new version.
 
@@ -214,7 +215,7 @@ global:
     productsgreenWeight: 10
 ```
 
-2. Increase the number of replicas to be able to support the 10% of the traffic in the new version.
+2. Increase the number of replicas to be able to support 10% of the traffic in the new version.
 
 ```yaml
 products-green:
@@ -309,7 +310,7 @@ In the products url`s response, you will have the new version in 50% of the requ
 
 ### Step 3 - Scale canary version to 100%
 
-Now we have to do the changes to send 100% of the traffic to the new version v1.1.1. We have to edit the file `helm/quarkus-helm-umbrella/chart/values/values-mesh.yaml`.
+Now we have to make the changes to send 100% of the traffic to the new version v1.1.1. We have to edit the file `helm/quarkus-helm-umbrella/chart/values/values-mesh.yaml`.
 
 1. In `global.istio` change the weight to send 50% of the traffic to the new version.
 
@@ -320,7 +321,7 @@ global:
     productsgreenWeight: 100
 ```
 
-2. We can decrease the number of replicas in the old version, becuase it will not recived traffic.
+2. We can decrease the number of replicas in the old version because it will not receive traffic.
 
 ```yaml
 products-blue:

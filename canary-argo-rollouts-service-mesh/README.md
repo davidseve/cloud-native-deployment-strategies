@@ -6,7 +6,7 @@
 
 ## Introduction
 
-A critical topic in `Cloud Native` is the `Microservice Architecture`. We are not any more dealing with one monolithic application. We have several applications that have dependencies on each other and also have other dependencies like brokers or databases.
+A critical topic in `Cloud Native` is the `Microservice Architecture`. We are no longer dealing with one monolithic application. We have several applications that have dependencies on each other and also have other dependencies like brokers or databases.
  
 Applications have their own life cycle, so we should be able to execute independent canary deployment. All the applications and dependencies will not change their version at the same time.
  
@@ -15,9 +15,9 @@ Another important topic in the `Cloud Native` is `Continuous Delivery`. If we ar
 [**Argo Rollouts**](https://argoproj.github.io/argo-rollouts/) is a Kubernetes controller and set of CRDs which provide advanced deployment capabilities such as blue-green, canary, canary analysis, experimentation, and progressive delivery features to Kubernetes.
 In this demo we are going to use canary capabilities.
  
-**In the next steps we will see a real example of how to install, deploy and manage the life cycle of Cloud Native applications doing canary deployment using Argo Rollouts and Openshift Service Mesh.**
+**In the next steps, we will see a real example of how to install, deploy and manage the life cycle of Cloud Native applications doing canary deployment using Argo Rollouts and Openshift Service Mesh.**
 
-Let's start with some theory...after it, we will have the **hands-on example**.
+Let's start with some theory...after that, we will have a **hands-on example**.
 
 ## Canary Deployment
 
@@ -33,7 +33,7 @@ We are going to use very simple applications to test canary deployment. We have 
  
 ## Shop Canary
  
-To achieve canary deployment with `Cloud Native` applications using **Argo Rollouts** and **Openshift Service Mesh**, we have designed this architecture.
+To achieve canary deployment with `Cloud Native` applications using **Argo Rollouts** and **Openshift Service Mesh**, we have designed this architecture. This is a simplification.
 
 ![Shop initial status](https://github.com/davidseve/cloud-native-deployment-strategies/raw/main/images/canary-rollout-mesh-initial.png)
  
