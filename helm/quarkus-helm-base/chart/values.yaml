@@ -8,8 +8,6 @@ jaeger:
 log:
   level: INFO 
 
-fullnameOverride: ""
-
 service:
   type: ClusterIP
   port: 8080
