@@ -23,6 +23,7 @@ spec:
     failureLimit: 2
     provider:
       prometheus:
+        insecure: true       
         address: {{ .Values.global.prometheusAddress }}
         query: |
           {{ .Values.rollouts.analysis.query | indent 10 }}
