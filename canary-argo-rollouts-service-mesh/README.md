@@ -128,7 +128,7 @@ Execute this command to add a new Argo CD application that syncs a Git repositor
 oc apply -f canary-argo-rollouts/application-cluster-config.yaml
 ```
  
-Looking at the Argo CD dashboard, you would notice that an application has been created.
+Looking at the Argo CD dashboard, you will notice that an application has been created.
 
 You can click on the `cluster-configuration` application to check the details of sync resources and their status on the cluster.
 
@@ -299,7 +299,7 @@ NAME                                  KIND        STATUS     AGE    INFO
       └──□ products-67fc9fb79b-xlkhp  Pod         ✔ Running  3m13s  ready:1/1
 ```
 
-In the products url`s response, you will have the new version in 10% of the requests.
+In the products url`s response you will have the new version in 10% of the requests.
 
 New revision:
 ```json
