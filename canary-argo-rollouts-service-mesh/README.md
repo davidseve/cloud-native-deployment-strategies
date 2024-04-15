@@ -171,7 +171,7 @@ spec:
 ```
 
 ```
-oc apply -f canary-argo-rollouts-service-mesh/application-shop-canary-rollouts.yaml
+oc apply -f canary-argo-rollouts-service-mesh/application-shop-canary-rollouts-mesh.yaml
 ```
 
 Looking at the Argo CD dashboard, you will notice that we have a new `shop` application.
