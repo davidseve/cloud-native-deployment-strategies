@@ -22,7 +22,7 @@ Those are the different `Cloud Native` deployment strategies that we have develo
 - [**Blue/Green** using **Argo Rollouts**](/blue-green-argo-rollouts)
 - [**Canary** using **Openshift Service Mesh**](/canary-service-mesh)
 - [**Canary** using **Argo Rollouts**](/canary-argo-rollouts)
-- [**Canary** using **Argo Rollouts** and **Openshift Service Mesh** (Work in progress)](/canary-argo-rollouts-service-mesh)
+- [**Canary** using **Argo Rollouts** and **Openshift Service Mesh**](/canary-argo-rollouts-service-mesh)
 
 
 
