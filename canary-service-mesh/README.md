@@ -166,7 +166,7 @@ We have deployed the `shop` with ArgoCD. We can test that it is up and running.
  
 We have to get the route that we have created.
 ```
-oc get routes shop-umbrella-products-route -n istio-system --template='http://{{.spec.host}}/products'
+oc get routes shop-umbrella-products-route -n istio-system --template='https://{{.spec.host}}/products'
 ```
 
 Notice that in each microservice response, we have added metadata information to see better the `version` of each application. This will help us to see the changes while we do the canary deployment.

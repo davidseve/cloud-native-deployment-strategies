@@ -184,7 +184,7 @@ We have deployed the `shop` with ArgoCD. We can test that it is up and running.
  
 We have to get the route that we have created.
 ```
-oc get routes shop-umbrella-products-route -n istio-system --template='http://{{.spec.host}}/products'
+oc get routes shop-umbrella-products-route -n istio-system --template='https://{{.spec.host}}/products'
 ```
 
 Notice that in each microservice response, we have added metadata information to see better the `version` of each application. This will help us to see the changes while we do the canary deployment.
@@ -214,7 +214,7 @@ We can also see the rollout`s status[^note].
 ```
 kubectl argo rollouts get rollout products --watch -n gitops
 ```
-TODO revisar si es asi
+
 ```
 NAME                                  KIND        STATUS     AGE  INFO
 ⟳ products                            Rollout     ✔ Healthy  38s  
@@ -260,7 +260,7 @@ This is just an example. The key point here is that, very easily we can have the
 We will deploy a new version v1.1.1. To do it, we have to edit the file `helm/quarkus-helm-umbrella/chart/values/values-canary-rollouts-mesh.yaml` under `products-blue` set `tag` value to `v1.1.1`
 
 ```yaml
-discounts-blue:
+products-blue:
   quarkus-base:
     image:
       tag: v1.1.1
