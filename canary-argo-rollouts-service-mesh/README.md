@@ -119,13 +119,17 @@ In the current Git repository, the [gitops/cluster-config](https://github.com/da
 - namespaces `gitops`.
 - role binding for ArgoCD to the namespace `gitops`.
 - Argo Rollouts project.
+- **OpenShift Service Mesh**
+- **Kiali Operator**
+- **OpenShift Elasticsearch Operator**
+- **Red Hat OpenShift distributed tracing platform**
  
 Let's configure Argo CD to recursively sync the content of the [gitops/cluster-config](https://github.com/davidseve/cloud-native-deployment-strategies/tree/main/gitops/cluster-config) directory into the OpenShift cluster.
  
 Execute this command to add a new Argo CD application that syncs a Git repository containing cluster configurations with the OpenShift cluster.
  
 ```
-oc apply -f canary-argo-rollouts/application-cluster-config.yaml
+oc apply -f canary-argo-rollouts-service-mesh/application-cluster-config.yaml
 ```
  
 Looking at the Argo CD dashboard, you will notice that an application has been created.
@@ -134,7 +138,7 @@ You can click on the `cluster-configuration` application to check the details of
 
 ### Create Shop application
 
-We are going to create the application `shop`, that we will use to test canary deployment. Because we will make changes in the application's GitHub repository, we have to use the repository that you have just forked. Please edit the file `canary-argo-rollouts/application-shop-canary-rollouts.yaml` and set your own GitHub repository in the `reportURL`and the OCP cluster domain in `change_domain`.
+We are going to create the application `shop`, that we will use to test canary deployment. Because we will make changes in the application's GitHub repository, we have to use the repository that you have just forked. Please edit the file `canary-argo-rollouts-service-mesh/application-shop-canary-rollouts-mesh.yaml` and set your own GitHub repository in the `reportURL`and the OCP cluster domain in `change_domain`.
 
 ```yaml
 apiVersion: argoproj.io/v1alpha1
@@ -167,7 +171,7 @@ spec:
 ```
 
 ```
-oc apply -f canary-argo-rollouts/application-shop-canary-rollouts.yaml
+oc apply -f canary-argo-rollouts-service-mesh/application-shop-canary-rollouts.yaml
 ```
 
 Looking at the Argo CD dashboard, you will notice that we have a new `shop` application.
