@@ -285,7 +285,6 @@ This is our current status:
 ```
 kubectl argo rollouts get rollout products --watch -n gitops
 ```
-TODO
 ```
 NAME                                  KIND        STATUS     AGE    INFO
 ⟳ products                            Rollout     ॥ Paused   3m13s  
@@ -343,7 +342,6 @@ This is our current status:
 ```
 kubectl argo rollouts get rollout products --watch -n gitops
 ```
-TODO
 ```
 NAME                                  KIND        STATUS     AGE    INFO
 ⟳ products                            Rollout     ॥ Paused   3m47s  
@@ -367,7 +365,6 @@ This is our current status:
 ```
 kubectl argo rollouts get rollout products --watch -n gitops
 ```
-TODO
 ```
 NAME                                 KIND        STATUS        AGE    INFO
 ⟳ products                           Rollout     ✔ Healthy     4m32s  
