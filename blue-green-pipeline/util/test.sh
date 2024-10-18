@@ -41,7 +41,7 @@ if [ ${3:-no} = "no" ]
 then
     oc apply -f gitops/gitops-operator.yaml
     waitoperatorpod gitops
-    
+    sleep 30s
     sed -i "s/changeme_token/$4/g" blue-green-pipeline/application-cluster-config.yaml
     sed -i 's/changeme_user/davidseve/g' blue-green-pipeline/application-cluster-config.yaml
     sed -i 's/changeme_mail/davidseve@gmail.com/g' blue-green-pipeline/application-cluster-config.yaml
